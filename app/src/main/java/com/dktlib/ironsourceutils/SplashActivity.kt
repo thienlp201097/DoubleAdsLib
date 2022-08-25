@@ -13,7 +13,6 @@ class SplashActivity : AppCompatActivity() {
         AdmodUtils.getInstance().initAdmob(this, 10000, true, true)
         AppOpenManager.getInstance().init(application, getString(R.string.test_ads_admob_app_open))
         AppOpenManager.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
-
         val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ApplovinUtil.initApplovin(this,  true)
