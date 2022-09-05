@@ -7,19 +7,18 @@ import android.net.ConnectivityManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.lifecycleScope
-import com.applovin.mediation.MaxAd
-import com.applovin.mediation.MaxAdListener
-import com.applovin.mediation.MaxAdViewAdListener
-import com.applovin.mediation.MaxError
+import com.applovin.mediation.*
 import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
+import com.applovin.sdk.AppLovinSdkUtils
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.Dispatchers
@@ -375,6 +374,15 @@ object ApplovinUtil : LifecycleObserver {
         }
         bannerContainer.removeAllViews()
         banner = MaxAdView(idAd, activity)
+
+        val width = ViewGroup.LayoutParams.MATCH_PARENT
+
+        // Get the adaptive banner height.
+        val heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).height
+        val heightPx = AppLovinSdkUtils.dpToPx(activity, heightDp)
+
+        banner?.layoutParams = FrameLayout.LayoutParams(width, heightPx)
+        banner?.setExtraParameter("adaptive_banner", "true")
 
         val tagView: View =
             activity.getLayoutInflater().inflate(R.layout.banner_shimmer_layout, null, false)

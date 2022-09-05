@@ -10,8 +10,8 @@
         android:id="@+id/btn_load_inter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
         android:text="load inter" />
 
 
@@ -41,19 +41,16 @@
 
     <LinearLayout
         android:id="@+id/nativead"
-        android:layout_below="@id/btn_show_reward"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_show_reward"
         android:minHeight="250dp"
-        android:layout_height="wrap_content"/>
+        android:orientation="horizontal" />
     <FrameLayout
         android:id="@+id/banner_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/tv_below_banner"
-        android:layout_below="@id/banner_container"
-        android:text="Text below banner"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:minHeight="50dp"/>
+
 </RelativeLayout>
