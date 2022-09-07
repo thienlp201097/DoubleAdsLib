@@ -409,6 +409,7 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
                 bannerContainer.removeAllViews()
+                bannerContainer.visibility = View.GONE
             }
 
             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
