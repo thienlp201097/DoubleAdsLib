@@ -250,7 +250,7 @@ public class AdmodUtils {
 
     // ads native
     @SuppressLint("StaticFieldLeak")
-    public void loadNativeloadNativeAdsWithLayoutAds(Activity activity, String s, ViewGroup viewGroup, GoogleENative size, NativeAdCallback adCallback) {
+    public void loadNativeAds(Activity activity, String s, ViewGroup viewGroup, GoogleENative size, NativeAdCallback adCallback) {
         View tagView;
         if (size == GoogleENative.UNIFIED_MEDIUM) {
             tagView = activity.getLayoutInflater().inflate(R.layout.layoutnative_loading_medium, null, false);

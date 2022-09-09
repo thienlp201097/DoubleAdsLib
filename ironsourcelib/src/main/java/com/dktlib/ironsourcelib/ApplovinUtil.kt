@@ -35,7 +35,7 @@ object ApplovinUtil : LifecycleObserver {
     var isLoadInterstitialFailed = false
     private lateinit var interstitialAd: MaxInterstitialAd
 
-    fun initApplovin(activity: Activity,  enableAds: Boolean) {
+    fun initApplovin(activity: Activity, enableAds: Boolean) {
         this.enableAds = enableAds
         AppLovinSdk.getInstance(activity).setMediationProvider("max")
         AppLovinSdk.getInstance(activity).initializeSdk({ configuration: AppLovinSdkConfiguration ->
@@ -43,17 +43,19 @@ object ApplovinUtil : LifecycleObserver {
         })
 
     }
+
     val TAG: String = "IronSourceUtil"
 
 
     //Only use for splash interstitial
     fun loadInterstitials(activity: AppCompatActivity, idAd: String, timeout: Long, callback: InterstititialCallback) {
-        if (!enableAds) {
+        interstitialAd = MaxInterstitialAd(idAd, activity)
+
+        if (!enableAds || !isNetworkConnected(activity)) {
             callback.onInterstitialClosed()
             return
         }
 
-        interstitialAd = MaxInterstitialAd(idAd, activity)
         interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 callback.onInterstitialReady()
@@ -106,6 +108,15 @@ object ApplovinUtil : LifecycleObserver {
         dialogShowTime: Long,
         callback: InterstititialCallback
     ) {
+
+        if (interstitialAd == null) {
+            callback.onInterstitialLoadFail("null")
+            return
+        }
+        if (!enableAds || !isNetworkConnected(activity)) {
+            callback.onInterstitialClosed()
+            return
+        }
 
         if (AppOpenManager.getInstance().isInitialized) {
             if (!AppOpenManager.getInstance().isAppResumeEnabled) {
@@ -194,7 +205,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     Log.d(TAG, "onInterstitialAdReady")
-                  interstitialAd.showAd()
+                    interstitialAd.showAd()
                 }
             }
         } else {
@@ -216,6 +227,12 @@ object ApplovinUtil : LifecycleObserver {
         dialogShowTime: Long,
         callback: InterstititialCallback
     ) {
+
+        if (!enableAds || !isNetworkConnected(activity)) {
+            callback.onInterstitialClosed()
+            return
+        }
+
         var dialog = SweetAlertDialog(activity, SweetAlertDialog.PROGRESS_TYPE)
         dialog.getProgressHelper().barColor = Color.parseColor("#A5DC86")
         dialog.setTitleText("Loading ads. Please wait...")
@@ -258,12 +275,11 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setListener(object :MaxAdListener{
+        interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     Log.d(TAG, "onInterstitialAdReady")
-                    if ( interstitialAd.isReady() )
-                    {
+                    if (interstitialAd.isReady()) {
                         dialog.dismiss()
                         interstitialAd.showAd();
                     }
@@ -347,8 +363,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     Log.d(TAG, "onInterstitialAdReady")
-                    if ( interstitialAd.isReady() )
-                    {
+                    if (interstitialAd.isReady()) {
                         interstitialAd.showAd();
                     }
                 }
@@ -368,10 +383,12 @@ object ApplovinUtil : LifecycleObserver {
 
 
     fun showBanner(activity: AppCompatActivity, bannerContainer: ViewGroup, idAd: String) {
-        if (!this.enableAds) {
+
+        if (!enableAds || !isNetworkConnected(activity)) {
             bannerContainer.visibility = View.GONE
             return
         }
+
         bannerContainer.removeAllViews()
         banner = MaxAdView(idAd, activity)
 
@@ -392,7 +409,7 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmerAnimation()
 
-        banner?.setListener(object : MaxAdViewAdListener{
+        banner?.setListener(object : MaxAdViewAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 shimmerFrameLayout.stopShimmerAnimation()
                 bannerContainer.removeView(tagView)
@@ -409,7 +426,6 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
                 bannerContainer.removeAllViews()
-                bannerContainer.visibility = View.GONE
             }
 
             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
