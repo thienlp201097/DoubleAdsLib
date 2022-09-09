@@ -190,7 +190,17 @@ public class AdmodUtils {
 
 
     // ads native
-    public void loadNativeAdsWithLayout(Activity activity, String s, ViewGroup viewGroup, int layout, NativeAdCallback adCallback) {
+    public void loadNativeAdsWithLayout(Activity activity, String s, ViewGroup viewGroup, int layout,GoogleENative size, NativeAdCallback adCallback) {
+
+        View tagView;
+        if (size == GoogleENative.UNIFIED_MEDIUM) {
+            tagView = activity.getLayoutInflater().inflate(R.layout.layoutnative_loading_medium, null, false);
+        } else {
+            tagView = activity.getLayoutInflater().inflate(R.layout.layoutnative_loading_small, null, false);
+        }
+        viewGroup.addView(tagView, 0);
+        ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
+        shimmerFrameLayout.startShimmerAnimation();
 
         if (!isShowAds|| !isNetworkConnected(activity)) {
             viewGroup.setVisibility(View.GONE);
@@ -214,15 +224,19 @@ public class AdmodUtils {
 
                         NativeFunc.Companion.populateNativeAdView(nativeAd, adView, GoogleENative.UNIFIED_MEDIUM);
 
+                        shimmerFrameLayout.stopShimmerAnimation();
                         viewGroup.removeAllViews();
                         viewGroup.addView(adView);
-                        viewGroup.setVisibility(View.VISIBLE);
+                        //viewGroup.setVisibility(View.VISIBLE);
                     }
 
-                })
-                .withAdListener(new AdListener() {
+                }).withAdListener(new AdListener() {
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
+                        Log.e("Admodfail", "onAdFailedToLoad" + adError.getMessage());
+                        Log.e("Admodfail", "errorCodeAds" + adError.getCause());
+                        shimmerFrameLayout.stopShimmerAnimation();
+                        viewGroup.removeAllViews();
                         adCallback.onAdFail();
                     }
                 })
@@ -236,7 +250,7 @@ public class AdmodUtils {
 
     // ads native
     @SuppressLint("StaticFieldLeak")
-    public void loadNativeAds(Activity activity, String s, ViewGroup viewGroup, GoogleENative size, NativeAdCallback adCallback) {
+    public void loadNativeloadNativeAdsWithLayoutAds(Activity activity, String s, ViewGroup viewGroup, GoogleENative size, NativeAdCallback adCallback) {
         View tagView;
         if (size == GoogleENative.UNIFIED_MEDIUM) {
             tagView = activity.getLayoutInflater().inflate(R.layout.layoutnative_loading_medium, null, false);
