@@ -3,6 +3,7 @@ package com.dktlib.ironsourceutils
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.applovin.mediation.MaxAd
 import com.dktlib.ironsourcelib.*
 import com.dktlib.ironsourceutils.databinding.ActivitySplashBinding
 
@@ -31,6 +32,10 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onInterstitialShowSucceed() {
+
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
 
             }
         })

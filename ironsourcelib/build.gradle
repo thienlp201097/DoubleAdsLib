@@ -34,6 +34,7 @@ dependencies {
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.cardview:cardview:1.0.0'
+//    implementation 'com.google.android.gms:play-services-measurement-api:21.1.1'
     testImplementation 'junit:junit:4.+'
 
 
@@ -59,6 +60,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-appset:16.0.2'
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'com.google.android.gms:play-services-basement:18.1.0'
+
+//    implementation 'com.google.firebase:firebase-core:21.1.1'
+//    implementation platform('com.google.firebase:firebase-bom:30.4.1')
+//    implementation 'com.google.firebase:firebase-analytics'
 
 
 

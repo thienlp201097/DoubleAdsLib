@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.applovin.mediation.MaxAd
 import com.dktlib.ironsourcelib.*
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +44,10 @@ class MainActivity : AppCompatActivity() {
                 override fun onInterstitialShowSucceed() {
 
                 }
+
+                override fun onAdRevenuePaid(ad: MaxAd?) {
+                    TODO("Not yet implemented")
+                }
             })
 
         }
@@ -53,6 +58,9 @@ class MainActivity : AppCompatActivity() {
                 object : InterstititialCallback {
                     override fun onInterstitialShowSucceed() {
 
+                    }
+
+                    override fun onAdRevenuePaid(ad: com.applovin.mediation.MaxAd?) {
                     }
 
                     override fun onInterstitialReady() {
@@ -113,6 +121,10 @@ class MainActivity : AppCompatActivity() {
                 override fun onInterstitialShowSucceed() {
 
                 }
+
+                override fun onAdRevenuePaid(ad: MaxAd?) {
+                    TODO("Not yet implemented")
+                }
             })
         }
 
@@ -134,7 +146,19 @@ class MainActivity : AppCompatActivity() {
 //    }
     override fun onResume() {
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
-        ApplovinUtil.showBanner(this, bannerContainer, "5c902521afdeef72")
+        ApplovinUtil.showBanner(this, bannerContainer, "5c902521afdeef72", object : BannerCallback{
+            override fun onBannerLoadFail(error: String) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onBannerShowSucceed() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                TODO("Not yet implemented")
+            }
+        })
         super.onResume()
     }
 }

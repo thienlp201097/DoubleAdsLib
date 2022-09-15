@@ -3,10 +3,12 @@ package com.dktlib.ironsourcelib.utils;
 import static android.content.Context.TELEPHONY_SERVICE;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.LocaleList;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
@@ -17,6 +19,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import com.applovin.mediation.MaxAd;
+import com.applovin.mediation.MaxAdFormat;
+import com.applovin.sdk.AppLovinSdk;
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog;
 
 import java.lang.reflect.InvocationTargetException;
@@ -230,6 +235,7 @@ public class Utils {
         }
         transaction.commit();
     }
+
 
 
 

@@ -20,6 +20,7 @@ import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog
+import com.dktlib.ironsourcelib.utils.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -141,7 +142,10 @@ object ApplovinUtil : LifecycleObserver {
         }
 
 
-        interstitialAd.setListener(object : MaxAdListener {
+        interstitialAd.setListener(object : MaxAdListener, MaxAdRevenueListener {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                callback.onAdRevenuePaid(ad)
+            }
             override fun onAdLoaded(ad: MaxAd?) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
                     isLoadInterstitialFailed = false
@@ -275,7 +279,11 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setListener(object : MaxAdListener {
+        interstitialAd.setListener(object : MaxAdListener, MaxAdRevenueListener {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                callback.onAdRevenuePaid(ad)
+            }
+
             override fun onAdLoaded(ad: MaxAd?) {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     Log.d(TAG, "onInterstitialAdReady")
@@ -382,7 +390,8 @@ object ApplovinUtil : LifecycleObserver {
     }
 
 
-    fun showBanner(activity: AppCompatActivity, bannerContainer: ViewGroup, idAd: String) {
+    fun showBanner(activity: AppCompatActivity, bannerContainer: ViewGroup, idAd: String,
+                   callback: BannerCallback) {
 
         if (!enableAds || !isNetworkConnected(activity)) {
             bannerContainer.visibility = View.GONE
@@ -409,13 +418,16 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmerAnimation()
 
-        banner?.setListener(object : MaxAdViewAdListener {
+
+
+        banner?.setListener(object : MaxAdViewAdListener, MaxAdRevenueListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 shimmerFrameLayout.stopShimmerAnimation()
                 bannerContainer.removeView(tagView)
             }
 
             override fun onAdDisplayed(ad: MaxAd?) {
+                callback.onBannerShowSucceed()
             }
 
             override fun onAdHidden(ad: MaxAd?) {
@@ -426,9 +438,12 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
                 bannerContainer.removeAllViews()
+                callback.onBannerLoadFail(error.toString())
             }
 
             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                callback.onBannerLoadFail(error.toString())
+
             }
 
             override fun onAdExpanded(ad: MaxAd?) {
@@ -436,11 +451,17 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdCollapsed(ad: MaxAd?) {
             }
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                callback.onAdRevenuePaid(ad)
+            }
         })
 
         banner?.loadAd()
 
     }
+
+
+
 
 
 //    fun loadAndShowRewardsAds(placementId: String, callback: RewardVideoCallback) {
