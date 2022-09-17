@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.applovin.mediation.MaxAd
 import com.dktlib.ironsourcelib.InterstititialCallback
 import com.dktlib.ironsourcelib.ApplovinUtil
+import com.dktlib.ironsourcelib.BannerCallback
 
 class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +36,28 @@ class MainActivity2 : AppCompatActivity() {
                     override fun onInterstitialShowSucceed() {
 
                     }
+
+                    override fun onAdRevenuePaid(ad: MaxAd?) {
+                        TODO("Not yet implemented")
+                    }
                 })
         }
     }
     override fun onResume() {
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
-        ApplovinUtil.showBanner(this,bannerContainer,"banner_main")
+        ApplovinUtil.showBanner(this,bannerContainer,"banner_main", object :BannerCallback{
+            override fun onBannerLoadFail(error: String) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onBannerShowSucceed() {
+                TODO("Not yet implemented")
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                TODO("Not yet implemented")
+            }
+        })
         super.onResume()
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.applovin.mediation.MaxAd
 import com.dktlib.ironsourcelib.InterstititialCallback
 import com.dktlib.ironsourcelib.ApplovinUtil
 import com.dktlib.ironsourceutils.databinding.FragmentBlankBinding
@@ -92,6 +93,10 @@ class BlankFragment : Fragment() {
 
                     override fun onInterstitialShowSucceed() {
 
+                    }
+
+                    override fun onAdRevenuePaid(ad: MaxAd?) {
+                        TODO("Not yet implemented")
                     }
                 })
             } else {

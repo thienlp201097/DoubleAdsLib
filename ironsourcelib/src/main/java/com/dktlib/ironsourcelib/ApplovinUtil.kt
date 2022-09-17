@@ -141,11 +141,12 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-
-        interstitialAd.setListener(object : MaxAdListener, MaxAdRevenueListener {
+        interstitialAd.setRevenueListener(object :MaxAdRevenueListener {
             override fun onAdRevenuePaid(ad: MaxAd?) {
                 callback.onAdRevenuePaid(ad)
             }
+        })
+        interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
                     isLoadInterstitialFailed = false
@@ -279,10 +280,13 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setListener(object : MaxAdListener, MaxAdRevenueListener {
+        interstitialAd.setRevenueListener(object :MaxAdRevenueListener {
             override fun onAdRevenuePaid(ad: MaxAd?) {
                 callback.onAdRevenuePaid(ad)
             }
+        })
+        interstitialAd.setListener(object :MaxAdListener {
+
 
             override fun onAdLoaded(ad: MaxAd?) {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
@@ -357,6 +361,10 @@ object ApplovinUtil : LifecycleObserver {
                 }
             }
         })
+
+
+
+
         if (interstitialAd.isReady()) {
             activity.lifecycleScope.launch {
                 if (dialogShowTime > 0) {
@@ -418,9 +426,13 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmerAnimation()
 
+        banner?.setRevenueListener(object :MaxAdRevenueListener {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                callback.onAdRevenuePaid(ad)
+            }
+        })
 
-
-        banner?.setListener(object : MaxAdViewAdListener, MaxAdRevenueListener {
+        banner?.setListener(object : MaxAdViewAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 shimmerFrameLayout.stopShimmerAnimation()
                 bannerContainer.removeView(tagView)
@@ -451,9 +463,7 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdCollapsed(ad: MaxAd?) {
             }
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-                callback.onAdRevenuePaid(ad)
-            }
+
         })
 
         banner?.loadAd()

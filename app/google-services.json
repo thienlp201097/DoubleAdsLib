@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "216197804826",
+    "project_id": "piano-30527",
+    "storage_bucket": "piano-30527.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216197804826:android:ad00b57ab7329f5a7032a3",
+        "android_client_info": {
+          "package_name": "virtual.piano.keyboard.perfectpiano.melody.electric.instrument"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "216197804826-eeooonhpgsesu2o0m7b6qbobnvb4s4d4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhUx4NI5Zcn0Xe_KO_jXxn3IYPEBVtXPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "216197804826-eeooonhpgsesu2o0m7b6qbobnvb4s4d4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
