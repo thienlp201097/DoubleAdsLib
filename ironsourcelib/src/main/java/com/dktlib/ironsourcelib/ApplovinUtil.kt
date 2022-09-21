@@ -34,13 +34,12 @@ object ApplovinUtil : LifecycleObserver {
     var lastTimeInterstitialShowed: Long = 0L
     var lastTimeCallInterstitial: Long = 0L
     var isLoadInterstitialFailed = false
-    private lateinit var interstitialAd: MaxInterstitialAd
+    public lateinit var interstitialAd: MaxInterstitialAd
 
     fun initApplovin(activity: Activity, enableAds: Boolean) {
         this.enableAds = enableAds
         AppLovinSdk.getInstance(activity).setMediationProvider("max")
         AppLovinSdk.getInstance(activity).initializeSdk({ configuration: AppLovinSdkConfiguration ->
-
         })
 
     }

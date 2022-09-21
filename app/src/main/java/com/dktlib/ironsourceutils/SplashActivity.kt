@@ -24,6 +24,8 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onInterstitialClosed() {
+
+
                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
             }
 
