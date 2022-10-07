@@ -128,12 +128,21 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        AdmodUtils.getInstance().loadNativeAds(this@MainActivity,
-            getString(R.string.test_ads_admob_native_id), nativeAds,
-            GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
-           override fun onNativeAdLoaded() {}
-            override  fun onAdFail() {}
-        })
+        ApplovinUtil.loadNativeAds(this@MainActivity, "8aec97f172bce4a6", nativeAds, object : NativeAdCallback {
+                override fun onNativeAdLoaded() {
+                    Toast.makeText(this@MainActivity,"onNativeAdLoaded",Toast.LENGTH_SHORT).show()
+                }
+                override  fun onAdFail() {
+                    Toast.makeText(this@MainActivity,"onAdFail",Toast.LENGTH_SHORT).show()
+                }
+            })
+
+//        AdmodUtils.getInstance().loadNativeAds(this@MainActivity,
+//            getString(R.string.test_ads_admob_native_id), nativeAds,
+//            GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
+//           override fun onNativeAdLoaded() {}
+//            override  fun onAdFail() {}
+//        })
 
 
     }

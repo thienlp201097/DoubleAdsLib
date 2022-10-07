@@ -16,6 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import com.applovin.mediation.*
 import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
+import com.applovin.mediation.nativeAds.MaxNativeAdListener
+import com.applovin.mediation.nativeAds.MaxNativeAdLoader
+import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
@@ -35,6 +38,9 @@ object ApplovinUtil : LifecycleObserver {
     var lastTimeCallInterstitial: Long = 0L
     var isLoadInterstitialFailed = false
     public lateinit var interstitialAd: MaxInterstitialAd
+
+    private lateinit var nativeAdLoader: MaxNativeAdLoader
+    private var nativeAd: MaxAd? = null
 
     fun initApplovin(activity: Activity, enableAds: Boolean) {
         this.enableAds = enableAds
@@ -513,6 +519,45 @@ object ApplovinUtil : LifecycleObserver {
 //            callback.onRewardNotAvailable()
 //        }
 //    }
+
+
+
+
+    fun loadNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, adCallback: NativeAdCallback)
+    {
+        nativeAdLoader = MaxNativeAdLoader( idAd, activity)
+        nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
+
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd)
+            {
+                // Clean up any pre-existing native ad to prevent memory leaks.
+                adCallback.onNativeAdLoaded()
+                if ( nativeAd != null )
+                {
+                    nativeAdLoader.destroy( nativeAd )
+                }
+
+                // Save ad for cleanup.
+                nativeAd = ad
+
+                // Add ad view to view.
+                nativeAdContainer.removeAllViews()
+                nativeAdContainer.addView( nativeAdView )
+            }
+
+            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError)
+            {
+                adCallback.onAdFail()
+                // We recommend retrying with exponentially higher delays up to a maximum delay
+            }
+
+            override fun onNativeAdClicked(ad: MaxAd)
+            {
+                // Optional click callback
+            }
+        })
+        nativeAdLoader.loadAd()
+    }
 
     fun isNetworkConnected(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
