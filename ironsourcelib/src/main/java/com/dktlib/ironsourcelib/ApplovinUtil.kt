@@ -23,7 +23,6 @@ import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog
-import com.dktlib.ironsourcelib.utils.Utils
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -526,12 +525,16 @@ object ApplovinUtil : LifecycleObserver {
     fun loadNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, adCallback: NativeAdCallback)
     {
         nativeAdLoader = MaxNativeAdLoader( idAd, activity)
+        var tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+        nativeAdContainer.addView(tagView, 0)
+        val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
+        shimmerFrameLayout.startShimmerAnimation()
+
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd)
             {
                 // Clean up any pre-existing native ad to prevent memory leaks.
-                adCallback.onNativeAdLoaded()
                 if ( nativeAd != null )
                 {
                     nativeAdLoader.destroy( nativeAd )
@@ -541,12 +544,17 @@ object ApplovinUtil : LifecycleObserver {
                 nativeAd = ad
 
                 // Add ad view to view.
+                shimmerFrameLayout.stopShimmerAnimation()
                 nativeAdContainer.removeAllViews()
                 nativeAdContainer.addView( nativeAdView )
+                adCallback.onNativeAdLoaded()
+
             }
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError)
             {
+                shimmerFrameLayout.stopShimmerAnimation()
+                nativeAdContainer.removeAllViews()
                 adCallback.onAdFail()
                 // We recommend retrying with exponentially higher delays up to a maximum delay
             }

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,46 +8,56 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btn_load_inter"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:text="load inter" />
+        android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:layout_below="@id/btn_load_inter"
-        android:id="@+id/btn_show_inter_callback2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="show inter check time " />
+            <Button
+                android:id="@+id/btn_load_inter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:text="load inter" />
 
-    <Button
-        android:id="@+id/btn_load_show_inter_callback2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_show_inter_callback2"
-        android:layout_centerInParent="true"
-        android:text="load and show intersitial" />
+            <Button
+                android:id="@+id/btn_show_inter_callback2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_load_inter"
+                android:layout_centerInParent="true"
+                android:text="show inter check time " />
 
-    <Button
-        android:id="@+id/btn_show_reward"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_load_show_inter_callback2"
-        android:layout_centerHorizontal="true"
-        android:text="load and show reward" />
+            <Button
+                android:id="@+id/btn_load_show_inter_callback2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_show_inter_callback2"
+                android:layout_centerInParent="true"
+                android:text="load and show intersitial" />
 
-    <LinearLayout
-        android:id="@+id/nativead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_show_reward"
-        android:minHeight="250dp"
-        android:orientation="horizontal" />
+            <Button
+                android:id="@+id/btn_show_reward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_load_show_inter_callback2"
+                android:layout_centerHorizontal="true"
+                android:text="load and show reward" />
+
+            <LinearLayout
+                android:id="@+id/nativead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_show_reward"
+                android:minHeight="250dp"
+                android:orientation="horizontal" />
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
         android:id="@+id/banner_container"
