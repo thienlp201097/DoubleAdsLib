@@ -17,30 +17,30 @@ class SplashActivity : AppCompatActivity() {
         val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ApplovinUtil.initApplovin(this,  true)
-        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-//        ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this, "134656413e36e374", 0, object : InterstititialCallback {
-//            override fun onInterstitialReady() {
-//
-//            }
-//
-//            override fun onInterstitialClosed() {
-//
-//
-//                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-//            }
-//
-//            override fun onInterstitialLoadFail(error: String) {
-//                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-//            }
-//
-//            override fun onInterstitialShowSucceed() {
-//
-//            }
-//
-//            override fun onAdRevenuePaid(ad: MaxAd?) {
-//
-//            }
-//        })
+
+        ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this, "134656413e36e374", 0, object : InterstititialCallback {
+            override fun onInterstitialReady() {
+
+            }
+
+            override fun onInterstitialClosed() {
+
+
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            }
+
+            override fun onInterstitialLoadFail(error: String) {
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            }
+
+            override fun onInterstitialShowSucceed() {
+
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+
+            }
+        })
 
 
         binding.btnNext.setOnClickListener {

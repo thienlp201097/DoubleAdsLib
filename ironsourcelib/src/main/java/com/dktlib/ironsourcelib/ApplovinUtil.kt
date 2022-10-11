@@ -145,7 +145,7 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setRevenueListener(object :MaxAdRevenueListener {
+        interstitialAd.setRevenueListener(object : MaxAdRevenueListener {
             override fun onAdRevenuePaid(ad: MaxAd?) {
                 callback.onAdRevenuePaid(ad)
             }
@@ -284,12 +284,12 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setRevenueListener(object :MaxAdRevenueListener {
+        interstitialAd.setRevenueListener(object : MaxAdRevenueListener {
             override fun onAdRevenuePaid(ad: MaxAd?) {
                 callback.onAdRevenuePaid(ad)
             }
         })
-        interstitialAd.setListener(object :MaxAdListener {
+        interstitialAd.setListener(object : MaxAdListener {
 
 
             override fun onAdLoaded(ad: MaxAd?) {
@@ -402,8 +402,10 @@ object ApplovinUtil : LifecycleObserver {
     }
 
 
-    fun showBanner(activity: AppCompatActivity, bannerContainer: ViewGroup, idAd: String,
-                   callback: BannerCallback) {
+    fun showBanner(
+        activity: AppCompatActivity, bannerContainer: ViewGroup, idAd: String,
+        callback: BannerCallback
+    ) {
 
         if (!enableAds || !isNetworkConnected(activity)) {
             bannerContainer.visibility = View.GONE
@@ -430,7 +432,7 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmerAnimation()
 
-        banner?.setRevenueListener(object :MaxAdRevenueListener {
+        banner?.setRevenueListener(object : MaxAdRevenueListener {
             override fun onAdRevenuePaid(ad: MaxAd?) {
                 callback.onAdRevenuePaid(ad)
             }
@@ -475,9 +477,6 @@ object ApplovinUtil : LifecycleObserver {
     }
 
 
-
-
-
 //    fun loadAndShowRewardsAds(placementId: String, callback: RewardVideoCallback) {
 //        IronSource.setRewardedVideoListener(object : RewardedVideoListener {
 //            override fun onRewardedVideoAdOpened() {
@@ -520,24 +519,24 @@ object ApplovinUtil : LifecycleObserver {
 //    }
 
 
-
-
-    fun loadNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, adCallback: NativeAdCallback)
-    {
-        nativeAdLoader = MaxNativeAdLoader( idAd, activity)
-        var tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+    fun loadNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, size: GoogleENative , adCallback: NativeAdCallback) {
+        nativeAdLoader = MaxNativeAdLoader(idAd, activity)
+        val tagView: View
+        if (size === GoogleENative.UNIFIED_MEDIUM) {
+            tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+        } else {
+            tagView =  activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+        }
         nativeAdContainer.addView(tagView, 0)
         val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmerAnimation()
 
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
-            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd)
-            {
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
                 // Clean up any pre-existing native ad to prevent memory leaks.
-                if ( nativeAd != null )
-                {
-                    nativeAdLoader.destroy( nativeAd )
+                if (nativeAd != null) {
+                    nativeAdLoader.destroy(nativeAd)
                 }
 
                 // Save ad for cleanup.
@@ -546,21 +545,19 @@ object ApplovinUtil : LifecycleObserver {
                 // Add ad view to view.
                 shimmerFrameLayout.stopShimmerAnimation()
                 nativeAdContainer.removeAllViews()
-                nativeAdContainer.addView( nativeAdView )
+                nativeAdContainer.addView(nativeAdView)
                 adCallback.onNativeAdLoaded()
 
             }
 
-            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError)
-            {
+            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                 shimmerFrameLayout.stopShimmerAnimation()
                 nativeAdContainer.removeAllViews()
                 adCallback.onAdFail()
                 // We recommend retrying with exponentially higher delays up to a maximum delay
             }
 
-            override fun onNativeAdClicked(ad: MaxAd)
-            {
+            override fun onNativeAdClicked(ad: MaxAd) {
                 // Optional click callback
             }
         })
