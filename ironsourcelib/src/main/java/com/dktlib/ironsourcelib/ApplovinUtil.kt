@@ -531,6 +531,11 @@ object ApplovinUtil : LifecycleObserver {
         val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmerAnimation()
 
+        nativeAdLoader.setRevenueListener(object : MaxAdRevenueListener {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                adCallback.onAdRevenuePaid(ad)
+            }
+        })
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
