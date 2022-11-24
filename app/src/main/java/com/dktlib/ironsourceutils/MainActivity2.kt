@@ -47,15 +47,12 @@ class MainActivity2 : AppCompatActivity() {
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
         ApplovinUtil.showBanner(this,bannerContainer,"banner_main", object :BannerCallback{
             override fun onBannerLoadFail(error: String) {
-                TODO("Not yet implemented")
             }
 
             override fun onBannerShowSucceed() {
-                TODO("Not yet implemented")
             }
 
             override fun onAdRevenuePaid(ad: MaxAd?) {
-                TODO("Not yet implemented")
             }
         })
         super.onResume()

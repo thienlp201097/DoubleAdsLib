@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnReward.setOnClickListener {
-//            ApplovinUtil.loadAndShowRewardsAds("rewards",object : RewardVideoCallback {
+//            ApplovinUtil.loadReward("rewards",object : RewardVideoCallback {
 //                override fun onRewardClosed() {
 //
 //                }

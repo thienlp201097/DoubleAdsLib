@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.applovin.mediation.*
 import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
+import com.applovin.mediation.ads.MaxRewardedAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
@@ -37,6 +38,7 @@ object ApplovinUtil : LifecycleObserver {
     var lastTimeCallInterstitial: Long = 0L
     var isLoadInterstitialFailed = false
     public lateinit var interstitialAd: MaxInterstitialAd
+    public lateinit var rewardAd: MaxRewardedAd
 
     private lateinit var nativeAdLoader: MaxNativeAdLoader
     private var nativeAd: MaxAd? = null
@@ -44,8 +46,7 @@ object ApplovinUtil : LifecycleObserver {
     fun initApplovin(activity: Activity, enableAds: Boolean) {
         this.enableAds = enableAds
         AppLovinSdk.getInstance(activity).setMediationProvider("max")
-        AppLovinSdk.getInstance(activity).initializeSdk({ configuration: AppLovinSdkConfiguration ->
-        })
+        AppLovinSdk.getInstance(activity).initializeSdk({ configuration: AppLovinSdkConfiguration -> })
 
     }
 
@@ -55,7 +56,6 @@ object ApplovinUtil : LifecycleObserver {
     //Only use for splash interstitial
     fun loadInterstitials(activity: AppCompatActivity, idAd: String, timeout: Long, callback: InterstititialCallback) {
         interstitialAd = MaxInterstitialAd(idAd, activity)
-
         if (!enableAds || !isNetworkConnected(activity)) {
             callback.onInterstitialClosed()
             return
@@ -114,12 +114,13 @@ object ApplovinUtil : LifecycleObserver {
         callback: InterstititialCallback
     ) {
 
-        if (interstitialAd == null) {
-            callback.onInterstitialLoadFail("null")
-            return
-        }
         if (!enableAds || !isNetworkConnected(activity)) {
             callback.onInterstitialClosed()
+            return
+        }
+
+        if (interstitialAd == null) {
+            callback.onInterstitialLoadFail("null")
             return
         }
 
@@ -408,7 +409,7 @@ object ApplovinUtil : LifecycleObserver {
     ) {
 
         if (!enableAds || !isNetworkConnected(activity)) {
-            bannerContainer.visibility = View.GONE
+           callback.onBannerLoadFail("")
             return
         }
 
@@ -477,6 +478,209 @@ object ApplovinUtil : LifecycleObserver {
     }
 
 
+    @MainThread
+    fun showRewardWithDialogCheckTime(
+        activity: AppCompatActivity,
+        dialogShowTime: Long,
+        callback: RewardCallback
+    ) {
+
+        if (!enableAds || !isNetworkConnected(activity)) {
+            callback.onRewardClosed()
+            return
+        }
+
+        if (rewardAd == null) {
+            callback.onRewardLoadFail("null")
+            return
+        }
+
+        if (AppOpenManager.getInstance().isInitialized) {
+            if (!AppOpenManager.getInstance().isAppResumeEnabled) {
+                return
+            } else {
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = false
+                }
+            }
+        }
+
+        if (System.currentTimeMillis() - 1000 < lastTimeCallInterstitial) {
+            return
+        }
+        lastTimeCallInterstitial = System.currentTimeMillis()
+        if (!enableAds) {
+            if (AppOpenManager.getInstance().isInitialized) {
+                AppOpenManager.getInstance().isAppResumeEnabled = true
+            }
+            callback.onRewardLoadFail("\"isNetworkConnected\"")
+            return
+        }
+
+        rewardAd.setRevenueListener(object : MaxAdRevenueListener {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                callback.onAdRevenuePaid(ad)
+            }
+        })
+        rewardAd.setListener(object : MaxRewardedAdListener {
+            override fun onAdLoaded(ad: MaxAd?) {
+                activity.lifecycleScope.launch(Dispatchers.Main) {
+                    isLoadInterstitialFailed = false
+                    callback.onRewardReady()
+                }
+            }
+
+            override fun onAdDisplayed(ad: MaxAd?) {
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = false
+                }
+                callback.onRewardShowSucceed()
+                lastTimeInterstitialShowed = System.currentTimeMillis()
+                isInterstitialAdShowing = true
+            }
+
+            override fun onAdHidden(ad: MaxAd?) {
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                }
+                callback.onRewardClosed()
+                isInterstitialAdShowing = false
+            }
+
+            override fun onAdClicked(ad: MaxAd?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                isLoadInterstitialFailed = true
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                }
+                callback.onRewardLoadFail(error.toString())
+            }
+
+            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                }
+                callback.onRewardClosed()
+            }
+
+            override fun onUserRewarded(ad: MaxAd?, reward: MaxReward?) {
+                callback.onUserRewarded()
+            }
+
+            override fun onRewardedVideoStarted(ad: MaxAd?) {
+                callback.onRewardedVideoStarted()
+            }
+
+            override fun onRewardedVideoCompleted(ad: MaxAd?) {
+                callback.onRewardedVideoCompleted()
+            }
+        })
+
+
+        if (rewardAd.isReady()) {
+            activity.lifecycleScope.launch {
+                if (dialogShowTime > 0) {
+                    var dialog = SweetAlertDialog(activity, SweetAlertDialog.PROGRESS_TYPE)
+                    dialog.getProgressHelper().barColor = Color.parseColor("#A5DC86")
+                    dialog.setTitleText("Loading ads. Please wait...")
+                    dialog.setCancelable(false)
+                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialog))
+                    if (!activity.isFinishing) {
+                        dialog.show()
+                    }
+                    delay(dialogShowTime)
+                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing()) {
+                        dialog.dismiss()
+                    }
+                }
+                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                    Log.d(TAG, "onInterstitialAdReady")
+                    interstitialAd.showAd()
+                }
+            }
+        } else {
+            activity.lifecycleScope.launch(Dispatchers.Main) {
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                }
+                callback.onRewardClosed()
+                isInterstitialAdShowing = false
+                isLoadInterstitialFailed = true
+            }
+        }
+    }
+
+
+    fun loadReward(activity: AppCompatActivity, idAd: String, timeout: Long, callback: RewardCallback) {
+
+        rewardAd = MaxRewardedAd.getInstance(idAd, activity)
+        if (!enableAds || !isNetworkConnected(activity)) {
+            callback.onRewardClosed()
+            return
+        }
+
+        rewardAd.setListener(object : MaxRewardedAdListener {
+            override fun onAdLoaded(ad: MaxAd?) {
+                callback.onRewardReady()
+                isLoadInterstitialFailed = false
+            }
+
+            override fun onAdDisplayed(ad: MaxAd?) {
+                callback.onRewardShowSucceed()
+                lastTimeInterstitialShowed = System.currentTimeMillis()
+                isInterstitialAdShowing = true
+            }
+
+            override fun onAdHidden(ad: MaxAd?) {
+                callback.onRewardClosed()
+                isInterstitialAdShowing = false
+            }
+
+            override fun onAdClicked(ad: MaxAd?) {
+
+            }
+
+            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                callback.onRewardLoadFail(error.toString())
+                isLoadInterstitialFailed = true
+                isInterstitialAdShowing = false
+            }
+
+            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                callback.onRewardLoadFail(error.toString())
+            }
+
+            override fun onUserRewarded(ad: MaxAd?, reward: MaxReward?) {
+                callback.onUserRewarded()
+            }
+
+            override fun onRewardedVideoStarted(ad: MaxAd?) {
+                callback.onRewardedVideoStarted()
+            }
+
+            override fun onRewardedVideoCompleted(ad: MaxAd?) {
+                callback.onRewardedVideoCompleted()
+            }
+
+        })
+
+        // Load the first ad
+        rewardAd.loadAd()
+
+        activity.lifecycleScope.launch(Dispatchers.Main) {
+            delay(timeout)
+            if ((!rewardAd.isReady()) && (!isInterstitialAdShowing)) {
+                callback.onRewardLoadFail("!IronSource.isInterstitialReady()")
+            }
+        }
+
+    }
+
+
+
 //    fun loadAndShowRewardsAds(placementId: String, callback: RewardVideoCallback) {
 //        IronSource.setRewardedVideoListener(object : RewardedVideoListener {
 //            override fun onRewardedVideoAdOpened() {
@@ -520,6 +724,12 @@ object ApplovinUtil : LifecycleObserver {
 
 
     fun loadNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, size: GoogleENative , adCallback: NativeAdCallback) {
+
+        if (!enableAds || !isNetworkConnected(activity)) {
+            adCallback.onAdFail()
+            return
+        }
+
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
         val tagView: View
         if (size === GoogleENative.UNIFIED_MEDIUM) {
