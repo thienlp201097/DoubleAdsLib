@@ -82,23 +82,60 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnReward.setOnClickListener {
-//            ApplovinUtil.loadReward("rewards",object : RewardVideoCallback {
-//                override fun onRewardClosed() {
-//
-//                }
-//
-//                override fun onRewardEarned() {
-//
-//                }
-//
-//                override fun onRewardFailed() {
-//
-//                }
-//
-//                override fun onRewardNotAvailable() {
-//
-//                }
-//            })
+            ApplovinUtil.loadReward(this,"c10d259dcb47378d",15000, object :RewardCallback{
+                override fun onRewardReady() {
+                    ApplovinUtil.showRewardWithDialogCheckTime(this@MainActivity,1500, object :RewardCallback{
+                        override fun onRewardReady() {
+
+                        }
+
+                        override fun onRewardClosed() {
+                            Toast.makeText(this@MainActivity,"onRewardClosed",Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onRewardLoadFail(error: String) {
+                        }
+
+                        override fun onRewardShowSucceed() {
+                        }
+
+                        override fun onUserRewarded() {
+                            Toast.makeText(this@MainActivity,"onUserRewarded",Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onRewardedVideoStarted() {
+                        }
+
+                        override fun onRewardedVideoCompleted() {
+                            Toast.makeText(this@MainActivity,"onRewardedVideoCompleted",Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onAdRevenuePaid(ad: MaxAd?) {
+                        }
+                    })
+                }
+
+                override fun onRewardClosed() {
+                }
+
+                override fun onRewardLoadFail(error: String) {
+                }
+
+                override fun onRewardShowSucceed() {
+                }
+
+                override fun onUserRewarded() {
+                }
+
+                override fun onRewardedVideoStarted() {
+                }
+
+                override fun onRewardedVideoCompleted() {
+                }
+
+                override fun onAdRevenuePaid(ad: MaxAd?) {
+                }
+            })
         }
         btnLoadAndShow.setOnClickListener {
             ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this,"134656413e36e374",1500,object : InterstititialCallback {

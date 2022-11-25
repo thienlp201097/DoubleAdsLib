@@ -598,7 +598,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     Log.d(TAG, "onInterstitialAdReady")
-                    interstitialAd.showAd()
+                    rewardAd.showAd()
                 }
             }
         } else {
@@ -624,8 +624,8 @@ object ApplovinUtil : LifecycleObserver {
 
         rewardAd.setListener(object : MaxRewardedAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
-                callback.onRewardReady()
                 isLoadInterstitialFailed = false
+                callback.onRewardReady()
             }
 
             override fun onAdDisplayed(ad: MaxAd?) {

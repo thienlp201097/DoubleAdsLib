@@ -16,7 +16,7 @@ class SplashActivity : AppCompatActivity() {
         AppOpenManager.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
         val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ApplovinUtil.initApplovin(this,  false)
+        ApplovinUtil.initApplovin(this,  true)
 
         ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this, "134656413e36e374", 0, object : InterstititialCallback {
             override fun onInterstitialReady() {
