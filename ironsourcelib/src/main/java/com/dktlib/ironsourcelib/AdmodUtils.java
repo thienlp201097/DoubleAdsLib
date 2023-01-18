@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
@@ -22,6 +23,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
@@ -52,7 +54,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 
 public class AdmodUtils {
@@ -190,7 +191,7 @@ public class AdmodUtils {
 
 
     // ads native
-    public void loadNativeAdsWithLayout(Activity activity, String s, ViewGroup viewGroup, int layout,GoogleENative size, NativeAdCallback adCallback) {
+    public void loadNativeAdsWithLayout(Activity activity, String s, ViewGroup viewGroup, int layout, GoogleENative size, NativeAdCallback adCallback) {
 
         View tagView;
         if (size == GoogleENative.UNIFIED_MEDIUM) {
@@ -202,7 +203,7 @@ public class AdmodUtils {
         ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
         shimmerFrameLayout.startShimmerAnimation();
 
-        if (!isShowAds|| !isNetworkConnected(activity)) {
+        if (!isShowAds || !isNetworkConnected(activity)) {
             viewGroup.setVisibility(View.GONE);
             return;
         }
@@ -290,7 +291,7 @@ public class AdmodUtils {
                         shimmerFrameLayout.stopShimmerAnimation();
                         viewGroup.removeAllViews();
                         viewGroup.addView(adView);
-                      //  viewGroup.setVisibility(View.VISIBLE);
+                        //  viewGroup.setVisibility(View.VISIBLE);
                     }
 
                 })
@@ -311,6 +312,86 @@ public class AdmodUtils {
         }
         Log.e("Admod", "loadAdNativeAds");
     }
+
+    public void loadAdBannerCollapsible(Activity activity, String bannerId, CollapsibleBanner collapsibleBannersize, ViewGroup viewGroup, BannerAdCallback callback) {
+        if (!isShowAds || !isNetworkConnected(activity)) {
+            viewGroup.setVisibility(View.GONE);
+            return;
+        }
+        AdView mAdView = new AdView(activity);
+        if (isTesting) {
+            bannerId = activity.getString(R.string.test_ads_admob_banner_id);
+        }
+        mAdView.setAdUnitId(bannerId);
+        AdSize adSize = getAdSize(activity);
+        mAdView.setAdSize(adSize);
+        viewGroup.removeAllViews();
+        View tagView = activity.getLayoutInflater().inflate(R.layout.banner_shimmer_layout, null, false);
+        viewGroup.addView(tagView, 0);
+        viewGroup.addView(mAdView, 1);
+        ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
+        shimmerFrameLayout.startShimmerAnimation();
+
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                shimmerFrameLayout.stopShimmerAnimation();
+                viewGroup.removeView(tagView);
+                callback.onBannerAdLoaded(adSize);
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError adError) {
+                Log.e(" Admod", "failloadbanner" + adError.getMessage());
+                shimmerFrameLayout.stopShimmerAnimation();
+                viewGroup.removeView(tagView);
+                callback.onAdFail();
+            }
+
+            @Override
+            public void onAdOpened() {
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+        });
+        Bundle extras = new Bundle();
+        String anchored = "top";
+        if (collapsibleBannersize == CollapsibleBanner.TOP) {
+            anchored = "top";
+        } else {
+            anchored = "bottom";
+        }
+        extras.putString("collapsible", anchored);
+        AdRequest adRequest2 = new AdRequest.Builder().addNetworkExtrasBundle(AdMobAdapter.class, extras)
+                .build();
+        if (adRequest2 != null) {
+            mAdView.loadAd(adRequest2);
+        }
+
+        Log.e(" Admod", "loadAdBanner");
+    }
+
+    private AdSize getAdSize(Activity context) {
+        // Step 2 - Determine the screen width (less decorations) to use for the ad width.
+        Display display = context.getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
+        int adWidth = (int) (widthPixels / density);
+        // Step 3 - Get adaptive ad size and return for setting on the ad view.
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth);
+    }
+
 
     public void dismissAdDialog() {
         if (AdmodUtils.getInstance().dialog != null && AdmodUtils.getInstance().dialog.isShowing()) {

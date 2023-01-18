@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        ApplovinUtil.loadNativeAds(this@MainActivity, "8aec97f172bce4a6", nativeAds,GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
+        ApplovinUtil.loadAndShowNativeAds(this@MainActivity, "8aec97f172bce4a6", nativeAds,GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
                 override fun onNativeAdLoaded() {
                     Toast.makeText(this@MainActivity,"onNativeAdLoaded",Toast.LENGTH_SHORT).show()
                 }

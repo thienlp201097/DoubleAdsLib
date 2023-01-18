@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.applovin.mediation.MaxAd
+import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
 import com.dktlib.ironsourceutils.databinding.ActivitySplashBinding
 
@@ -18,29 +19,27 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
         ApplovinUtil.initApplovin(this,  true)
 
-        ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this, "134656413e36e374", 0, object : InterstititialCallback {
-            override fun onInterstitialReady() {
+        ApplovinUtil.loadAndGetNativeAds(this@SplashActivity, "8aec97f172bce4a6",object : NativeAdCallback {
+            override fun onNativeAdLoaded() {
 
             }
 
-            override fun onInterstitialClosed() {
-
-
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            }
-
-            override fun onInterstitialLoadFail(error: String) {
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            }
-
-            override fun onInterstitialShowSucceed() {
-
+            override fun onLoadedAndGetNativeAd(ad: MaxAd?, adView: MaxNativeAdView?) {
+                loadInter();
             }
 
             override fun onAdRevenuePaid(ad: MaxAd?) {
 
             }
+
+            override fun onAdFail() {
+                loadInter();
+            }
+
         })
+
+
+
 
 
         binding.btnNext.setOnClickListener {
@@ -71,34 +70,29 @@ class SplashActivity : AppCompatActivity() {
 
     }
 
-//    val requestPermissionLauncher =
-//        registerForActivityResult(
-//            ActivityResultContracts.RequestPermission()
-//        ) { isGranted: Boolean ->
-//            if (isGranted) {
-//                IronSourceUtil.loadAndShowInterstitialsWithDialogCheckTime(this, "aplssh", 1500, 0, object : InterstititialCallback {
-//                    override fun onInterstitialReady() {
-//
-//                    }
-//
-//                    override fun onInterstitialClosed() {
-//                        onInterstitialLoadFail()
-//                    }
-//
-//                    override fun onInterstitialLoadFail() {
-//                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-//                    }
-//
-//                    override fun onInterstitialShowSucceed() {
-//
-//                    }
-//                })
-//            } else {
-//                // Explain to the user that the feature is unavailable because the
-//                // features requires a permission that the user has denied. At the
-//                // same time, respect the user's decision. Don't link to system
-//                // settings in an effort to convince the user to change their
-//                // decision.
-//            }
-//        }
+    fun loadInter(){
+        ApplovinUtil.loadInterstitials(this, "134656413e36e374", 0, object : InterstititialCallback {
+            override fun onInterstitialReady() {
+
+            }
+
+            override fun onInterstitialClosed() {
+
+
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            }
+
+            override fun onInterstitialLoadFail(error: String) {
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            }
+
+            override fun onInterstitialShowSucceed() {
+
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+
+            }
+        })
+    }
 }

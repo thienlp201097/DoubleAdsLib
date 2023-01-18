@@ -409,7 +409,7 @@ object ApplovinUtil : LifecycleObserver {
     ) {
 
         if (!enableAds || !isNetworkConnected(activity)) {
-           callback.onBannerLoadFail("")
+            callback.onBannerLoadFail("")
             return
         }
 
@@ -548,7 +548,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(ad: MaxAd?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
@@ -680,7 +680,6 @@ object ApplovinUtil : LifecycleObserver {
     }
 
 
-
 //    fun loadAndShowRewardsAds(placementId: String, callback: RewardVideoCallback) {
 //        IronSource.setRewardedVideoListener(object : RewardedVideoListener {
 //            override fun onRewardedVideoAdOpened() {
@@ -722,8 +721,52 @@ object ApplovinUtil : LifecycleObserver {
 //        }
 //    }
 
+    fun loadAndGetNativeAds(activity: Activity, idAd: String, adCallback: NativeAdCallback) {
 
-    fun loadNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, size: GoogleENative , adCallback: NativeAdCallback) {
+        if (!enableAds || !isNetworkConnected(activity)) {
+            adCallback.onAdFail()
+        }
+
+        nativeAdLoader = MaxNativeAdLoader(idAd, activity)
+        nativeAdLoader.setRevenueListener(object : MaxAdRevenueListener {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+                adCallback.onAdRevenuePaid(ad)
+            }
+        })
+        nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
+
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd?) {
+                // Clean up any pre-existing native ad to prevent memory leaks.
+                if (nativeAd != null) {
+                    nativeAdLoader.destroy(nativeAd)
+                }
+                nativeAd = ad
+                adCallback.onLoadedAndGetNativeAd(nativeAd, nativeAdView)
+            }
+
+            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                adCallback.onAdFail()
+                // We recommend retrying with exponentially higher delays up to a maximum delay
+            }
+
+            override fun onNativeAdClicked(ad: MaxAd) {
+                // Optional click callback
+            }
+        })
+        nativeAdLoader.loadAd()
+    }
+
+    fun showNativeAds(activity: Activity, nativeAdView: MaxNativeAdView?, nativeAdContainer: ViewGroup, adCallback: NativeAdCallback) {
+
+        if (!enableAds || !isNetworkConnected(activity)) {
+            adCallback.onAdFail()
+            return
+        }
+        nativeAdContainer.removeAllViews()
+        nativeAdContainer.addView(nativeAdView)
+    }
+
+    fun loadAndShowNativeAds(activity: Activity, idAd: String, nativeAdContainer: ViewGroup, size: GoogleENative, adCallback: NativeAdCallback) {
 
         if (!enableAds || !isNetworkConnected(activity)) {
             adCallback.onAdFail()
@@ -735,7 +778,7 @@ object ApplovinUtil : LifecycleObserver {
         if (size === GoogleENative.UNIFIED_MEDIUM) {
             tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
         } else {
-            tagView =  activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+            tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
         }
         nativeAdContainer.addView(tagView, 0)
         val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
