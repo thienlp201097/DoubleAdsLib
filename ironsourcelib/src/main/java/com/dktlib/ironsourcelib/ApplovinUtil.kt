@@ -22,6 +22,7 @@ import com.applovin.mediation.ads.MaxRewardedAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.applovin.mediation.nativeAds.MaxNativeAdViewBinder
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
@@ -1038,6 +1039,68 @@ object ApplovinUtil : LifecycleObserver {
         }
     }
 
+    fun showNativeWithLayout(view: ViewGroup, context: Activity, nativeAdLoader : MaxNativeAdLoader?,nativeAd : MaxAd?,native_mutable: MutableLiveData<MaxAd>, callback : NativeCallBackNew, isLoad : Boolean) {
+        val adView = createNativeAdView(context)
+        // Check if ad is expired before rendering
+        if (true == nativeAd?.nativeAd?.isExpired) {
+            Log.d("==Applovin","isExpired")
+            nativeAdLoader?.destroy(nativeAd)
+            nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
+                override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
+                    // Cleanup any pre-existing native ad to prevent memory leaks.
+                    nativeAdLoader.destroy(nativeAd)
+                    // Save ad to be rendered later.
+                    callback.onNativeAdLoaded(ad,adView)
+                }
+
+                override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                }
+
+                override fun onNativeAdClicked(ad: MaxAd) {
+                }
+
+                override fun onNativeAdExpired(ad: MaxAd?) {
+                    nativeAdLoader.loadAd()
+                }
+            })
+            nativeAdLoader?.loadAd()
+            return
+        }
+        if (isLoad){
+            Log.d("==Applovin","Load")
+            nativeAdLoader?.render(adView, nativeAd)
+            view.removeAllViews()
+            view.addView(adView)
+        }else {
+            val tagView: View = context.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+            view.addView(tagView, 0)
+            val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
+            shimmerFrameLayout.startShimmerAnimation()
+            native_mutable.observe(context as LifecycleOwner){
+                if (it.nativeAd != null){
+                    nativeAdLoader?.render(adView, nativeAd)
+                    view.removeAllViews()
+                    view.addView(adView)
+                }else {
+                    view.visibility = View.GONE
+                }
+            }
+        }
+        // Render the ad separately
+    }
+    private fun createNativeAdView(context: Context): MaxNativeAdView {
+        val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder.Builder(R.layout.native_custom_ad_view)
+            .setTitleTextViewId(R.id.title_text_view)
+            .setBodyTextViewId(R.id.body_text_view)
+            .setAdvertiserTextViewId(R.id.advertiser_text_view)
+            .setIconImageViewId(R.id.icon_image_view)
+            .setMediaContentViewGroupId(R.id.media_view_container)
+            .setOptionsContentViewGroupId(R.id.options_view)
+            .setStarRatingContentViewGroupId(R.id.star_rating_view)
+            .setCallToActionButtonId(R.id.cta_button)
+            .build()
+        return MaxNativeAdView(binder, context)
+    }
     fun dialogLoading(context: Context?) {
         dialogFullScreen = Dialog(context!!)
         dialogFullScreen?.requestWindowFeature(Window.FEATURE_NO_TITLE)
