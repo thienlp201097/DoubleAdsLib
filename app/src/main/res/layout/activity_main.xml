@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -25,10 +23,18 @@
                 android:text="load inter" />
 
             <Button
-                android:id="@+id/btn_show_inter_callback2"
+                android:id="@+id/btn_show_inter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/btn_load_inter"
+                android:layout_centerHorizontal="true"
+                android:text="show inter" />
+
+            <Button
+                android:id="@+id/btn_show_inter_callback2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_show_inter"
                 android:layout_centerInParent="true"
                 android:text="show inter check time " />
 
@@ -47,14 +53,31 @@
                 android:layout_below="@id/btn_load_show_inter_callback2"
                 android:layout_centerHorizontal="true"
                 android:text="load and show reward" />
-
-            <LinearLayout
-                android:id="@+id/nativead"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/load_native"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/btn_show_reward"
-                android:minHeight="250dp"
-                android:orientation="horizontal" />
+                android:layout_centerHorizontal="true"
+                android:text="load native" />
+            <Button
+                android:id="@+id/show_native"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/load_native"
+                android:layout_centerHorizontal="true"
+                android:text="show native" />
+            <ScrollView
+                android:layout_below="@id/show_native"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <FrameLayout
+                    android:id="@+id/nativead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="250dp"
+                    android:orientation="horizontal" />
+            </ScrollView>
 
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>

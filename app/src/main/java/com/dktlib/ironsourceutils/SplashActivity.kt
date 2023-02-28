@@ -19,24 +19,23 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
         ApplovinUtil.initApplovin(this,  true)
 
-        ApplovinUtil.loadAndGetNativeAds(this@SplashActivity, "8aec97f172bce4a6",object : NativeAdCallback {
-            override fun onNativeAdLoaded() {
+//        ApplovinUtil.loadAndGetNativeAds(this@SplashActivity, "8aec97f172bce4a6",object : NativeCallBackNew {
+//
+//            override fun onAdRevenuePaid(ad: MaxAd?) {
+//
+//            }
+//
+//            override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+//
+//            }
+//
+//            override fun onAdFail() {
+//                loadInter();
+//            }
+//
+//        })
 
-            }
-
-            override fun onLoadedAndGetNativeAd(ad: MaxAd?, adView: MaxNativeAdView?) {
-                loadInter();
-            }
-
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-
-            }
-
-            override fun onAdFail() {
-                loadInter();
-            }
-
-        })
+        loadInter();
 
 
 
