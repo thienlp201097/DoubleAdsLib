@@ -148,19 +148,7 @@ class MainActivity : AppCompatActivity() {
             AdsManager.loadNativeAdsNew(this,"8aec97f172bce4a6")
         }
         btnShowNative.setOnClickListener {
-            AdsManager.showNativeAds(this,AdsManager.nativeAdLoader!!,nativeAds,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
-                override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
-
-                }
-
-                override fun onAdFail() {
-
-                }
-
-                override fun onAdRevenuePaid(ad: MaxAd?) {
-
-                }
-            })
+            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
         }
 //        btnLoadAndShow.setOnClickListener {
 //            ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this,"134656413e36e374",500,object : InterstititialCallback {

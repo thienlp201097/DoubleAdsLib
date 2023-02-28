@@ -2,19 +2,15 @@ package com.dktlib.ironsourceutils
 
 import android.app.Activity
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.applovin.mediation.MaxAd
-import com.applovin.mediation.MaxError
 import com.applovin.mediation.ads.MaxInterstitialAd
-import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
-import com.dktlib.ironsourcelib.R
 
 object AdsManager {
     var inter: MaxInterstitialAd?=null
@@ -75,51 +71,27 @@ object AdsManager {
     }
 
     var nativeAdLoader : MaxNativeAdLoader?=null
-    var nativeAd: MaxAd? = null
+    var native: MaxAd? = null
+    var nativeView: MaxNativeAdView? = null
 
     fun loadNativeAdsNew(activity: Activity, idAd: String) {
-        if (!ApplovinUtil.enableAds || !ApplovinUtil.isNetworkConnected(activity)) {
-            return
-        }
-        nativeAdLoader = MaxNativeAdLoader(idAd, activity)
-    }
-
-    fun showNativeAds(activity: Activity, nativeAdView: MaxNativeAdLoader, nativeAdContainer: ViewGroup, size: GoogleENative, adCallback: NativeCallBackNew) {
-        if (!ApplovinUtil.enableAds || !ApplovinUtil.isNetworkConnected(activity)) {
-            adCallback.onAdFail()
-            return
-        }
-        val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
-        } else {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
-        }
-        nativeAdContainer.addView(tagView, 0)
-        nativeAdView.setNativeAdListener(object : MaxNativeAdListener() {
-
-            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-                // Clean up any pre-existing native ad to prevent memory leaks.
-                if (nativeAd != null) {
-                    nativeAdLoader?.destroy(nativeAd)
-                }
-                // Save ad for cleanup.
-                nativeAd = ad
-                nativeAdContainer.removeAllViews()
-                nativeAdContainer.addView(nativeAdView)
-                // Add ad view to view.
-                adCallback.onNativeAdLoaded(ad,nativeAdView)
-                nativeAdLoader = null
-                nativeAd = null
-                loadNativeAdsNew(activity,"8aec97f172bce4a6")
+        ApplovinUtil.loadAndGetNativeAds(activity,idAd,object : NativeCallBackNew{
+            override fun onNativeAdLoaded(nativeAd: MaxAd?,nativeAdView : MaxNativeAdView?) {
+                native = nativeAd
+                nativeView = nativeAdView
             }
 
-            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                adCallback.onAdFail()
+            override fun onAdFail() {
+
             }
 
-            override fun onNativeAdClicked(ad: MaxAd) {
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+
             }
         })
-        nativeAdLoader?.loadAd()
+    }
+
+    fun showNativeAds(activity: Activity, nativeAdContainer: ViewGroup, size: GoogleENative) {
+        ApplovinUtil.showNativeAds(activity, native,nativeAdContainer,size,nativeView)
     }
 }

@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -739,7 +738,7 @@ object ApplovinUtil : LifecycleObserver {
                     nativeAdLoader.destroy(nativeAd)
                 }
                 nativeAd = ad
-                adCallback.onNativeAdLoaded(nativeAd, nativeAdView)
+                adCallback.onNativeAdLoaded(nativeAd,nativeAdView)
             }
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
@@ -1017,46 +1016,26 @@ object ApplovinUtil : LifecycleObserver {
         }
 
     }
-
-    fun showNativeAds(activity: Activity, nativeAdView: MaxNativeAdLoader, nativeAdContainer: ViewGroup, size: GoogleENative, adCallback: NativeCallBackNew) {
-        if (!enableAds || !isNetworkConnected(activity)) {
-            adCallback.onAdFail()
-            return
-        }
+    fun showNativeAds(
+        activity: Activity,
+        nativeAd: MaxAd?,
+        viewGroup: ViewGroup,
+        size: GoogleENative, adView: MaxNativeAdView?
+    ) {
+        viewGroup.removeAllViews()
         val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
         } else {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
         }
-        nativeAdContainer.addView(tagView, 0)
-        val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
-        shimmerFrameLayout.startShimmerAnimation()
-        nativeAdView.setNativeAdListener(object : MaxNativeAdListener() {
-
-            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-                // Clean up any pre-existing native ad to prevent memory leaks.
-                if (nativeAd != null) {
-                    nativeAdLoader.destroy(nativeAd)
-                }
-                // Save ad for cleanup.
-                nativeAd = ad
-                shimmerFrameLayout.stopShimmerAnimation()
-                nativeAdContainer.removeAllViews()
-                nativeAdContainer.addView(nativeAdView)
-                // Add ad view to view.
-                adCallback.onNativeAdLoaded(ad,nativeAdView)
-
-            }
-
-            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                adCallback.onAdFail()
-            }
-
-            override fun onNativeAdClicked(ad: MaxAd) {
-
-            }
-        })
-        nativeAdView.loadAd()
+        viewGroup.addView(tagView, 0)
+        val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
+        if (nativeAd == null) {
+            shimmerFrameLayout.startShimmerAnimation()
+        } else {
+            shimmerFrameLayout.stopShimmerAnimation()
+            viewGroup.addView(adView)
+        }
     }
 
     fun dialogLoading(context: Context?) {
