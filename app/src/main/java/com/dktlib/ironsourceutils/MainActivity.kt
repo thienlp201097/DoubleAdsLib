@@ -145,10 +145,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnLoadNative.setOnClickListener {
-            AdsManager.loadNativeAdsNew(this,"8aec97f172bce4a6")
+            AdsManager.loadAndShowNativeAdsNew(this,"8aec97f172bce4a6")
         }
         btnShowNative.setOnClickListener {
-            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
+//            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
+            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeAdLoader,AdsManager.native,AdsManager.native_mutable,object : NativeCallBackNew{
+                override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+                }
+
+                override fun onAdFail() {
+                }
+
+                override fun onAdRevenuePaid(ad: MaxAd?) {
+                }
+
+            },AdsManager.isLoad)
         }
 //        btnLoadAndShow.setOnClickListener {
 //            ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this,"134656413e36e374",500,object : InterstititialCallback {

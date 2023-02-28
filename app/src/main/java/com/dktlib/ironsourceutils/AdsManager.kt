@@ -2,12 +2,15 @@ package com.dktlib.ironsourceutils
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.applovin.mediation.MaxAd
+import com.applovin.mediation.MaxError
 import com.applovin.mediation.ads.MaxInterstitialAd
+import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
@@ -72,26 +75,38 @@ object AdsManager {
 
     var nativeAdLoader : MaxNativeAdLoader?=null
     var native: MaxAd? = null
-    var nativeView: MaxNativeAdView? = null
+    var isLoad = false
+    var native_mutable: MutableLiveData<MaxAd> = MutableLiveData()
 
-    fun loadNativeAdsNew(activity: Activity, idAd: String) {
-        ApplovinUtil.loadAndGetNativeAds(activity,idAd,object : NativeCallBackNew{
-            override fun onNativeAdLoaded(nativeAd: MaxAd?,nativeAdView : MaxNativeAdView?) {
-                native = nativeAd
-                nativeView = nativeAdView
+    fun loadAndShowNativeAdsNew(activity: Activity, idAd: String) {
+        isLoad = true
+        nativeAdLoader = MaxNativeAdLoader(idAd, activity)
+        nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
+                // Cleanup any pre-existing native ad to prevent memory leaks.
+                if (native != null) {
+                    nativeAdLoader?.destroy(native)
+                }
+                isLoad = false
+                // Save ad to be rendered later.
+                native = ad
+                native_mutable.value = ad
+                Toast.makeText(activity,"Loaded", Toast.LENGTH_SHORT).show()
             }
 
-            override fun onAdFail() {
-
+            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                isLoad = false
+                native_mutable.value = null
+                Toast.makeText(activity,"Failed",Toast.LENGTH_SHORT).show()
             }
 
-            override fun onAdRevenuePaid(ad: MaxAd?) {
+            override fun onNativeAdClicked(ad: MaxAd) {
+            }
+
+            override fun onNativeAdExpired(ad: MaxAd?) {
 
             }
         })
-    }
-
-    fun showNativeAds(activity: Activity, nativeAdContainer: ViewGroup, size: GoogleENative) {
-        ApplovinUtil.showNativeAds(activity, native,nativeAdContainer,size,nativeView)
+        nativeAdLoader?.loadAd()
     }
 }
