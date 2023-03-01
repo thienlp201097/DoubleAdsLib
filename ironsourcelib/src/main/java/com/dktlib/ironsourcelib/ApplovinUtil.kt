@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -1010,37 +1011,43 @@ object ApplovinUtil : LifecycleObserver {
         }
     }
 
-    fun loadNativeAdsNew(activity: Activity, idAd: String, adCallback: NativeCallBackNew,nativeLoader: MaxNativeAdLoader) {
+    fun loadNativeAds(activity: Activity, idAd: String, adCallback: NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(activity)) {
             adCallback.onAdFail()
             return
         }
+        nativeAdLoader = MaxNativeAdLoader(idAd, activity)
+        nativeAdLoader.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
+        nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
 
-    }
-    fun showNativeAds(
-        activity: Activity,
-        nativeAd: MaxAd?,
-        viewGroup: ViewGroup,
-        size: GoogleENative, adView: MaxNativeAdView?
-    ) {
-        viewGroup.removeAllViews()
-        val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
-        } else {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
-        }
-        viewGroup.addView(tagView, 0)
-        val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
-        if (nativeAd == null) {
-            shimmerFrameLayout.startShimmerAnimation()
-        } else {
-            shimmerFrameLayout.stopShimmerAnimation()
-            viewGroup.addView(adView)
-        }
+                // Cleanup any pre-existing native ad to prevent memory leaks.
+                if (nativeAd != null) {
+                    nativeAdLoader.destroy(nativeAd)
+                }
+                // Save ad to be rendered later.
+                nativeAd = ad
+                adCallback.onNativeAdLoaded(nativeAd,nativeAdView)
+            }
+
+            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+            }
+
+            override fun onNativeAdClicked(ad: MaxAd) {
+            }
+
+            override fun onNativeAdExpired(ad: MaxAd?) {
+                nativeAdLoader.loadAd()
+            }
+        })
     }
 
-    fun showNativeWithLayout(view: ViewGroup, context: Activity, nativeAdLoader : MaxNativeAdLoader?,nativeAd : MaxAd?,native_mutable: MutableLiveData<MaxAd>, callback : NativeCallBackNew, isLoad : Boolean) {
-        val adView = createNativeAdView(context)
+    fun showNativeWithLayout(view: ViewGroup, context: Activity, nativeAdLoader : MaxNativeAdLoader?,nativeAd : MaxAd?,native_mutable: MutableLiveData<MaxAd>, layout : Int, callback : NativeCallBackNew, isLoad : Boolean) {
+        if (!enableAds || !isNetworkConnected(context)) {
+            callback.onAdFail()
+            return
+        }
+        val adView = createNativeAdView(context,layout)
         // Check if ad is expired before rendering
         if (true == nativeAd?.nativeAd?.isExpired) {
             Log.d("==Applovin","isExpired")
@@ -1077,19 +1084,25 @@ object ApplovinUtil : LifecycleObserver {
             val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout.startShimmerAnimation()
             native_mutable.observe(context as LifecycleOwner){
-                if (it.nativeAd != null){
-                    nativeAdLoader?.render(adView, nativeAd)
-                    view.removeAllViews()
-                    view.addView(adView)
-                }else {
-                    view.visibility = View.GONE
+                if (it!=null){
+                    if (it.nativeAd != null){
+                        nativeAdLoader?.render(adView, nativeAd)
+                        view.removeAllViews()
+                        view.addView(adView)
+                    }else {
+                        shimmerFrameLayout.stopShimmerAnimation()
+                        callback.onAdFail()
+                    }
+                }else{
+                    shimmerFrameLayout.stopShimmerAnimation()
+                    callback.onAdFail()
                 }
             }
         }
         // Render the ad separately
     }
-    private fun createNativeAdView(context: Context): MaxNativeAdView {
-        val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder.Builder(R.layout.native_custom_ad_view)
+    private fun createNativeAdView(context: Context,layout : Int): MaxNativeAdView {
+        val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder.Builder(layout)
             .setTitleTextViewId(R.id.title_text_view)
             .setBodyTextViewId(R.id.body_text_view)
             .setAdvertiserTextViewId(R.id.advertiser_text_view)

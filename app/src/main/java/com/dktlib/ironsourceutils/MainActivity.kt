@@ -13,6 +13,7 @@ import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
+import com.dktlib.ironsourceutils.AdsManager.nativeAdLoader
 
 class MainActivity : AppCompatActivity() {
     lateinit var bannerContainer: ViewGroup
@@ -145,11 +146,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnLoadNative.setOnClickListener {
-            AdsManager.loadAndShowNativeAdsNew(this,"8aec97f172bce4a6")
+//            AdsManager.loadAndShowNativeAdsNew(this,"8aec97f172bce4a6")
+            AdsManager.loadAndShowNativeAdsNew(this,"3805534b02308f23")
         }
         btnShowNative.setOnClickListener {
 //            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
-            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeAdLoader,AdsManager.native,AdsManager.native_mutable,object : NativeCallBackNew{
+            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeAdLoader,AdsManager.native,AdsManager.native_mutable, R.layout.native_custom_ad_view,object : NativeCallBackNew{
                 override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
                 }
 
@@ -160,6 +162,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
             },AdsManager.isLoad)
+            Log.d("===Native",AdsManager.native.toString() +"/"+nativeAdLoader.toString())
         }
 //        btnLoadAndShow.setOnClickListener {
 //            ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this,"134656413e36e374",500,object : InterstititialCallback {
@@ -189,18 +192,22 @@ class MainActivity : AppCompatActivity() {
 //            })
 //        }
 
-//        ApplovinUtil.loadAndShowNativeAds(this@MainActivity, "8aec97f172bce4a6", nativeAds,GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
-//                override fun onNativeAdLoaded() {
-//                    Toast.makeText(this@MainActivity,"onNativeAdLoaded",Toast.LENGTH_SHORT).show()
-//                }
-//                override  fun onAdFail() {
-//                    Toast.makeText(this@MainActivity,"onAdFail",Toast.LENGTH_SHORT).show()
-//                }
-//
-//            override fun onAdRevenuePaid(ad: MaxAd?) {
-//
-//            }
-//        })
+        ApplovinUtil.loadAndShowNativeAds(this@MainActivity, "3805534b02308f23", nativeAds,GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
+                override fun onNativeAdLoaded() {
+                    Toast.makeText(this@MainActivity,"onNativeAdLoaded",Toast.LENGTH_SHORT).show()
+                }
+
+            override fun onLoadedAndGetNativeAd(ad: MaxAd?, adView: MaxNativeAdView?) {
+            }
+
+            override  fun onAdFail() {
+                    Toast.makeText(this@MainActivity,"onAdFail",Toast.LENGTH_SHORT).show()
+                }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+
+            }
+        })
 
 //        AdmodUtils.getInstance().loadNativeAds(this@MainActivity,
 //            getString(R.string.test_ads_admob_native_id), nativeAds,
