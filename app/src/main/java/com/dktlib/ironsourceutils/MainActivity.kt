@@ -192,22 +192,22 @@ class MainActivity : AppCompatActivity() {
 //            })
 //        }
 
-        ApplovinUtil.loadAndShowNativeAds(this@MainActivity, "3805534b02308f23", nativeAds,GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
-                override fun onNativeAdLoaded() {
-                    Toast.makeText(this@MainActivity,"onNativeAdLoaded",Toast.LENGTH_SHORT).show()
-                }
-
-            override fun onLoadedAndGetNativeAd(ad: MaxAd?, adView: MaxNativeAdView?) {
-            }
-
-            override  fun onAdFail() {
-                    Toast.makeText(this@MainActivity,"onAdFail",Toast.LENGTH_SHORT).show()
-                }
-
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-
-            }
-        })
+//        ApplovinUtil.loadAndShowNativeAds(this@MainActivity, "3805534b02308f23", nativeAds,GoogleENative.UNIFIED_MEDIUM, object : NativeAdCallback {
+//                override fun onNativeAdLoaded() {
+//                    Toast.makeText(this@MainActivity,"onNativeAdLoaded",Toast.LENGTH_SHORT).show()
+//                }
+//
+//            override fun onLoadedAndGetNativeAd(ad: MaxAd?, adView: MaxNativeAdView?) {
+//            }
+//
+//            override  fun onAdFail() {
+//                    Toast.makeText(this@MainActivity,"onAdFail",Toast.LENGTH_SHORT).show()
+//                }
+//
+//            override fun onAdRevenuePaid(ad: MaxAd?) {
+//
+//            }
+//        })
 
 //        AdmodUtils.getInstance().loadNativeAds(this@MainActivity,
 //            getString(R.string.test_ads_admob_native_id), nativeAds,
