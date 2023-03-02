@@ -1042,7 +1042,7 @@ object ApplovinUtil : LifecycleObserver {
         })
     }
 
-    fun showNativeWithLayout(view: ViewGroup, context: Activity, nativeAdLoader : MaxNativeAdLoader?,nativeAd : MaxAd?,native_mutable: MutableLiveData<MaxAd>, layout : Int, callback : NativeCallBackNew, isLoad : Boolean) {
+    fun showNativeWithLayout(view: ViewGroup, context: Activity, nativeAdLoader : MaxNativeAdLoader?,nativeAd : MaxAd?,native_mutable: MutableLiveData<MaxAd>, layout : Int,size: GoogleENative, callback : NativeCallBackNew, isLoad : Boolean) {
         if (!enableAds || !isNetworkConnected(context)) {
             callback.onAdFail()
             return
@@ -1079,7 +1079,11 @@ object ApplovinUtil : LifecycleObserver {
             view.removeAllViews()
             view.addView(adView)
         }else {
-            val tagView: View = context.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+            val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
+                context.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+            } else {
+                context.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+            }
             view.addView(tagView, 0)
             val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout.startShimmerAnimation()
