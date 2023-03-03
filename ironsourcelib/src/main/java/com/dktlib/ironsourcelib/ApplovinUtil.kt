@@ -1105,6 +1105,7 @@ object ApplovinUtil : LifecycleObserver {
         }
         // Render the ad separately
     }
+
     private fun createNativeAdView(context: Context,layout : Int): MaxNativeAdView {
         val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder.Builder(layout)
             .setTitleTextViewId(R.id.title_text_view)

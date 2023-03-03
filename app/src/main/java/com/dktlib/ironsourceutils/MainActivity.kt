@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
         }
         btnShowNative.setOnClickListener {
 //            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
-            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeAdLoader,AdsManager.native,AdsManager.native_mutable, R.layout.native_custom_ad_view,object : NativeCallBackNew{
+            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeAdLoader,AdsManager.native,AdsManager.native_mutable, R.layout.native_custom_ad_view,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
                 override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
                 }
 
