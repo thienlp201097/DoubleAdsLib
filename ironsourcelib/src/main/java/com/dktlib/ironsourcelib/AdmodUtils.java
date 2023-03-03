@@ -201,7 +201,7 @@ public class AdmodUtils {
         }
         viewGroup.addView(tagView, 0);
         ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
-        shimmerFrameLayout.startShimmerAnimation();
+        shimmerFrameLayout.startShimmer();
 
         if (!isShowAds || !isNetworkConnected(activity)) {
             viewGroup.setVisibility(View.GONE);
@@ -225,7 +225,7 @@ public class AdmodUtils {
 
                         NativeFunc.Companion.populateNativeAdView(nativeAd, adView, GoogleENative.UNIFIED_MEDIUM);
 
-                        shimmerFrameLayout.stopShimmerAnimation();
+                        shimmerFrameLayout.stopShimmer();
                         viewGroup.removeAllViews();
                         viewGroup.addView(adView);
                         //viewGroup.setVisibility(View.VISIBLE);
@@ -236,7 +236,7 @@ public class AdmodUtils {
                     public void onAdFailedToLoad(LoadAdError adError) {
                         Log.e("Admodfail", "onAdFailedToLoad" + adError.getMessage());
                         Log.e("Admodfail", "errorCodeAds" + adError.getCause());
-                        shimmerFrameLayout.stopShimmerAnimation();
+                        shimmerFrameLayout.stopShimmer();
                         viewGroup.removeAllViews();
                         adCallback.onAdFail();
                     }
@@ -260,7 +260,7 @@ public class AdmodUtils {
         }
         viewGroup.addView(tagView, 0);
         ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
-        shimmerFrameLayout.startShimmerAnimation();
+        shimmerFrameLayout.startShimmer();
         if (!isShowAds) {
             viewGroup.setVisibility(View.GONE);
             return;
@@ -288,7 +288,7 @@ public class AdmodUtils {
                                 .inflate(id, null);
 
                         NativeFunc.Companion.populateNativeAdView(nativeAd, adView, size);
-                        shimmerFrameLayout.stopShimmerAnimation();
+                        shimmerFrameLayout.stopShimmer();
                         viewGroup.removeAllViews();
                         viewGroup.addView(adView);
                         //  viewGroup.setVisibility(View.VISIBLE);
@@ -300,7 +300,7 @@ public class AdmodUtils {
                     public void onAdFailedToLoad(LoadAdError adError) {
                         Log.e("Admodfail", "onAdFailedToLoad" + adError.getMessage());
                         Log.e("Admodfail", "errorCodeAds" + adError.getCause());
-                        shimmerFrameLayout.stopShimmerAnimation();
+                        shimmerFrameLayout.stopShimmer();
                         viewGroup.removeAllViews();
                         adCallback.onAdFail();
                     }
@@ -330,12 +330,12 @@ public class AdmodUtils {
         viewGroup.addView(tagView, 0);
         viewGroup.addView(mAdView, 1);
         ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
-        shimmerFrameLayout.startShimmerAnimation();
+        shimmerFrameLayout.startShimmer();
 
         mAdView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.stopShimmer();
                 viewGroup.removeView(tagView);
                 callback.onBannerAdLoaded(adSize);
             }
@@ -343,7 +343,7 @@ public class AdmodUtils {
             @Override
             public void onAdFailedToLoad(LoadAdError adError) {
                 Log.e(" Admod", "failloadbanner" + adError.getMessage());
-                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.stopShimmer();
                 viewGroup.removeView(tagView);
                 callback.onAdFail();
             }
