@@ -14,18 +14,16 @@ import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
+import com.dktlib.ironsourcelib.utils.InterHolder
 
 object AdsManager {
     var inter: MaxInterstitialAd?=null
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
-
+    var interHolder = InterHolder("134656413e36e374")
     fun loadInter(context: Context,  id : String){
-        ApplovinUtil.loadAnGetInterstitials(context,id,object : InterstititialCallbackNew{
+        ApplovinUtil.loadAnGetInterstitials(context,interHolder,object : InterstititialCallbackNew{
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {
-                inter = interstitialAd
-                mutable_inter.value = interstitialAd
-                check_inter = false
                 Toast.makeText(context,"Loaded",Toast.LENGTH_SHORT).show()
             }
 
@@ -34,8 +32,6 @@ object AdsManager {
             }
 
             override fun onInterstitialLoadFail(error: String) {
-                check_inter = false
-                mutable_inter.value = null
                 Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
 
@@ -49,17 +45,19 @@ object AdsManager {
         })
     }
 
-    fun showInter(context: AppCompatActivity, interstitialAd: MaxInterstitialAd?){
-        ApplovinUtil.showInterstitialsWithDialogCheckTimeNew(context, 800,interstitialAd, mutable_inter, check_inter,object : InterstititialCallback {
+    fun showInter(context: AppCompatActivity,interHolder: InterHolder,adsOnClick: AdsOnClick){
+        ApplovinUtil.showInterstitialsWithDialogCheckTimeNew(context, 800,interHolder ,object : InterstititialCallback {
             override fun onInterstitialReady() {
                 Toast.makeText(context,"Ready",Toast.LENGTH_SHORT).show()
             }
 
             override fun onInterstitialClosed() {
+                adsOnClick.onAdsCloseOrFailed()
                 Toast.makeText(context,"Closed",Toast.LENGTH_SHORT).show()
             }
 
             override fun onInterstitialLoadFail(error: String) {
+                adsOnClick.onAdsCloseOrFailed()
                 Toast.makeText(context,"Failed",Toast.LENGTH_SHORT).show()
             }
 
@@ -73,12 +71,16 @@ object AdsManager {
         })
     }
 
+    interface AdsOnClick{
+        fun onAdsCloseOrFailed()
+    }
+
     var nativeAdLoader : MaxNativeAdLoader?=null
     var native: MaxAd? = null
     var isLoad = false
     var native_mutable: MutableLiveData<MaxAd> = MutableLiveData()
 
-    fun loadAndShowNativeAdsNew(activity: Activity, idAd: String) {
+    fun loadNativeAds(activity: Activity, idAd: String) {
         isLoad = true
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
         nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {

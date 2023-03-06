@@ -10,18 +10,23 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.applovin.mediation.MaxAd
+import com.applovin.mediation.MaxError
+import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
+import com.dktlib.ironsourcelib.utils.NativeHolder
 import com.dktlib.ironsourceutils.AdsManager.nativeAdLoader
 
 class MainActivity : AppCompatActivity() {
     lateinit var bannerContainer: ViewGroup
     lateinit var nativeLoader : MaxNativeAdLoader
+    var nativeHolder = NativeHolder("3805534b02308f23")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val btnLoad = findViewById<Button>(R.id.btn_load_inter)
+        val btnshow = findViewById<Button>(R.id.btn_show_inter)
         val btnCallback2 = findViewById<Button>(R.id.btn_show_inter_callback2)
         val btnLoadAndShow = findViewById<Button>(R.id.btn_load_show_inter_callback2)
         val nativeAds = findViewById<FrameLayout>(R.id.nativead)
@@ -58,6 +63,13 @@ class MainActivity : AppCompatActivity() {
 //            })
             AdsManager.loadInter(this,"134656413e36e374")
         }
+        btnshow.setOnClickListener {
+            AdsManager.showInter(this,AdsManager.interHolder,object : AdsManager.AdsOnClick{
+                override fun onAdsCloseOrFailed() {
+                    startActivity(Intent(this@MainActivity, MainActivity2::class.java))
+                }
+            })
+        }
         btnCallback2.setOnClickListener {
             ApplovinUtil.showInterstitialsWithDialogCheckTime(
                 this,
@@ -85,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnLoadAndShow.setOnClickListener(){
-            AdsManager.showInter(this,AdsManager.inter)
+//            AdsManager.showInter(this,AdsManager.inter)
         }
 
         btnReward.setOnClickListener {
@@ -147,21 +159,35 @@ class MainActivity : AppCompatActivity() {
 
         btnLoadNative.setOnClickListener {
 //            AdsManager.loadAndShowNativeAdsNew(this,"8aec97f172bce4a6")
-            AdsManager.loadAndShowNativeAdsNew(this,"3805534b02308f23")
-        }
-        btnShowNative.setOnClickListener {
-//            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
-            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeAdLoader,AdsManager.native,AdsManager.native_mutable, R.layout.native_custom_ad_view,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
+            ApplovinUtil.loadNativeAds(this,nativeHolder,object : NativeCallBackNew{
                 override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+                    Toast.makeText(this@MainActivity,"Loaded", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onAdFail() {
+                    Toast.makeText(this@MainActivity,"Failed", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onAdRevenuePaid(ad: MaxAd?) {
+                }
+            })
+        }
+
+        btnShowNative.setOnClickListener {
+//            AdsManager.showNativeAds(this,nativeAds,GoogleENative.UNIFIED_MEDIUM)
+            ApplovinUtil.showNativeWithLayout(nativeAds,this,nativeHolder,R.layout.native_custom_ad_view,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
+                override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+                    Toast.makeText(this@MainActivity,"show success", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onAdFail() {
+                    Toast.makeText(this@MainActivity,"Show failed", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onAdRevenuePaid(ad: MaxAd?) {
                 }
 
-            },AdsManager.isLoad)
+            })
             Log.d("===Native",AdsManager.native.toString() +"/"+nativeAdLoader.toString())
         }
 //        btnLoadAndShow.setOnClickListener {

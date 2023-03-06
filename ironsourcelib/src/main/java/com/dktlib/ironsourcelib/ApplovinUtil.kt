@@ -27,6 +27,8 @@ import com.applovin.mediation.nativeAds.MaxNativeAdViewBinder
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
+import com.dktlib.ironsourcelib.utils.InterHolder
+import com.dktlib.ironsourcelib.utils.NativeHolder
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.Dispatchers
@@ -807,17 +809,19 @@ object ApplovinUtil : LifecycleObserver {
     }
 
     //New thienlp
-    fun loadAnGetInterstitials(activity: Context, idAd: String, callback: InterstititialCallbackNew) {
-        val interstitialAd = MaxInterstitialAd(idAd, activity as Activity?)
+    fun loadAnGetInterstitials(activity: Context, interHolder: InterHolder, callback: InterstititialCallbackNew) {
+        interHolder.inter = MaxInterstitialAd(interHolder.adsId, activity as Activity?)
         if (!enableAds || !isNetworkConnected(activity)) {
             callback.onInterstitialClosed()
             return
         }
-
-        interstitialAd.setListener(object : MaxAdListener {
+        interHolder.check = true
+        interHolder.inter?.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
-                callback.onInterstitialReady(interstitialAd)
+                callback.onInterstitialReady(interHolder.inter!!)
                 isLoadInterstitialFailed = false
+                interHolder.check = false
+                interHolder.mutable.value = interHolder.inter
             }
 
             override fun onAdDisplayed(ad: MaxAd?) {
@@ -839,6 +843,8 @@ object ApplovinUtil : LifecycleObserver {
                 callback.onInterstitialLoadFail(error.toString())
                 isLoadInterstitialFailed = true
                 isInterstitialAdShowing = false
+                interHolder.check = false
+                interHolder.mutable.value = null
             }
 
             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
@@ -847,13 +853,13 @@ object ApplovinUtil : LifecycleObserver {
 
         })
         // Load the first ad
-        interstitialAd.loadAd()
+        interHolder.inter?.loadAd()
     }
 
     @MainThread
     fun showInterstitialsWithDialogCheckTimeNew(
         activity: AppCompatActivity,
-        dialogShowTime: Long, interstitialAd : MaxInterstitialAd?, isAdsLoaded : MutableLiveData<MaxInterstitialAd>, isLoading : Boolean,
+        dialogShowTime: Long,interHolder: InterHolder,
         callback: InterstititialCallback
     ) {
         if (!enableAds || !isNetworkConnected(activity)) {
@@ -861,7 +867,7 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        if (interstitialAd == null) {
+        if (interHolder.inter == null) {
             callback.onInterstitialLoadFail("null")
             return
         }
@@ -888,8 +894,8 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
-        interstitialAd.setListener(object : MaxAdListener {
+        interHolder.inter?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
+        interHolder.inter?.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
                     isLoadInterstitialFailed = false
@@ -933,8 +939,8 @@ object ApplovinUtil : LifecycleObserver {
                 callback.onInterstitialClosed()
             }
         })
-        if (!isLoading){
-            if (interstitialAd.isReady) {
+        if (!interHolder.check){
+            if (interHolder.inter?.isReady == true) {
                 activity.lifecycleScope.launch {
                     dialogFullScreen = Dialog(activity)
                     dialogFullScreen?.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -954,7 +960,7 @@ object ApplovinUtil : LifecycleObserver {
                     }
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         Log.d(TAG, "onInterstitialAdReady")
-                        interstitialAd.showAd()
+                        interHolder.inter?.showAd()
                         dialogFullScreen?.dismiss()
                     }
                 }
@@ -986,11 +992,11 @@ object ApplovinUtil : LifecycleObserver {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
                     dialogFullScreen?.dismiss()
                 }
-                isAdsLoaded.observe(activity as LifecycleOwner) {
+                interHolder.mutable.observe(activity as LifecycleOwner) {
                     if (it.isReady){
                         if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                             Log.d(TAG, "onInterstitialAdReady")
-                            interstitialAd.showAd()
+                            interHolder.inter?.showAd()
                         }
                         if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
                             dialogFullScreen?.dismiss()
@@ -1011,38 +1017,43 @@ object ApplovinUtil : LifecycleObserver {
         }
     }
 
-    fun loadNativeAds(activity: Activity, idAd: String, adCallback: NativeCallBackNew) {
+    fun loadNativeAds(activity: Activity, nativeHolder: NativeHolder, adCallback: NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(activity)) {
             adCallback.onAdFail()
             return
         }
-        nativeAdLoader = MaxNativeAdLoader(idAd, activity)
-        nativeAdLoader.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
-        nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
+        nativeHolder.isLoad = true
+        nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
+        nativeHolder.nativeAdLoader?.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
+        nativeHolder.nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-
                 // Cleanup any pre-existing native ad to prevent memory leaks.
-                if (nativeAd != null) {
-                    nativeAdLoader.destroy(nativeAd)
+                if (nativeHolder.native != null) {
+                    nativeHolder.nativeAdLoader?.destroy(nativeHolder.native)
                 }
                 // Save ad to be rendered later.
-                nativeAd = ad
+                nativeHolder.native = ad
+                nativeHolder.isLoad = false
+                nativeHolder.native_mutable.value = ad
                 adCallback.onNativeAdLoaded(nativeAd,nativeAdView)
             }
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                nativeHolder.native_mutable.value = null
+                nativeHolder.isLoad = false
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
             }
 
             override fun onNativeAdExpired(ad: MaxAd?) {
-                nativeAdLoader.loadAd()
+                nativeHolder.nativeAdLoader?.loadAd()
             }
         })
+        nativeHolder.nativeAdLoader?.loadAd()
     }
 
-    fun showNativeWithLayout(view: ViewGroup, context: Activity, nativeAdLoader : MaxNativeAdLoader?,nativeAd : MaxAd?,native_mutable: MutableLiveData<MaxAd>, layout : Int,size: GoogleENative, callback : NativeCallBackNew, isLoad : Boolean) {
+    fun showNativeWithLayout(view: ViewGroup, context: Activity,nativeHolder: NativeHolder, layout : Int,size: GoogleENative, callback : NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(context)) {
             callback.onAdFail()
             return
@@ -1051,11 +1062,11 @@ object ApplovinUtil : LifecycleObserver {
         // Check if ad is expired before rendering
         if (true == nativeAd?.nativeAd?.isExpired) {
             Log.d("==Applovin","isExpired")
-            nativeAdLoader?.destroy(nativeAd)
-            nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
+            nativeHolder.nativeAdLoader?.destroy(nativeAd)
+            nativeHolder.nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
                 override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
                     // Cleanup any pre-existing native ad to prevent memory leaks.
-                    nativeAdLoader.destroy(nativeAd)
+                    nativeHolder.nativeAdLoader?.destroy(nativeAd)
                     // Save ad to be rendered later.
                     callback.onNativeAdLoaded(ad,adView)
                 }
@@ -1067,17 +1078,22 @@ object ApplovinUtil : LifecycleObserver {
                 }
 
                 override fun onNativeAdExpired(ad: MaxAd?) {
-                    nativeAdLoader.loadAd()
+                    nativeHolder.nativeAdLoader?.loadAd()
                 }
             })
-            nativeAdLoader?.loadAd()
+            nativeHolder.nativeAdLoader?.loadAd()
             return
         }
-        if (isLoad){
-            Log.d("==Applovin","Load")
-            nativeAdLoader?.render(adView, nativeAd)
-            view.removeAllViews()
-            view.addView(adView)
+        if (!nativeHolder.isLoad){
+            if (nativeHolder.native != null){
+                Log.d("==Applovin","Load")
+                nativeHolder.nativeAdLoader?.render(adView, nativeHolder.native)
+                view.removeAllViews()
+                view.addView(adView)
+                callback.onNativeAdLoaded(nativeHolder.native,adView)
+            }else{
+                callback.onAdFail()
+            }
         }else {
             val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
                 context.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
@@ -1087,12 +1103,13 @@ object ApplovinUtil : LifecycleObserver {
             view.addView(tagView, 0)
             val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout.startShimmer()
-            native_mutable.observe(context as LifecycleOwner){
+            nativeHolder.native_mutable.observe(context as LifecycleOwner){
                 if (it!=null){
                     if (it.nativeAd != null){
-                        nativeAdLoader?.render(adView, nativeAd)
+                        nativeHolder.nativeAdLoader?.render(adView, nativeHolder.native)
                         view.removeAllViews()
                         view.addView(adView)
+                        callback.onNativeAdLoaded(nativeHolder.native,adView)
                     }else {
                         shimmerFrameLayout.stopShimmer()
                         callback.onAdFail()
@@ -1102,8 +1119,12 @@ object ApplovinUtil : LifecycleObserver {
                     callback.onAdFail()
                 }
             }
+            Handler().postDelayed({
+                if (!nativeHolder.isLoad && nativeHolder.native == null){
+                    callback.onAdFail()
+                }
+            },3000)
         }
-        // Render the ad separately
     }
 
     private fun createNativeAdView(context: Context,layout : Int): MaxNativeAdView {
