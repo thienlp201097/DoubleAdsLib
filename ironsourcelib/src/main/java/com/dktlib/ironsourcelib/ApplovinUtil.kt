@@ -184,7 +184,6 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(ad: MaxAd?) {
-                TODO("Not yet implemented")
             }
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
@@ -816,7 +815,7 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
         interHolder.check = true
-        interHolder.inter?.setListener(object : MaxAdListener {
+        interHolder.inter!!.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
                 callback.onInterstitialReady(interHolder.inter!!)
                 isLoadInterstitialFailed = false
@@ -860,10 +859,10 @@ object ApplovinUtil : LifecycleObserver {
     fun showInterstitialsWithDialogCheckTimeNew(
         activity: AppCompatActivity,
         dialogShowTime: Long,interHolder: InterHolder,
-        callback: InterstititialCallback
+        callback: InterstititialCallbackNew
     ) {
         if (!enableAds || !isNetworkConnected(activity)) {
-            callback.onInterstitialClosed()
+            callback.onInterstitialLoadFail("null")
             return
         }
 
@@ -893,52 +892,7 @@ object ApplovinUtil : LifecycleObserver {
             callback.onInterstitialLoadFail("\"isNetworkConnected\"")
             return
         }
-
         interHolder.inter?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
-        interHolder.inter?.setListener(object : MaxAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
-                activity.lifecycleScope.launch(Dispatchers.Main) {
-                    isLoadInterstitialFailed = false
-                    callback.onInterstitialReady()
-                }
-            }
-
-            override fun onAdDisplayed(ad: MaxAd?) {
-                if (AppOpenManager.getInstance().isInitialized) {
-                    AppOpenManager.getInstance().isAppResumeEnabled = false
-                }
-                callback.onInterstitialShowSucceed()
-                lastTimeInterstitialShowed = System.currentTimeMillis()
-                isInterstitialAdShowing = true
-            }
-
-            override fun onAdHidden(ad: MaxAd?) {
-                if (AppOpenManager.getInstance().isInitialized) {
-                    AppOpenManager.getInstance().isAppResumeEnabled = true
-                }
-                callback.onInterstitialClosed()
-                isInterstitialAdShowing = false
-            }
-
-            override fun onAdClicked(ad: MaxAd?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                isLoadInterstitialFailed = true
-                if (AppOpenManager.getInstance().isInitialized) {
-                    AppOpenManager.getInstance().isAppResumeEnabled = true
-                }
-                callback.onInterstitialLoadFail(error.toString())
-            }
-
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                if (AppOpenManager.getInstance().isInitialized) {
-                    AppOpenManager.getInstance().isAppResumeEnabled = true
-                }
-                callback.onInterstitialClosed()
-            }
-        })
         if (!interHolder.check){
             if (interHolder.inter?.isReady == true) {
                 activity.lifecycleScope.launch {
@@ -960,7 +914,41 @@ object ApplovinUtil : LifecycleObserver {
                     }
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         Log.d(TAG, "onInterstitialAdReady")
+                        interHolder.inter?.setListener(object : MaxAdListener {
+                            override fun onAdLoaded(ad: MaxAd?) {
+                                callback.onInterstitialReady(interHolder.inter!!)
+                                isLoadInterstitialFailed = false
+                            }
+
+                            override fun onAdDisplayed(ad: MaxAd?) {
+                                callback.onInterstitialShowSucceed()
+                                lastTimeInterstitialShowed = System.currentTimeMillis()
+                                isInterstitialAdShowing = true
+                            }
+
+                            override fun onAdHidden(ad: MaxAd?) {
+                                callback.onInterstitialClosed()
+                                isInterstitialAdShowing = false
+                            }
+
+                            override fun onAdClicked(ad: MaxAd?) {
+
+                            }
+
+                            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                                callback.onInterstitialLoadFail(error.toString())
+                                isLoadInterstitialFailed = true
+                                isInterstitialAdShowing = false
+                            }
+
+                            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                                callback.onInterstitialLoadFail(error.toString())
+                            }
+
+                        })
                         interHolder.inter?.showAd()
+                        dialogFullScreen?.dismiss()
+                    }else{
                         dialogFullScreen?.dismiss()
                     }
                 }
@@ -989,20 +977,54 @@ object ApplovinUtil : LifecycleObserver {
                     dialogFullScreen?.show()
                 }
                 delay(dialogShowTime)
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
-                    dialogFullScreen?.dismiss()
-                }
                 interHolder.mutable.observe(activity as LifecycleOwner) {
                     if (it.isReady){
+                        interHolder.mutable.removeObservers(activity as LifecycleOwner)
                         if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                             Log.d(TAG, "onInterstitialAdReady")
+                            interHolder.inter?.setListener(object : MaxAdListener {
+                                override fun onAdLoaded(ad: MaxAd?) {
+                                    callback.onInterstitialReady(interHolder.inter!!)
+                                    isLoadInterstitialFailed = false
+                                }
+
+                                override fun onAdDisplayed(ad: MaxAd?) {
+                                    callback.onInterstitialShowSucceed()
+                                    lastTimeInterstitialShowed = System.currentTimeMillis()
+                                    isInterstitialAdShowing = true
+                                }
+
+                                override fun onAdHidden(ad: MaxAd?) {
+                                    callback.onInterstitialClosed()
+                                    isInterstitialAdShowing = false
+                                }
+
+                                override fun onAdClicked(ad: MaxAd?) {
+
+                                }
+
+                                override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                                    callback.onInterstitialLoadFail(error.toString())
+                                    isLoadInterstitialFailed = true
+                                    isInterstitialAdShowing = false
+                                }
+
+                                override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                                    callback.onInterstitialLoadFail(error.toString())
+                                }
+
+                            })
                             interHolder.inter?.showAd()
+                        }else{
+                            callback.onInterstitialClosed()
+                            dialogFullScreen?.dismiss()
                         }
                         if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
                             dialogFullScreen?.dismiss()
                         }
                     }else {
                         activity.lifecycleScope.launch(Dispatchers.Main) {
+                            interHolder.mutable.removeObservers(activity as LifecycleOwner)
                             dialogFullScreen?.dismiss()
                             if (AppOpenManager.getInstance().isInitialized) {
                                 AppOpenManager.getInstance().isAppResumeEnabled = true

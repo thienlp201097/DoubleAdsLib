@@ -46,8 +46,9 @@ object AdsManager {
     }
 
     fun showInter(context: AppCompatActivity,interHolder: InterHolder,adsOnClick: AdsOnClick){
-        ApplovinUtil.showInterstitialsWithDialogCheckTimeNew(context, 800,interHolder ,object : InterstititialCallback {
-            override fun onInterstitialReady() {
+        AppOpenManager.getInstance().isAppResumeEnabled = true
+        ApplovinUtil.showInterstitialsWithDialogCheckTimeNew(context, 800,interHolder ,object : InterstititialCallbackNew {
+            override fun onInterstitialReady(interstitialAd : MaxInterstitialAd) {
                 Toast.makeText(context,"Ready",Toast.LENGTH_SHORT).show()
             }
 

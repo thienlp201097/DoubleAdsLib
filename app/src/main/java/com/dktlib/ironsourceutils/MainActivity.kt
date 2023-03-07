@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
             AdsManager.loadInter(this,"134656413e36e374")
         }
         btnshow.setOnClickListener {
+
             AdsManager.showInter(this,AdsManager.interHolder,object : AdsManager.AdsOnClick{
                 override fun onAdsCloseOrFailed() {
                     startActivity(Intent(this@MainActivity, MainActivity2::class.java))
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
 
-                    override fun onAdRevenuePaid(ad: com.applovin.mediation.MaxAd?) {
+                    override fun onAdRevenuePaid(ad: MaxAd?) {
                     }
 
                     override fun onInterstitialReady() {
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 })
         }
 
-        btnLoadAndShow.setOnClickListener(){
+        btnLoadAndShow.setOnClickListener {
 //            AdsManager.showInter(this,AdsManager.inter)
         }
 
@@ -253,19 +254,16 @@ class MainActivity : AppCompatActivity() {
 //    }
     override fun onResume() {
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
-//        ApplovinUtil.showBanner(this, bannerContainer, "5c902521afdeef72", object : BannerCallback{
-//            override fun onBannerLoadFail(error: String) {
-//                TODO("Not yet implemented")
-//            }
-//
-//            override fun onBannerShowSucceed() {
-//                TODO("Not yet implemented")
-//            }
-//
-//            override fun onAdRevenuePaid(ad: MaxAd?) {
-//                TODO("Not yet implemented")
-//            }
-//        })
+        ApplovinUtil.showBanner(this, bannerContainer, "5c902521afdeef72", object : BannerCallback{
+            override fun onBannerLoadFail(error: String) {
+            }
+
+            override fun onBannerShowSucceed() {
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+            }
+        })
         super.onResume()
     }
 }
