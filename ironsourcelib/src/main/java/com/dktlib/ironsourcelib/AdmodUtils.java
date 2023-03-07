@@ -29,10 +29,12 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdValue;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.OnPaidEventListener;
 import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.formats.NativeAdOptions;
@@ -331,7 +333,7 @@ public class AdmodUtils {
         viewGroup.addView(mAdView, 1);
         ShimmerFrameLayout shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container);
         shimmerFrameLayout.startShimmer();
-
+        mAdView.setOnPaidEventListener(callback::onAdPaid);
         mAdView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
