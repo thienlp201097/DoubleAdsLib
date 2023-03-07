@@ -893,6 +893,7 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
         interHolder.inter?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
+
         if (!interHolder.check){
             if (interHolder.inter?.isReady == true) {
                 activity.lifecycleScope.launch {
@@ -916,33 +917,46 @@ object ApplovinUtil : LifecycleObserver {
                         Log.d(TAG, "onInterstitialAdReady")
                         interHolder.inter?.setListener(object : MaxAdListener {
                             override fun onAdLoaded(ad: MaxAd?) {
-                                callback.onInterstitialReady(interHolder.inter!!)
-                                isLoadInterstitialFailed = false
+                                activity.lifecycleScope.launch(Dispatchers.Main) {
+                                    isLoadInterstitialFailed = false
+                                    callback.onInterstitialReady(interHolder.inter!!)
+                                }
                             }
 
                             override fun onAdDisplayed(ad: MaxAd?) {
+                                if (AppOpenManager.getInstance().isInitialized) {
+                                    AppOpenManager.getInstance().isAppResumeEnabled = false
+                                }
                                 callback.onInterstitialShowSucceed()
                                 lastTimeInterstitialShowed = System.currentTimeMillis()
                                 isInterstitialAdShowing = true
                             }
 
                             override fun onAdHidden(ad: MaxAd?) {
+                                if (AppOpenManager.getInstance().isInitialized) {
+                                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                                }
                                 callback.onInterstitialClosed()
                                 isInterstitialAdShowing = false
                             }
 
                             override fun onAdClicked(ad: MaxAd?) {
-
+                                TODO("Not yet implemented")
                             }
 
                             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                                callback.onInterstitialLoadFail(error.toString())
                                 isLoadInterstitialFailed = true
-                                isInterstitialAdShowing = false
+                                if (AppOpenManager.getInstance().isInitialized) {
+                                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                                }
+                                callback.onInterstitialLoadFail(error.toString())
                             }
 
                             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                                callback.onInterstitialLoadFail(error.toString())
+                                if (AppOpenManager.getInstance().isInitialized) {
+                                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                                }
+                                callback.onInterstitialClosed()
                             }
 
                         })
@@ -984,33 +998,46 @@ object ApplovinUtil : LifecycleObserver {
                             Log.d(TAG, "onInterstitialAdReady")
                             interHolder.inter?.setListener(object : MaxAdListener {
                                 override fun onAdLoaded(ad: MaxAd?) {
-                                    callback.onInterstitialReady(interHolder.inter!!)
-                                    isLoadInterstitialFailed = false
+                                    activity.lifecycleScope.launch(Dispatchers.Main) {
+                                        isLoadInterstitialFailed = false
+                                        callback.onInterstitialReady(interHolder.inter!!)
+                                    }
                                 }
 
                                 override fun onAdDisplayed(ad: MaxAd?) {
+                                    if (AppOpenManager.getInstance().isInitialized) {
+                                        AppOpenManager.getInstance().isAppResumeEnabled = false
+                                    }
                                     callback.onInterstitialShowSucceed()
                                     lastTimeInterstitialShowed = System.currentTimeMillis()
                                     isInterstitialAdShowing = true
                                 }
 
                                 override fun onAdHidden(ad: MaxAd?) {
+                                    if (AppOpenManager.getInstance().isInitialized) {
+                                        AppOpenManager.getInstance().isAppResumeEnabled = true
+                                    }
                                     callback.onInterstitialClosed()
                                     isInterstitialAdShowing = false
                                 }
 
                                 override fun onAdClicked(ad: MaxAd?) {
-
+                                    TODO("Not yet implemented")
                                 }
 
                                 override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                                    callback.onInterstitialLoadFail(error.toString())
                                     isLoadInterstitialFailed = true
-                                    isInterstitialAdShowing = false
+                                    if (AppOpenManager.getInstance().isInitialized) {
+                                        AppOpenManager.getInstance().isAppResumeEnabled = true
+                                    }
+                                    callback.onInterstitialLoadFail(error.toString())
                                 }
 
                                 override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                                    callback.onInterstitialLoadFail(error.toString())
+                                    if (AppOpenManager.getInstance().isInitialized) {
+                                        AppOpenManager.getInstance().isAppResumeEnabled = true
+                                    }
+                                    callback.onInterstitialClosed()
                                 }
 
                             })
