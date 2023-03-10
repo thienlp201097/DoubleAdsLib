@@ -956,7 +956,7 @@ object ApplovinUtil : LifecycleObserver {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
-                                callback.onInterstitialClosed()
+                                callback.onInterstitialLoadFail(error.toString())
                             }
 
                         })
@@ -1037,7 +1037,7 @@ object ApplovinUtil : LifecycleObserver {
                                     if (AppOpenManager.getInstance().isInitialized) {
                                         AppOpenManager.getInstance().isAppResumeEnabled = true
                                     }
-                                    callback.onInterstitialClosed()
+                                    callback.onInterstitialLoadFail(error.toString())
                                 }
 
                             })
