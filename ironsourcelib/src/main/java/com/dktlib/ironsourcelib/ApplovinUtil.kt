@@ -64,7 +64,7 @@ object ApplovinUtil : LifecycleObserver {
     fun loadInterstitials(activity: AppCompatActivity, idAd: String, timeout: Long, callback: InterstititialCallback) {
         interstitialAd = MaxInterstitialAd(idAd, activity)
         if (!enableAds || !isNetworkConnected(activity)) {
-            callback.onInterstitialClosed()
+            callback.onInterstitialLoadFail("null")
             return
         }
 
@@ -110,7 +110,6 @@ object ApplovinUtil : LifecycleObserver {
                 callback.onInterstitialLoadFail("!IronSource.isInterstitialReady()")
             }
         }
-
     }
 
 
@@ -198,7 +197,7 @@ object ApplovinUtil : LifecycleObserver {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
-                callback.onInterstitialClosed()
+                callback.onInterstitialLoadFail(error.toString())
             }
         })
 
@@ -229,7 +228,7 @@ object ApplovinUtil : LifecycleObserver {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
-                callback.onInterstitialClosed()
+                callback.onInterstitialLoadFail("error")
                 isInterstitialAdShowing = false
                 isLoadInterstitialFailed = true
             }

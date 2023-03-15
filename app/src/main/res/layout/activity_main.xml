@@ -14,27 +14,104 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btn_load_inter"
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
-                android:text="load inter" />
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_show_inter"
-                android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/btn_load_inter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="load inter" />
+
+                <Button
+                    android:id="@+id/btn_show_inter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="show inter" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btn_load_inter"
-                android:layout_centerHorizontal="true"
-                android:text="show inter" />
+                android:layout_below="@id/ln1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_load_inter_app_lovin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="load inter Max" />
+
+                <Button
+                    android:id="@+id/btn_show_inter_app_lovin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="show inter Max" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ln2"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/load_native"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/btn_show_reward"
+                    android:layout_centerHorizontal="true"
+                    android:text="load native" />
+
+                <Button
+                    android:id="@+id/show_native"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/load_native"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="20dp"
+                    android:text="show native" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ln4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ln3"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/load_native_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/btn_show_reward"
+                    android:layout_centerHorizontal="true"
+                    android:text="load native Max" />
+
+                <Button
+                    android:id="@+id/show_native_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/load_native"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="20dp"
+                    android:text="show native Max" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <Button
                 android:id="@+id/btn_show_inter_callback2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btn_show_inter"
+                android:layout_below="@id/ln4"
                 android:layout_centerInParent="true"
                 android:text="show inter check time " />
 
@@ -53,24 +130,12 @@
                 android:layout_below="@id/btn_load_show_inter_callback2"
                 android:layout_centerHorizontal="true"
                 android:text="load and show reward" />
-            <Button
-                android:id="@+id/load_native"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btn_show_reward"
-                android:layout_centerHorizontal="true"
-                android:text="load native" />
-            <Button
-                android:id="@+id/show_native"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/load_native"
-                android:layout_centerHorizontal="true"
-                android:text="show native" />
+
             <ScrollView
-                android:layout_below="@id/show_native"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_show_reward">
+
                 <FrameLayout
                     android:id="@+id/nativead"
                     android:layout_width="match_parent"

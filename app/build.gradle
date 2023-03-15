@@ -10,7 +10,7 @@ android {
     configurations.all {
         resolutionStrategy { force 'androidx.work:work-runtime:2.6.0' }
     }
-    compileSdk 32
+    compileSdk 33
     dataBinding {
         enabled = true
     }
@@ -19,8 +19,8 @@ android {
             resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
         }
         applicationId "virtual.piano.keyboard.perfectpiano.melody.electric.instrument"
-        minSdk 23
-        targetSdk 30
+        minSdk 27
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -62,6 +62,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation "androidx.core:core-ktx:+"
     implementation 'com.applovin:applovin-sdk:+'
+    implementation 'com.google.android.gms:play-services-ads:21.1.0'
 //    implementation 'androidx.annotation:annotation:1.0.0'
 //    implementation 'com.facebook.android:audience-network-sdk:6.+'
 }

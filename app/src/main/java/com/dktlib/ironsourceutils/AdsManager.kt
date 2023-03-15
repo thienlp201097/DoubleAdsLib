@@ -21,7 +21,7 @@ object AdsManager {
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
     var interHolder = InterHolder("134656413e36e374")
-    fun loadInter(context: Context,  id : String){
+    fun loadInter(context: Context){
         ApplovinUtil.loadAnGetInterstitials(context,interHolder,object : InterstititialCallbackNew{
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {
                 Toast.makeText(context,"Loaded",Toast.LENGTH_SHORT).show()
@@ -32,6 +32,7 @@ object AdsManager {
             }
 
             override fun onInterstitialLoadFail(error: String) {
+                interHolder.inter = null
                 Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
 
