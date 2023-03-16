@@ -894,6 +894,7 @@ object ApplovinUtil : LifecycleObserver {
         interHolder.inter?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
 
         if (!interHolder.check){
+            interHolder.mutable.removeObservers(activity as LifecycleOwner)
             if (interHolder.inter?.isReady == true) {
                 activity.lifecycleScope.launch {
                     dialogFullScreen = Dialog(activity)

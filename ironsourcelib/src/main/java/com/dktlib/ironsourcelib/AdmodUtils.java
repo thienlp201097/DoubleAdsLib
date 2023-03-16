@@ -425,9 +425,6 @@ public class AdmodUtils {
                     public void onAdFailedToLoad(LoadAdError adError) {
                         Log.e("Admodfail", "onAdFailedToLoad" + adError.getMessage());
                         Log.e("Admodfail", "errorCodeAds" + adError.getCause());
-                        nativeHolder.setNativeAd(null);
-                        nativeHolder.setLoad(false);
-                        nativeHolder.getNative_mutable().setValue(null);
                         loadAndGetNativeAds2(context,nativeHolder,adCallback);
                     }
                 })
@@ -454,6 +451,8 @@ public class AdmodUtils {
                     @Override
                     public void onNativeAdLoaded(@NonNull @NotNull NativeAd nativeAd) {
                         nativeHolder.setNativeAd(nativeAd);
+                        nativeHolder.setLoad(false);
+                        nativeHolder.getNative_mutable().setValue(nativeAd);
                         nativeAd.setOnPaidEventListener(adCallback::onAdPaid);
                         adCallback.onLoadedAndGetNativeAd(nativeAd);
                         //viewGroup.setVisibility(View.VISIBLE);
@@ -464,6 +463,9 @@ public class AdmodUtils {
                     public void onAdFailedToLoad(LoadAdError adError) {
                         Log.e("Admodfail", "onAdFailedToLoad" + adError.getMessage());
                         Log.e("Admodfail", "errorCodeAds" + adError.getCause());
+                        nativeHolder.setNativeAd(null);
+                        nativeHolder.setLoad(false);
+                        nativeHolder.getNative_mutable().setValue(null);
                         adCallback.onAdFail();
                     }
                 })
