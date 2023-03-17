@@ -1064,6 +1064,17 @@ object ApplovinUtil : LifecycleObserver {
                 }
             }
         }
+
+        activity.lifecycleScope.launch(Dispatchers.Main) {
+            delay(5000)
+            if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing)) {
+                dialogFullScreen?.dismiss()
+                interHolder.inter = null
+                interHolder.check = false
+                interHolder.mutable.removeObservers(activity)
+                callback.onInterstitialLoadFail("!IronSource.isInterstitialReady()")
+            }
+        }
     }
 
     fun loadNativeAds(activity: Activity, nativeHolder: NativeHolder, adCallback: NativeCallBackNew) {
