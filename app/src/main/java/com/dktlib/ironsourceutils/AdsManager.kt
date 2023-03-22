@@ -15,12 +15,30 @@ import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
 import com.dktlib.ironsourcelib.utils.InterHolder
+import com.dktlib.ironsourcelib.utils.NativeHolder
 
 object AdsManager {
     var inter: MaxInterstitialAd?=null
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
     var interHolder = InterHolder("134656413e36e374")
+    var nativeHolder = NativeHolder("134656413e36e374")
+
+    fun showAdsNative(activity: Activity, nativeHolder: NativeHolder,viewGroup: ViewGroup){
+        ApplovinUtil.loadAndShowNativeAdsWithLayout(activity,nativeHolder,R.layout.native_custom_ad_view,viewGroup,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
+            override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+                Toast.makeText(activity,"Loaded",Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onAdFail() {
+                Toast.makeText(activity,"LoadFailed",Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+
+            }
+        })
+    }
     fun loadInter(context: Context){
         ApplovinUtil.loadAnGetInterstitials(context,interHolder,object : InterstititialCallbackNew{
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {

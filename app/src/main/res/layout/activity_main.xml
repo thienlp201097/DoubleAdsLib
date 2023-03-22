@@ -131,10 +131,18 @@
                 android:layout_centerHorizontal="true"
                 android:text="load and show reward" />
 
+            <Button
+                android:id="@+id/btn_show_native"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_show_reward"
+                android:layout_centerHorizontal="true"
+                android:text="load and show native" />
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btn_show_reward">
+                android:layout_below="@id/btn_show_native">
 
                 <FrameLayout
                     android:id="@+id/nativead"

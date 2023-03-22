@@ -38,10 +38,14 @@ class MainActivity : AppCompatActivity() {
         val load_native_max = findViewById<Button>(R.id.load_native_max)
         val btnShowNative = findViewById<Button>(R.id.show_native)
         val show_native_max = findViewById<Button>(R.id.show_native_max)
+        val btn_show_native = findViewById<Button>(R.id.btn_show_native)
 
         bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
 
+        btn_show_native.setOnClickListener {
+            AdsManager.showAdsNative(this,nativeHolder,nativeAds)
+        }
         btnLoad.setOnClickListener {
             AdsManagerAdmod.loadInter(this, AdsManagerAdmod.interholder)
         }

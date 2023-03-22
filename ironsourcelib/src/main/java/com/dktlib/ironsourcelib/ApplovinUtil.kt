@@ -992,64 +992,77 @@ object ApplovinUtil : LifecycleObserver {
                 }
                 delay(dialogShowTime)
                 interHolder.mutable.observe(activity as LifecycleOwner) {
-                    if (it.isReady){
-                        interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                        if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                            Log.d(TAG, "onInterstitialAdReady")
-                            interHolder.inter?.setListener(object : MaxAdListener {
-                                override fun onAdLoaded(ad: MaxAd?) {
-                                    activity.lifecycleScope.launch(Dispatchers.Main) {
-                                        isLoadInterstitialFailed = false
-                                        callback.onInterstitialReady(interHolder.inter!!)
+                    if (it!=null){
+                        if (it.isReady){
+                            interHolder.mutable.removeObservers(activity as LifecycleOwner)
+                            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                                Log.d(TAG, "onInterstitialAdReady")
+                                interHolder.inter?.setListener(object : MaxAdListener {
+                                    override fun onAdLoaded(ad: MaxAd?) {
+                                        activity.lifecycleScope.launch(Dispatchers.Main) {
+                                            isLoadInterstitialFailed = false
+                                            callback.onInterstitialReady(interHolder.inter!!)
+                                        }
                                     }
-                                }
 
-                                override fun onAdDisplayed(ad: MaxAd?) {
-                                    if (AppOpenManager.getInstance().isInitialized) {
-                                        AppOpenManager.getInstance().isAppResumeEnabled = false
+                                    override fun onAdDisplayed(ad: MaxAd?) {
+                                        if (AppOpenManager.getInstance().isInitialized) {
+                                            AppOpenManager.getInstance().isAppResumeEnabled = false
+                                        }
+                                        callback.onInterstitialShowSucceed()
+                                        lastTimeInterstitialShowed = System.currentTimeMillis()
+                                        isInterstitialAdShowing = true
                                     }
-                                    callback.onInterstitialShowSucceed()
-                                    lastTimeInterstitialShowed = System.currentTimeMillis()
-                                    isInterstitialAdShowing = true
-                                }
 
-                                override fun onAdHidden(ad: MaxAd?) {
-                                    if (AppOpenManager.getInstance().isInitialized) {
-                                        AppOpenManager.getInstance().isAppResumeEnabled = true
+                                    override fun onAdHidden(ad: MaxAd?) {
+                                        if (AppOpenManager.getInstance().isInitialized) {
+                                            AppOpenManager.getInstance().isAppResumeEnabled = true
+                                        }
+                                        callback.onInterstitialClosed()
+                                        isInterstitialAdShowing = false
                                     }
-                                    callback.onInterstitialClosed()
-                                    isInterstitialAdShowing = false
-                                }
 
-                                override fun onAdClicked(ad: MaxAd?) {
-                                    TODO("Not yet implemented")
-                                }
-
-                                override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                                    isLoadInterstitialFailed = true
-                                    if (AppOpenManager.getInstance().isInitialized) {
-                                        AppOpenManager.getInstance().isAppResumeEnabled = true
+                                    override fun onAdClicked(ad: MaxAd?) {
+                                        TODO("Not yet implemented")
                                     }
-                                    callback.onInterstitialLoadFail(error.toString())
-                                }
 
-                                override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                                    if (AppOpenManager.getInstance().isInitialized) {
-                                        AppOpenManager.getInstance().isAppResumeEnabled = true
+                                    override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                                        isLoadInterstitialFailed = true
+                                        if (AppOpenManager.getInstance().isInitialized) {
+                                            AppOpenManager.getInstance().isAppResumeEnabled = true
+                                        }
+                                        callback.onInterstitialLoadFail(error.toString())
                                     }
-                                    callback.onInterstitialLoadFail(error.toString())
-                                }
 
-                            })
-                            interHolder.inter?.showAd()
-                        }else{
-                            callback.onInterstitialClosed()
-                            dialogFullScreen?.dismiss()
+                                    override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                                        if (AppOpenManager.getInstance().isInitialized) {
+                                            AppOpenManager.getInstance().isAppResumeEnabled = true
+                                        }
+                                        callback.onInterstitialLoadFail(error.toString())
+                                    }
+
+                                })
+                                interHolder.inter?.showAd()
+                            }else{
+                                callback.onInterstitialClosed()
+                                dialogFullScreen?.dismiss()
+                            }
+                            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
+                                dialogFullScreen?.dismiss()
+                            }
+                        }else {
+                            activity.lifecycleScope.launch(Dispatchers.Main) {
+                                interHolder.mutable.removeObservers(activity as LifecycleOwner)
+                                dialogFullScreen?.dismiss()
+                                if (AppOpenManager.getInstance().isInitialized) {
+                                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                                }
+                                callback.onInterstitialLoadFail("Error")
+                                isInterstitialAdShowing = false
+                                isLoadInterstitialFailed = true
+                            }
                         }
-                        if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
-                            dialogFullScreen?.dismiss()
-                        }
-                    }else {
+                    }else{
                         activity.lifecycleScope.launch(Dispatchers.Main) {
                             interHolder.mutable.removeObservers(activity as LifecycleOwner)
                             dialogFullScreen?.dismiss()
@@ -1187,6 +1200,51 @@ object ApplovinUtil : LifecycleObserver {
         }
     }
 
+
+    fun loadAndShowNativeAdsWithLayout(activity: Activity, nativeHolder: NativeHolder, layout: Int, view: ViewGroup,size: GoogleENative, adCallback: NativeCallBackNew) {
+        if (!enableAds || !isNetworkConnected(activity)) {
+            adCallback.onAdFail()
+            return
+        }
+        nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
+        val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
+            activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+        } else {
+            activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+        }
+        view.addView(tagView, 0)
+        val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
+        shimmerFrameLayout.startShimmer()
+
+        nativeHolder.nativeAdLoader?.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
+        nativeHolder.nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
+                if (nativeHolder.native != null) {
+                    nativeHolder.nativeAdLoader?.destroy(nativeHolder.native)
+                }
+                nativeHolder.native = ad
+                val adView = createNativeAdView(activity,layout)
+                nativeHolder.nativeAdLoader?.render(adView, nativeHolder.native)
+                shimmerFrameLayout.stopShimmer()
+                view.removeAllViews()
+                view.addView(adView)
+                adCallback.onNativeAdLoaded(nativeHolder.native,adView)
+            }
+
+            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                shimmerFrameLayout.stopShimmer()
+                adCallback.onAdFail()
+            }
+
+            override fun onNativeAdClicked(ad: MaxAd) {
+            }
+
+            override fun onNativeAdExpired(ad: MaxAd?) {
+                nativeHolder.nativeAdLoader?.loadAd()
+            }
+        })
+        nativeHolder.nativeAdLoader?.loadAd()
+    }
     private fun createNativeAdView(context: Context,layout : Int): MaxNativeAdView {
         val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder.Builder(layout)
             .setTitleTextViewId(R.id.title_text_view)
