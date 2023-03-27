@@ -728,7 +728,7 @@ object ApplovinUtil : LifecycleObserver {
 
     fun loadAndGetNativeAds(activity: Activity, idAd: String, adCallback: NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(activity)) {
-            adCallback.onAdFail()
+            adCallback.onAdFail("No internet")
         }
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
         nativeAdLoader.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
@@ -744,7 +744,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                adCallback.onAdFail()
+                adCallback.onAdFail(error.toString())
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
@@ -970,7 +970,7 @@ object ApplovinUtil : LifecycleObserver {
                     if (AppOpenManager.getInstance().isInitialized) {
                         AppOpenManager.getInstance().isAppResumeEnabled = true
                     }
-                    callback.onInterstitialLoadFail("Error")
+                    callback.onInterstitialLoadFail("interHolder.inter not ready")
                     isInterstitialAdShowing = false
                     isLoadInterstitialFailed = true
                 }
@@ -1055,7 +1055,7 @@ object ApplovinUtil : LifecycleObserver {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
-                                callback.onInterstitialLoadFail("Error")
+                                callback.onInterstitialLoadFail("interHolder.inter not ready")
                                 isInterstitialAdShowing = false
                                 isLoadInterstitialFailed = true
                             }
@@ -1067,7 +1067,7 @@ object ApplovinUtil : LifecycleObserver {
                             if (AppOpenManager.getInstance().isInitialized) {
                                 AppOpenManager.getInstance().isAppResumeEnabled = true
                             }
-                            callback.onInterstitialLoadFail("Error")
+                            callback.onInterstitialLoadFail("interHolder.inter null")
                             isInterstitialAdShowing = false
                             isLoadInterstitialFailed = true
                         }
@@ -1083,14 +1083,14 @@ object ApplovinUtil : LifecycleObserver {
                 interHolder.inter = null
                 interHolder.check = false
                 interHolder.mutable.removeObservers(activity)
-                callback.onInterstitialLoadFail("!IronSource.isInterstitialReady()")
+                callback.onInterstitialLoadFail("interHolder.inter not ready")
             }
         }
     }
 
     fun loadNativeAds(activity: Activity, nativeHolder: NativeHolder, adCallback: NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(activity)) {
-            adCallback.onAdFail()
+            adCallback.onAdFail("No internet")
             return
         }
         nativeHolder.isLoad = true
@@ -1112,6 +1112,7 @@ object ApplovinUtil : LifecycleObserver {
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                 nativeHolder.native_mutable.value = null
                 nativeHolder.isLoad = false
+                adCallback.onAdFail(error.toString())
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
@@ -1126,7 +1127,7 @@ object ApplovinUtil : LifecycleObserver {
 
     fun showNativeWithLayout(view: ViewGroup, context: Activity,nativeHolder: NativeHolder, layout : Int,size: GoogleENative, callback : NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(context)) {
-            callback.onAdFail()
+            callback.onAdFail("No internet")
             return
         }
         val adView = createNativeAdView(context,layout)
@@ -1143,6 +1144,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
 
                 override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
+                    callback.onAdFail(error.toString())
                 }
 
                 override fun onNativeAdClicked(ad: MaxAd) {
@@ -1163,7 +1165,7 @@ object ApplovinUtil : LifecycleObserver {
                 view.addView(adView)
                 callback.onNativeAdLoaded(nativeHolder.native,adView)
             }else{
-                callback.onAdFail()
+                callback.onAdFail("NativeAd Null")
             }
         }else {
             val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
@@ -1183,16 +1185,16 @@ object ApplovinUtil : LifecycleObserver {
                         callback.onNativeAdLoaded(nativeHolder.native,adView)
                     }else {
                         shimmerFrameLayout.stopShimmer()
-                        callback.onAdFail()
+                        callback.onAdFail("NativeAd null")
                     }
                 }else{
                     shimmerFrameLayout.stopShimmer()
-                    callback.onAdFail()
+                    callback.onAdFail("NativeAd null")
                 }
             }
             Handler().postDelayed({
                 if (!nativeHolder.isLoad && nativeHolder.native == null){
-                    callback.onAdFail()
+                    callback.onAdFail("NativeAd null")
                 }
             },3000)
         }
@@ -1201,7 +1203,7 @@ object ApplovinUtil : LifecycleObserver {
 
     fun loadAndShowNativeAdsWithLayout(activity: Activity, nativeHolder: NativeHolder, layout: Int, view: ViewGroup,size: GoogleENative, adCallback: NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(activity)) {
-            adCallback.onAdFail()
+            adCallback.onAdFail("No internet")
             return
         }
         nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
@@ -1231,7 +1233,7 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                 shimmerFrameLayout.stopShimmer()
-                adCallback.onAdFail()
+                adCallback.onAdFail(error.toString())
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
