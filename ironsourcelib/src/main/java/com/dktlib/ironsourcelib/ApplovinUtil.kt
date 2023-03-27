@@ -941,7 +941,6 @@ object ApplovinUtil : LifecycleObserver {
                             }
 
                             override fun onAdClicked(ad: MaxAd?) {
-                                TODO("Not yet implemented")
                             }
 
                             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
@@ -1023,7 +1022,6 @@ object ApplovinUtil : LifecycleObserver {
                                     }
 
                                     override fun onAdClicked(ad: MaxAd?) {
-                                        TODO("Not yet implemented")
                                     }
 
                                     override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
