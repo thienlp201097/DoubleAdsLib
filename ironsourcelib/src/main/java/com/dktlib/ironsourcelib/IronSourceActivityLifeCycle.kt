@@ -1,11 +1,12 @@
 package com.dktlib.ironsourcelib
 
+import android.app.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog
 
-class DialogHelperActivityLifeCycle(val dialog: SweetAlertDialog) : LifecycleObserver {
+class DialogHelperActivityLifeCycle(val dialog: Dialog) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onDestroy(){

@@ -106,7 +106,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnLoadAndShow.setOnClickListener {
-//            AdsManager.showInter(this,AdsManager.inter)
+            AdsManager.loadAndShowIntersial(this,"134656413e36e374",object : AdsManager.AdsOnClick{
+                override fun onAdsCloseOrFailed() {
+                    startActivity(Intent(this@MainActivity, MainActivity3::class.java))
+                }
+            })
         }
 
         btnReward.setOnClickListener {
@@ -191,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity,"Loaded", Toast.LENGTH_SHORT).show()
                 }
 
-                override fun onAdFail() {
+                override fun onAdFail(error: String) {
                     Toast.makeText(this@MainActivity,"Failed", Toast.LENGTH_SHORT).show()
                 }
 
@@ -210,7 +214,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity,"show success", Toast.LENGTH_SHORT).show()
                 }
 
-                override fun onAdFail() {
+                override fun onAdFail(error: String) {
                     Toast.makeText(this@MainActivity,"Show failed", Toast.LENGTH_SHORT).show()
                 }
 

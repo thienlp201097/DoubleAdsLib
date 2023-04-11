@@ -30,7 +30,7 @@ object AdsManager {
                 Toast.makeText(activity,"Loaded",Toast.LENGTH_SHORT).show()
             }
 
-            override fun onAdFail() {
+            override fun onAdFail(error: String) {
                 Toast.makeText(activity,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
 
@@ -130,5 +130,30 @@ object AdsManager {
             }
         })
         nativeAdLoader?.loadAd()
+    }
+
+    fun loadAndShowIntersial(activity: Activity, idAd: String,adsOnClick: AdsOnClick){
+        ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(activity as AppCompatActivity,idAd,1500, object : InterstititialCallback{
+            override fun onInterstitialReady() {
+
+            }
+
+            override fun onInterstitialClosed() {
+                adsOnClick.onAdsCloseOrFailed()
+            }
+
+            override fun onInterstitialLoadFail(error: String) {
+                Log.d("===Ads",error)
+                adsOnClick.onAdsCloseOrFailed()
+            }
+
+            override fun onInterstitialShowSucceed() {
+
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+
+            }
+        })
     }
 }

@@ -248,10 +248,12 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        var dialog = SweetAlertDialog(activity, SweetAlertDialog.PROGRESS_TYPE)
-        dialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-        dialog.titleText = "Loading ads. Please wait..."
-        dialog.setCancelable(false)
+        val dialogFullScreen = Dialog(activity)
+        dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialogFullScreen.setContentView(R.layout.dialog_full_screen)
+        dialogFullScreen.setCancelable(false)
+        dialogFullScreen.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        dialogFullScreen.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
 
         interstitialAd = MaxInterstitialAd(idAd, activity)
         interstitialAd.loadAd()
@@ -270,8 +272,8 @@ object ApplovinUtil : LifecycleObserver {
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds || !isNetworkConnected(activity)) {
             Log.e("isNetworkConnected", "1" + AppOpenManager.getInstance().isAppResumeEnabled)
-            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing) {
-                dialog.dismiss()
+            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                dialogFullScreen.dismiss()
             }
             Log.e("isNetworkConnected", "2" + AppOpenManager.getInstance().isAppResumeEnabled)
 
@@ -299,18 +301,29 @@ object ApplovinUtil : LifecycleObserver {
 
 
             override fun onAdLoaded(ad: MaxAd?) {
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                    Log.d(TAG, "onInterstitialAdReady")
-                    if (interstitialAd.isReady) {
-                        dialog.dismiss()
-                        interstitialAd.showAd()
+                activity.lifecycleScope.launch {
+                    if (dialogShowTime > 0) {
+                        activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialogFullScreen))
+                        if (!activity.isFinishing) {
+                            dialogFullScreen.show()
+                        }
+                        delay(dialogShowTime)
+                        if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                            dialogFullScreen.dismiss()
+                        }
+                    }
+                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        Log.d(TAG, "onInterstitialAdReady")
+                        if (interstitialAd.isReady) {
+                            interstitialAd.showAd()
+                        }
                     }
                 }
             }
 
             override fun onAdDisplayed(ad: MaxAd?) {
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing) {
-                    dialog.dismiss()
+                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                    dialogFullScreen.dismiss()
                 }
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = false
@@ -324,8 +337,8 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdHidden(ad: MaxAd?) {
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing) {
-                    dialog.dismiss()
+                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                    dialogFullScreen.dismiss()
                 }
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
@@ -343,8 +356,8 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing) {
-                        dialog.dismiss()
+                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                        dialogFullScreen.dismiss()
                     }
                     isLoadInterstitialFailed = true
                     if (AppOpenManager.getInstance().isInitialized) {
@@ -353,7 +366,7 @@ object ApplovinUtil : LifecycleObserver {
 
                     }
                     isInterstitialAdShowing = false
-                    callback.onInterstitialLoadFail(error.toString())
+                    callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
                 }
             }
 
@@ -366,25 +379,22 @@ object ApplovinUtil : LifecycleObserver {
                 isInterstitialAdShowing = false
                 callback.onInterstitialClosed()
 
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing) {
-                    dialog.dismiss()
+                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                    dialogFullScreen.dismiss()
                 }
             }
         })
 
-
-
-
         if (interstitialAd.isReady) {
             activity.lifecycleScope.launch {
                 if (dialogShowTime > 0) {
-                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialog))
+                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialogFullScreen))
                     if (!activity.isFinishing) {
-                        dialog.show()
+                        dialogFullScreen.show()
                     }
                     delay(dialogShowTime)
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialog.isShowing) {
-                        dialog.dismiss()
+                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
+                        dialogFullScreen.dismiss()
                     }
                 }
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
@@ -397,9 +407,9 @@ object ApplovinUtil : LifecycleObserver {
         } else {
             if (dialogShowTime > 0) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
-                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialog))
+                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialogFullScreen))
                     if (!activity.isFinishing) {
-                        dialog.show()
+                        dialogFullScreen.show()
                     }
                 }
             }
@@ -462,11 +472,11 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
                 bannerContainer.removeAllViews()
-                callback.onBannerLoadFail(error.toString())
+                callback.onBannerLoadFail(error?.code.toString().replace("-",""))
             }
 
             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                callback.onBannerLoadFail(error.toString())
+                callback.onBannerLoadFail(error?.code.toString().replace("-",""))
 
             }
 
@@ -684,48 +694,6 @@ object ApplovinUtil : LifecycleObserver {
 
     }
 
-
-//    fun loadAndShowRewardsAds(placementId: String, callback: RewardVideoCallback) {
-//        IronSource.setRewardedVideoListener(object : RewardedVideoListener {
-//            override fun onRewardedVideoAdOpened() {
-//
-//            }
-//
-//            override fun onRewardedVideoAdClosed() {
-//                callback.onRewardClosed()
-//            }
-//
-//            override fun onRewardedVideoAvailabilityChanged(p0: Boolean) {
-//
-//            }
-//
-//            override fun onRewardedVideoAdStarted() {
-//
-//            }
-//
-//            override fun onRewardedVideoAdEnded() {
-//
-//            }
-//
-//            override fun onRewardedVideoAdRewarded(p0: Placement?) {
-//                callback.onRewardEarned()
-//            }
-//
-//            override fun onRewardedVideoAdShowFailed(p0: IronSourceError?) {
-//                callback.onRewardFailed()
-//            }
-//
-//            override fun onRewardedVideoAdClicked(p0: Placement?) {
-//
-//            }
-//        })
-//        if (IronSource.isRewardedVideoAvailable()) {
-//            IronSource.showRewardedVideo(placementId)
-//        } else {
-//            callback.onRewardNotAvailable()
-//        }
-//    }
-
     fun loadAndGetNativeAds(activity: Activity, idAd: String, adCallback: NativeCallBackNew) {
         if (!enableAds || !isNetworkConnected(activity)) {
             adCallback.onAdFail("No internet")
@@ -838,7 +806,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                callback.onInterstitialLoadFail(error.toString())
+                callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
                 isLoadInterstitialFailed = true
                 isInterstitialAdShowing = false
                 interHolder.check = false
@@ -846,7 +814,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                callback.onInterstitialLoadFail(error.toString())
+                callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
             }
 
         })
@@ -948,14 +916,14 @@ object ApplovinUtil : LifecycleObserver {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
-                                callback.onInterstitialLoadFail(error.toString())
+                                callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
                             }
 
                             override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
-                                callback.onInterstitialLoadFail(error.toString())
+                                callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
                             }
 
                         })
@@ -1029,14 +997,14 @@ object ApplovinUtil : LifecycleObserver {
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
-                                        callback.onInterstitialLoadFail(error.toString())
+                                        callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
                                     }
 
                                     override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
-                                        callback.onInterstitialLoadFail(error.toString())
+                                        callback.onInterstitialLoadFail(error?.code.toString().replace("-",""))
                                     }
 
                                 })
@@ -1055,7 +1023,7 @@ object ApplovinUtil : LifecycleObserver {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
-                                callback.onInterstitialLoadFail("interHolder.inter not ready")
+                                callback.onInterstitialLoadFail("inter not ready")
                                 isInterstitialAdShowing = false
                                 isLoadInterstitialFailed = true
                             }
@@ -1067,7 +1035,7 @@ object ApplovinUtil : LifecycleObserver {
                             if (AppOpenManager.getInstance().isInitialized) {
                                 AppOpenManager.getInstance().isAppResumeEnabled = true
                             }
-                            callback.onInterstitialLoadFail("interHolder.inter null")
+                            callback.onInterstitialLoadFail("inter null")
                             isInterstitialAdShowing = false
                             isLoadInterstitialFailed = true
                         }
@@ -1083,7 +1051,7 @@ object ApplovinUtil : LifecycleObserver {
                 interHolder.inter = null
                 interHolder.check = false
                 interHolder.mutable.removeObservers(activity)
-                callback.onInterstitialLoadFail("interHolder.inter not ready")
+                callback.onInterstitialLoadFail("inter not ready")
             }
         }
     }
@@ -1112,7 +1080,7 @@ object ApplovinUtil : LifecycleObserver {
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                 nativeHolder.native_mutable.value = null
                 nativeHolder.isLoad = false
-                adCallback.onAdFail(error.toString())
+                adCallback.onAdFail(error.code.toString().replace("-",""))
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
@@ -1144,7 +1112,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
 
                 override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                    callback.onAdFail(error.toString())
+                    callback.onAdFail(error.code.toString().replace("-",""))
                 }
 
                 override fun onNativeAdClicked(ad: MaxAd) {
@@ -1233,7 +1201,7 @@ object ApplovinUtil : LifecycleObserver {
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                 shimmerFrameLayout.stopShimmer()
-                adCallback.onAdFail(error.toString())
+                adCallback.onAdFail(error.code.toString().replace("-",""))
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
