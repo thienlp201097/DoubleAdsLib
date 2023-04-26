@@ -1,18 +1,26 @@
 package com.dktlib.ironsourcelib
 
 import android.app.Activity
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Handler
 import android.util.Log
+import android.view.Window
+import android.widget.LinearLayout
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
+import kotlinx.coroutines.delay
 
 class AOAManager(private val activity: Activity, val id : String, val appOpenAdsListener: AppOpenAdsListener) {
 
     private var appOpenAd: AppOpenAd? = null
     private var loadCallback: AppOpenAd.AppOpenAdLoadCallback? = null
     private var isShowingAd = false
+    var dialogFullScreen: Dialog? = null
     private val adRequest: AdRequest
         get() = AdRequest.Builder().build()
 
@@ -75,7 +83,20 @@ class AOAManager(private val activity: Activity, val id : String, val appOpenAds
                 }
             appOpenAd?.run {
                 this.fullScreenContentCallback = fullScreenContentCallback
-                show(activity)
+                dialogFullScreen = Dialog(activity)
+                dialogFullScreen?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialogFullScreen?.setContentView(R.layout.dialog_full_screen)
+                dialogFullScreen?.setCancelable(false)
+                dialogFullScreen?.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+                dialogFullScreen?.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+                if (!activity.isFinishing) {
+                    dialogFullScreen?.show()
+                }
+                Handler().postDelayed({
+                    dialogFullScreen?.dismiss()
+                    show(activity)
+                },800)
+
             }
         } else {
             Log.d("tag", "can't show ad ")
