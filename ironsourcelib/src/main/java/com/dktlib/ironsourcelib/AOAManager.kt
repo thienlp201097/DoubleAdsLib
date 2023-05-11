@@ -13,7 +13,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
-import kotlinx.coroutines.delay
 
 class AOAManager(private val activity: Activity, val id : String, val appOpenAdsListener: AppOpenAdsListener) {
 
@@ -67,6 +66,7 @@ class AOAManager(private val activity: Activity, val id : String, val appOpenAds
                 object : FullScreenContentCallback() {
 
                     override fun onAdDismissedFullScreenContent() {
+                        dialogFullScreen?.dismiss()
                         appOpenAd = null
                         isShowingAd = false
 //                        fetchAd()
@@ -74,6 +74,7 @@ class AOAManager(private val activity: Activity, val id : String, val appOpenAds
                     }
 
                     override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                        dialogFullScreen?.dismiss()
                         appOpenAdsListener.onAdClosedOrFail()
                     }
 
@@ -93,10 +94,8 @@ class AOAManager(private val activity: Activity, val id : String, val appOpenAds
                     dialogFullScreen?.show()
                 }
                 Handler().postDelayed({
-                    dialogFullScreen?.dismiss()
                     show(activity)
                 },800)
-
             }
         } else {
             Log.d("tag", "can't show ad ")
