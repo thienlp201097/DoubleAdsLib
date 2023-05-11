@@ -848,10 +848,6 @@ object ApplovinUtil : LifecycleObserver {
             }
         }
 
-        if (System.currentTimeMillis() - 1000 < lastTimeCallInterstitial) {
-            return
-        }
-        lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds) {
             if (AppOpenManager.getInstance().isInitialized) {
                 AppOpenManager.getInstance().isAppResumeEnabled = true
