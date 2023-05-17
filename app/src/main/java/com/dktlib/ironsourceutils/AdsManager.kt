@@ -50,7 +50,6 @@ object AdsManager {
             }
 
             override fun onInterstitialLoadFail(error: String) {
-                interHolder.inter = null
                 Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
 
