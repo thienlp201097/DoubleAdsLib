@@ -6,7 +6,7 @@ plugins {
 
 android {
     configurations.all {
-        resolutionStrategy { force 'androidx.work:work-runtime:2.6.0' }
+        resolutionStrategy { force 'androidx.work:work-runtime:2.7.1' }
     }
     compileSdk 33
     dataBinding {
@@ -18,7 +18,7 @@ android {
         }
         applicationId "virtual.piano.keyboard.perfectpiano.melody.electric.instrument"
         minSdk 27
-        targetSdk 33
+        targetSdk 30
         versionCode 1
         versionName "1.0"
 

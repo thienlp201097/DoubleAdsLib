@@ -252,6 +252,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
     public void showAdIfAvailable(final boolean isSplash) {
         if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            try {
+                dialogFullScreen.dismiss();
+                dialogFullScreen = null;
+            }catch (Exception ignored){
+
+            }
             if (fullScreenContentCallback != null) {
                 fullScreenContentCallback.onAdDismissedFullScreenContent();
             }
@@ -263,7 +269,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-                            dialogFullScreen.dismiss();
+                            try {
+                                dialogFullScreen.dismiss();
+                                dialogFullScreen = null;
+                            }catch (Exception ignored){
+
+                            }
                             // Set the reference to null so isAdAvailable() returns false.
                             appResumeAd = null;
                             if (fullScreenContentCallback != null) {
@@ -276,7 +287,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                         @Override
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            dialogFullScreen.dismiss();
+                            try {
+                                dialogFullScreen.dismiss();
+                                dialogFullScreen = null;
+                            }catch (Exception ignored){
+
+                            }
                             if (fullScreenContentCallback != null) {
                                 fullScreenContentCallback.onAdFailedToShowFullScreenContent(adError);
                             }
@@ -396,7 +412,11 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         dialogFullScreen.setCancelable(false);
         dialogFullScreen.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialogFullScreen.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        dialogFullScreen.show();
+        try {
+            dialogFullScreen.show();
+        }catch (Exception ignored){
+
+        }
     }
 }
 
