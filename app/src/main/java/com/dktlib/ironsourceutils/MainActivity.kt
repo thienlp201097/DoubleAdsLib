@@ -2,21 +2,17 @@ package com.dktlib.ironsourceutils
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.applovin.mediation.MaxAd
-import com.applovin.mediation.MaxError
-import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
 import com.dktlib.ironsourcelib.utils.NativeHolder
-import com.dktlib.ironsourceutils.AdsManager.nativeAdLoader
+import com.dktlib.ironsourcelib.utils.Utils
 
 class MainActivity : AppCompatActivity() {
     lateinit var bannerContainer: ViewGroup
@@ -39,7 +35,16 @@ class MainActivity : AppCompatActivity() {
         val btnShowNative = findViewById<Button>(R.id.show_native)
         val show_native_max = findViewById<Button>(R.id.show_native_max)
         val btn_show_native = findViewById<Button>(R.id.btn_show_native)
+        val aoaManager = AOAManager(this, "", 5000, object : AOAManager.AppOpenAdsListener {
+            override fun onAdsClose() {
+                Utils.getInstance().addActivity(this@MainActivity, MainActivity2::class.java)
+            }
 
+            override fun onAdsFailed() {
+                Utils.getInstance().addActivity(this@MainActivity, MainActivity2::class.java)
+            }
+        })
+        aoaManager.loadAndShowAoA()
         bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
 

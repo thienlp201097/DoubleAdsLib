@@ -71,11 +71,15 @@ object AdsManager {
             }
 
             override fun onInterstitialClosed() {
-                adsOnClick.onAdsCloseOrFailed()
+                interHolder.inter = null
+                loadInter(context)
                 Toast.makeText(context,"Closed",Toast.LENGTH_SHORT).show()
+                adsOnClick.onAdsCloseOrFailed()
             }
 
             override fun onInterstitialLoadFail(error: String) {
+                interHolder.inter = null
+                loadInter(context)
                 adsOnClick.onAdsCloseOrFailed()
                 Toast.makeText(context,"Failed",Toast.LENGTH_SHORT).show()
             }
