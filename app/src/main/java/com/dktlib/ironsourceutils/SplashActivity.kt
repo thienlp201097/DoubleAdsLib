@@ -6,18 +6,29 @@ import androidx.appcompat.app.AppCompatActivity
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
+import com.dktlib.ironsourcelib.utils.Utils
 import com.dktlib.ironsourceutils.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AdmodUtils.getInstance().initAdmob(this, 10000, true, false)
+        AdmodUtils.getInstance().initAdmob(this, 10000, true, true)
         AppOpenManager.getInstance().init(application, getString(R.string.test_ads_admob_app_open))
         AppOpenManager.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
         val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ApplovinUtil.initApplovin(this,  true)
+        val aoaManager = AOAManager(this, "", 10000, object : AOAManager.AppOpenAdsListener {
+            override fun onAdsClose() {
+                Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
+            }
+
+            override fun onAdsFailed() {
+                Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
+            }
+        })
+        aoaManager.loadAndShowAoA()
 
 //        ApplovinUtil.loadAndGetNativeAds(this@SplashActivity, "8aec97f172bce4a6",object : NativeCallBackNew {
 //
@@ -35,7 +46,7 @@ class SplashActivity : AppCompatActivity() {
 //
 //        })
 
-        loadInter();
+//        loadInter();
 
 
 
@@ -76,8 +87,6 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onInterstitialClosed() {
-
-
                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
             }
 

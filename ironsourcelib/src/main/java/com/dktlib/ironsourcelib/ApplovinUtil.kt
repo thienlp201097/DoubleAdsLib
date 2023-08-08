@@ -943,6 +943,7 @@ object ApplovinUtil : LifecycleObserver {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
+                                interHolder.inter = null
                                 callback.onInterstitialClosed()
                                 isInterstitialAdShowing = false
                             }
@@ -955,6 +956,7 @@ object ApplovinUtil : LifecycleObserver {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
+                                interHolder.inter = null
                                 callback.onInterstitialLoadFail(
                                     error?.code.toString().replace("-", "")
                                 )
@@ -971,9 +973,16 @@ object ApplovinUtil : LifecycleObserver {
 
                         })
                         interHolder.inter?.showAd()
-                        dialogFullScreen?.dismiss()
+                        try {
+                            dialogFullScreen?.dismiss()
+                        }catch (ignored: Exception) {
+                        }
+
                     } else {
-                        dialogFullScreen?.dismiss()
+                        try {
+                            dialogFullScreen?.dismiss()
+                        }catch (ignored: Exception) {
+                        }
                     }
                 }
             } else {
@@ -997,9 +1006,13 @@ object ApplovinUtil : LifecycleObserver {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT
                 )
-                if (!activity.isFinishing) {
-                    dialogFullScreen?.show()
+                try {
+                    if (!activity.isFinishing && dialogFullScreen != null && dialogFullScreen?.isShowing == false) {
+                        dialogFullScreen?.show()
+                    }
+                }catch (ignored: Exception) {
                 }
+
                 delay(dialogShowTime)
                 interHolder.mutable.observe(activity as LifecycleOwner) {
                     if (it != null) {
@@ -1028,6 +1041,7 @@ object ApplovinUtil : LifecycleObserver {
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
+                                        interHolder.inter = null
                                         callback.onInterstitialClosed()
                                         isInterstitialAdShowing = false
                                     }
@@ -1043,6 +1057,7 @@ object ApplovinUtil : LifecycleObserver {
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
+                                        interHolder.inter = null
                                         callback.onInterstitialLoadFail(
                                             error?.code.toString().replace("-", "")
                                         )
@@ -1095,7 +1110,7 @@ object ApplovinUtil : LifecycleObserver {
         }
 
         activity.lifecycleScope.launch(Dispatchers.Main) {
-            delay(5000)
+            delay(10000)
             if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing)) {
                 dialogFullScreen?.dismiss()
                 interHolder.inter = null
@@ -1207,8 +1222,7 @@ object ApplovinUtil : LifecycleObserver {
                 context.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
             }
             view.addView(tagView, 0)
-            val shimmerFrameLayout: ShimmerFrameLayout =
-                tagView.findViewById(R.id.shimmer_view_container)
+            val shimmerFrameLayout: ShimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout.startShimmer()
             nativeHolder.native_mutable.observe(context as LifecycleOwner) {
                 if (it != null) {

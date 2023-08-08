@@ -21,8 +21,9 @@ object AdsManager {
     var inter: MaxInterstitialAd?=null
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
-    var interHolder = InterHolder("134656413e36e374")
-    var nativeHolder = NativeHolder("134656413e36e374")
+    var interHolder = InterHolder("24619ce845f83d65")
+    var nativeHolder = NativeHolder("67527f2556316633")
+    var banner = "f443c90308f39f17"
 
     fun showAdsNative(activity: Activity, nativeHolder: NativeHolder,viewGroup: ViewGroup){
         ApplovinUtil.loadAndShowNativeAdsWithLayout(activity,nativeHolder,R.layout.native_custom_ad_view,viewGroup,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
@@ -71,14 +72,12 @@ object AdsManager {
             }
 
             override fun onInterstitialClosed() {
-                interHolder.inter = null
                 loadInter(context)
                 Toast.makeText(context,"Closed",Toast.LENGTH_SHORT).show()
                 adsOnClick.onAdsCloseOrFailed()
             }
 
             override fun onInterstitialLoadFail(error: String) {
-                interHolder.inter = null
                 loadInter(context)
                 adsOnClick.onAdsCloseOrFailed()
                 Toast.makeText(context,"Failed",Toast.LENGTH_SHORT).show()

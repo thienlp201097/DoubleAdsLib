@@ -17,7 +17,6 @@ import com.dktlib.ironsourcelib.utils.Utils
 class MainActivity : AppCompatActivity() {
     lateinit var bannerContainer: ViewGroup
     lateinit var nativeLoader: MaxNativeAdLoader
-    var nativeHolder = NativeHolder("3805534b02308f23")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,21 +34,14 @@ class MainActivity : AppCompatActivity() {
         val btnShowNative = findViewById<Button>(R.id.show_native)
         val show_native_max = findViewById<Button>(R.id.show_native_max)
         val btn_show_native = findViewById<Button>(R.id.btn_show_native)
-        val aoaManager = AOAManager(this, "", 5000, object : AOAManager.AppOpenAdsListener {
-            override fun onAdsClose() {
-                Utils.getInstance().addActivity(this@MainActivity, MainActivity2::class.java)
-            }
 
-            override fun onAdsFailed() {
-                Utils.getInstance().addActivity(this@MainActivity, MainActivity2::class.java)
-            }
-        })
-        aoaManager.loadAndShowAoA()
+
+
         bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
 
         btn_show_native.setOnClickListener {
-            AdsManager.showAdsNative(this,nativeHolder,nativeAds)
+            AdsManager.showAdsNative(this,AdsManager.nativeHolder,nativeAds)
         }
         btnLoad.setOnClickListener {
             AdsManagerAdmod.loadInter(this, AdsManagerAdmod.interholder)
@@ -195,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         load_native_max.setOnClickListener {
-            ApplovinUtil.loadNativeAds(this,nativeHolder,object : NativeCallBackNew{
+            ApplovinUtil.loadNativeAds(this,AdsManager.nativeHolder,object : NativeCallBackNew{
                 override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
                     Toast.makeText(this@MainActivity,"Loaded", Toast.LENGTH_SHORT).show()
                 }
@@ -214,7 +206,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         show_native_max.setOnClickListener {
-            ApplovinUtil.showNativeWithLayout(nativeAds,this,nativeHolder,R.layout.native_custom_ad_view,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
+            ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeHolder,R.layout.native_custom_ad_view,GoogleENative.UNIFIED_MEDIUM,object : NativeCallBackNew{
                 override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
                     Toast.makeText(this@MainActivity,"show success", Toast.LENGTH_SHORT).show()
                 }
