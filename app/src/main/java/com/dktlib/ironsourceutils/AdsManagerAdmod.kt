@@ -29,7 +29,7 @@ object AdsManagerAdmod {
 
     fun loadInter(context: Context, interHolder: InterHolderAdmod) {
         interHolder.check = true
-        AdmodUtils.getInstance().loadAndGetAdInterstitial(context,interHolder,
+        AdmodUtils.loadAndGetAdInterstitial(context,interHolder,
             object : AdCallBackInterLoad {
                 override fun onAdClosed() {
                     Utils.getInstance().showMessenger(context, "onAdClosed")
@@ -63,9 +63,8 @@ object AdsManagerAdmod {
         adListener: AdListener,
         enableLoadingDialog: Boolean
     ) {
-        AdmodUtils.getInstance().showAdInterstitialWithCallbackNotLoadNew(
-            context as Activity?,interHolder,
-            object : AdsInterCallBack {
+        AdmodUtils.showAdInterstitialWithCallbackNotLoadNew(
+            context as Activity,interHolder,10000, object : AdsInterCallBack {
                 override fun onAdLoaded() {
                     Utils.getInstance().showMessenger(context, "onAdLoaded")
                 }
@@ -74,7 +73,7 @@ object AdsManagerAdmod {
                     adListener.onAdClosed()
                 }
 
-                override fun onAdFail() {
+                override fun onAdFail(error: String?) {
                     interHolder.inter = null
                     loadInter(context,interHolder)
                     adListener.onFailed()
@@ -99,10 +98,10 @@ object AdsManagerAdmod {
     }
 
     fun loadAdsNativeNew(context: Context, holder: NativeHolderAdmod) {
-        AdmodUtils.getInstance().loadAndGetNativeAds(
+        AdmodUtils.loadAndGetNativeAds(
             context,
             holder,
-            object : NativeAdCallbackAdmod {
+            object : AdmodUtils.NativeAdCallback {
                 override fun onLoadedAndGetNativeAd(ad: NativeAd?) {
                     holder.nativeAd = ad
                 }
@@ -110,7 +109,7 @@ object AdsManagerAdmod {
                 override fun onNativeAdLoaded() {
                 }
 
-                override fun onAdFail() {
+                override fun onAdFail(error: String?) {
                 }
 
                 override fun onAdPaid(adValue: AdValue?) {
@@ -120,11 +119,11 @@ object AdsManagerAdmod {
     }
 
     fun showNative(activity: Activity, viewGroup: ViewGroup, holder: NativeHolderAdmod) {
-        if (!AdmodUtils.getInstance().isNetworkConnected(activity)) {
+        if (!AdmodUtils.isNetworkConnected(activity)) {
             viewGroup.visibility = View.GONE
             return
         }
-        AdmodUtils.getInstance().showNativeAdsWithLayout(activity, holder, viewGroup, R.layout.ad_unified_medium, GoogleENative.UNIFIED_MEDIUM, object : AdmodUtils.AdsNativeCallBackAdmod {
+        AdmodUtils.showNativeAdsWithLayout(activity, holder, viewGroup, R.layout.ad_unified_medium, GoogleENative.UNIFIED_MEDIUM, object : AdmodUtils.AdsNativeCallBackAdmod {
             override fun NativeLoaded() {
                 Utils.getInstance().showMessenger(activity, "onNativeShow")
             }

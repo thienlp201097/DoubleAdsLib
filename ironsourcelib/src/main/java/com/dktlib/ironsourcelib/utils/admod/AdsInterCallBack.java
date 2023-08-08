@@ -7,6 +7,6 @@ public interface AdsInterCallBack {
     void onEventClickAdClosed();
     void onAdShowed();
     void onAdLoaded();
-    void onAdFail();
+    void onAdFail(String error);
     void onPaid(AdValue adValue);
 }

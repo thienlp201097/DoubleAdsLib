@@ -13,7 +13,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AdmodUtils.getInstance().initAdmob(this, 10000, true, true)
+        AdmodUtils.initAdmob(this, 10000, isDebug = true, isEnableAds = true)
         AppOpenManager.getInstance().init(application, getString(R.string.test_ads_admob_app_open))
         AppOpenManager.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
         val binding = ActivitySplashBinding.inflate(layoutInflater)

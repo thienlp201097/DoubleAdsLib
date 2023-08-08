@@ -87,7 +87,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         isInitialized = true;
         this.myApplication = application;
         initAdRequest();
-        if (AdmodUtils.getInstance().isTesting) {
+        if (AdmodUtils.isTesting) {
             this.appResumeAdId = application.getString(R.string.test_ads_admob_app_open);
 
         } else {
@@ -345,56 +345,21 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onResume() {
-//        if(AdmodUtils.getInstance().mInterstitialAd != null && !AdmodUtils.getInstance().isAdShowing){
-//            AdmodUtils.getInstance().mInterstitialAd.show(currentActivity);
-//            AdmodUtils.getInstance().mInterstitialAd = null;
-//            AdmodUtils.getInstance().isAdShowing = true;
-//            return;
-//        }
-//        else if(AdmodUtils.getInstance().mRewardedAd != null){
-//            AdmodUtils.getInstance().mRewardedAd.show(currentActivity, new OnUserEarnedRewardListener() {
-//                @Override
-//                public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-//                    // Handle the reward.
-//                    new RewardAdCallback() {
-//                        @Override
-//                        public void onAdClosed() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onAdFail() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onEarned() {
-//
-//                        }
-//                    };
-//                }
-//            });
-//            AdmodUtils.getInstance().mRewardedAd = null;
-//            return;
-//        }
-//        else{
-//            AdmodUtils.getInstance().dismissAdDialog();
-//        }
-        if (AdmodUtils.getInstance() == null || currentActivity == null) {
+        if (currentActivity == null) {
             return;
         }
-        if(AdmodUtils.getInstance().isAdShowing){
+        if(AdmodUtils.isAdShowing){
             return;
         }
-        if (!AdmodUtils.getInstance().isShowAds) {
+        if (!AdmodUtils.isShowAds) {
             return;
         }
 
         if (!isAppResumeEnabled) {
             return;
         } else {
-            if(AdmodUtils.getInstance().dialog != null && AdmodUtils.getInstance().dialog.isShowing())
-                AdmodUtils.getInstance().dialog.dismiss();
+            if(AdmodUtils.dialog != null && AdmodUtils.dialog.isShowing())
+                AdmodUtils.dialog.dismiss();
         }
 
         for (Class activity : disabledAppOpenList) {
