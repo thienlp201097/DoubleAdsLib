@@ -8,6 +8,7 @@ import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.dktlib.ironsourcelib.*
 import com.dktlib.ironsourcelib.utils.Utils
 import com.dktlib.ironsourceutils.databinding.ActivitySplashBinding
+import com.google.android.gms.ads.AdValue
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,10 @@ class SplashActivity : AppCompatActivity() {
 
             override fun onAdsFailed() {
                 Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
+            }
+
+            override fun onPaid(adValue: AdValue) {
+
             }
         })
         aoaManager.loadAndShowAoA()

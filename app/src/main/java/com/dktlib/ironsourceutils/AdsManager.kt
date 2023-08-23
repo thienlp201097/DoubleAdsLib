@@ -50,10 +50,6 @@ object AdsManager {
 
             }
 
-            override fun onStartAction() {
-                TODO("Not yet implemented")
-            }
-
             override fun onInterstitialLoadFail(error: String) {
                 Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
@@ -78,12 +74,9 @@ object AdsManager {
             override fun onInterstitialClosed() {
                 loadInter(context)
                 Toast.makeText(context,"Closed",Toast.LENGTH_SHORT).show()
-
-            }
-
-            override fun onStartAction() {
                 adsOnClick.onAdsCloseOrFailed()
             }
+
 
             override fun onInterstitialLoadFail(error: String) {
                 loadInter(context)

@@ -10,6 +10,7 @@ import android.view.Window
 import android.widget.LinearLayout
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
@@ -135,6 +136,7 @@ class AOAManager(private val activity: Activity, val id : String,val timeOut: Lo
                 } catch (ignored: Exception) {
                 }
                 Handler().postDelayed({
+                    setOnPaidEventListener { appOpenAdsListener.onPaid(it) }
                     if (!AppOpenManager.getInstance().isShowingAd && !isShowingAd){
                         show(activity)
                     }
@@ -157,6 +159,7 @@ class AOAManager(private val activity: Activity, val id : String,val timeOut: Lo
     interface AppOpenAdsListener {
         fun onAdsClose()
         fun onAdsFailed()
+        fun onPaid(adValue : AdValue)
     }
 
 }
