@@ -1262,6 +1262,7 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
         nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
+        view.removeAllViews()
         val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
         } else {
