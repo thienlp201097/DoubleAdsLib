@@ -917,9 +917,7 @@ object ApplovinUtil : LifecycleObserver {
                         dialogFullScreen?.show()
                     }
                     delay(dialogShowTime)
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
-                        dialogFullScreen?.dismiss()
-                    }
+
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         Log.d(TAG, "onInterstitialAdReady")
                         interHolder.inter?.setListener(object : MaxAdListener {
@@ -973,14 +971,19 @@ object ApplovinUtil : LifecycleObserver {
 
                         })
                         interHolder.inter?.showAd()
+                        delay(150)
+                        callback.onStartAction()
                         try {
-                            dialogFullScreen?.dismiss()
+                            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
+                                dialogFullScreen?.dismiss()
+                            }
                         }catch (ignored: Exception) {
                         }
-
                     } else {
                         try {
-                            dialogFullScreen?.dismiss()
+                            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
+                                dialogFullScreen?.dismiss()
+                            }
                         }catch (ignored: Exception) {
                         }
                     }
@@ -1074,6 +1077,16 @@ object ApplovinUtil : LifecycleObserver {
 
                                 })
                                 interHolder.inter?.showAd()
+                                Handler().postDelayed({
+                                    try {
+                                        if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
+                                            dialogFullScreen?.dismiss()
+                                        }
+                                    }catch (ignored: Exception) {
+                                    }
+                                    callback.onStartAction()
+                                },150)
+
                             } else {
                                 callback.onInterstitialClosed()
                                 dialogFullScreen?.dismiss()

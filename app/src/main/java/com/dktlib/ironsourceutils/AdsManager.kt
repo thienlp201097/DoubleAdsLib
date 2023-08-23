@@ -21,8 +21,8 @@ object AdsManager {
     var inter: MaxInterstitialAd?=null
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
-    var interHolder = InterHolder("24619ce845f83d65")
-    var nativeHolder = NativeHolder("67527f2556316633")
+    var interHolder = InterHolder("134656413e36e374")
+    var nativeHolder = NativeHolder("8aec97f172bce4a6")
     var banner = "f443c90308f39f17"
 
     fun showAdsNative(activity: Activity, nativeHolder: NativeHolder,viewGroup: ViewGroup){
@@ -50,6 +50,10 @@ object AdsManager {
 
             }
 
+            override fun onStartAction() {
+                TODO("Not yet implemented")
+            }
+
             override fun onInterstitialLoadFail(error: String) {
                 Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
@@ -74,6 +78,10 @@ object AdsManager {
             override fun onInterstitialClosed() {
                 loadInter(context)
                 Toast.makeText(context,"Closed",Toast.LENGTH_SHORT).show()
+
+            }
+
+            override fun onStartAction() {
                 adsOnClick.onAdsCloseOrFailed()
             }
 

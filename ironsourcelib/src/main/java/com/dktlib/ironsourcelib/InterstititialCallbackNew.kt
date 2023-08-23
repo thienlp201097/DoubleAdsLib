@@ -6,6 +6,7 @@ import com.applovin.mediation.ads.MaxInterstitialAd
 interface InterstititialCallbackNew {
     fun onInterstitialReady(interstitialAd : MaxInterstitialAd)
     fun onInterstitialClosed()
+    fun onStartAction()
     fun onInterstitialLoadFail(error:String)
     fun onInterstitialShowSucceed()
     fun onAdRevenuePaid(ad: MaxAd?)
