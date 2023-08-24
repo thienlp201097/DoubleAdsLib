@@ -2,18 +2,16 @@ package com.dktlib.ironsourceutils
 
 import android.app.Activity
 import android.content.Context
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
+import com.applovin.mediation.MaxAd
 import com.dktlib.ironsourcelib.AdmodUtils
-import com.dktlib.ironsourcelib.ApplovinUtil
 import com.dktlib.ironsourcelib.GoogleENative
 import com.dktlib.ironsourcelib.utils.Utils
 import com.dktlib.ironsourcelib.utils.admod.AdCallBackInterLoad
 import com.dktlib.ironsourcelib.utils.admod.AdsInterCallBack
 import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmod
-import com.dktlib.ironsourcelib.utils.admod.NativeAdCallbackAdmod
 import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmod
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -57,6 +55,7 @@ object AdsManagerAdmod {
         )
     }
 
+
     fun showInter(
         context: Context,
         interHolder: InterHolderAdmod,
@@ -80,7 +79,7 @@ object AdsManagerAdmod {
                     Utils.getInstance().showMessenger(context, "onAdFail")
                 }
 
-                override fun onPaid(adValue: AdValue?) {
+                override fun onPaid(adValue: AdValue?, adsId: String?) {
                     Utils.getInstance().showMessenger(context, adValue.toString())
                 }
 
@@ -112,7 +111,7 @@ object AdsManagerAdmod {
                 override fun onAdFail(error: String?) {
                 }
 
-                override fun onAdPaid(adValue: AdValue?) {
+                override fun onAdPaid(adValue: AdValue?, adUnit: String) {
                 }
 
             })

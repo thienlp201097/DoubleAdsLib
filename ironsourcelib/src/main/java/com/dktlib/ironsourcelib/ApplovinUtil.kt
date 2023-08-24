@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -936,7 +937,6 @@ object ApplovinUtil : LifecycleObserver {
                                     txt?.visibility = View.GONE
                                     gif?.visibility = View.GONE
                                     bg?.setBackgroundResource(R.drawable.bg_main_dialog)
-
                                 }catch (ignored: Exception) {
                                 }
                                 if (AppOpenManager.getInstance().isInitialized) {
@@ -948,14 +948,15 @@ object ApplovinUtil : LifecycleObserver {
                             }
 
                             override fun onAdHidden(ad: MaxAd?) {
-                                try {
-                                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
-                                        dialogFullScreen?.dismiss()
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    try {
+                                        if (dialogFullScreen?.isShowing == true) {
+                                            dialogFullScreen?.dismiss()
+                                        }
+                                    }catch (e : Exception){
+
                                     }
-                                }catch (e : Exception){
-
-                                }
-
+                                },800)
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
@@ -991,7 +992,7 @@ object ApplovinUtil : LifecycleObserver {
                         interHolder.inter?.showAd()
                     } else {
                         try {
-                            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
+                            if (dialogFullScreen?.isShowing == true) {
                                 dialogFullScreen?.dismiss()
                             }
                         }catch (ignored: Exception) {
@@ -1060,13 +1061,15 @@ object ApplovinUtil : LifecycleObserver {
                                     }
 
                                     override fun onAdHidden(ad: MaxAd?) {
-                                        try {
-                                            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen?.isShowing == true) {
-                                                dialogFullScreen?.dismiss()
-                                            }
-                                        }catch (e : Exception){
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            try {
+                                                if (dialogFullScreen?.isShowing == true) {
+                                                    dialogFullScreen?.dismiss()
+                                                }
+                                            }catch (e : Exception){
 
-                                        }
+                                            }
+                                        },800)
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }

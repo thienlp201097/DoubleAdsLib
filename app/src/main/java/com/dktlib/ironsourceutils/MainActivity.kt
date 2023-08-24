@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var bannerContainer: ViewGroup
     lateinit var nativeLoader: MaxNativeAdLoader
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val btnLoad = findViewById<Button>(R.id.btn_load_inter)

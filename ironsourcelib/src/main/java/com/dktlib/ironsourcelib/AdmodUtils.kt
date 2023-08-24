@@ -181,7 +181,7 @@ object AdmodUtils {
     interface BannerCallBack {
         fun onLoad()
         fun onFailed()
-        fun onPaid(adValue: AdValue?, mAdView: AdView?)
+        fun onPaid(adValue: AdValue?, mAdView: String?)
     }
     @JvmStatic
     fun loadAdBanner(
@@ -210,7 +210,7 @@ object AdmodUtils {
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout?.startShimmer()
         mAdView.onPaidEventListener =
-            OnPaidEventListener { adValue -> bannerAdCallback.onPaid(adValue, mAdView) }
+            OnPaidEventListener { adValue -> bannerAdCallback.onPaid(adValue, mAdView.adUnitId) }
         mAdView.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 shimmerFrameLayout?.stopShimmer()
@@ -243,7 +243,7 @@ object AdmodUtils {
     interface BannerCollapsibleAdCallback {
         fun onBannerAdLoaded(adSize: AdSize)
         fun onAdFail()
-        fun onAdPaid(adValue: AdValue, mAdView: AdView)
+        fun onAdPaid(adValue: AdValue, adUnit: String)
     }
     @JvmStatic
     fun loadAdBannerCollapsible(
@@ -274,7 +274,7 @@ object AdmodUtils {
 
         mAdView.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                mAdView.onPaidEventListener = OnPaidEventListener { adValue -> callback.onAdPaid(adValue,mAdView) }
+                mAdView.onPaidEventListener = OnPaidEventListener { adValue -> callback.onAdPaid(adValue,mAdView.adUnitId) }
                 shimmerFrameLayout?.stopShimmer()
                 viewGroup.removeView(tagView)
                 callback.onBannerAdLoaded(adSize)
@@ -336,7 +336,7 @@ object AdmodUtils {
         val adSize = getAdSize(activity)
         mAdView.setAdSize(adSize)
         viewGroup.addView(mAdView, 0)
-        mAdView.onPaidEventListener = OnPaidEventListener { adValue -> callback.onAdPaid(adValue) }
+        mAdView.onPaidEventListener = OnPaidEventListener { adValue -> callback.onAdPaid(adValue,mAdView.adUnitId) }
         mAdView.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 callback.onBannerAdLoaded(adSize)
@@ -387,7 +387,7 @@ object AdmodUtils {
         fun onLoadedAndGetNativeAd(ad: NativeAd?)
         fun onNativeAdLoaded()
         fun onAdFail(error: String?)
-        fun onAdPaid(adValue: AdValue?)
+        fun onAdPaid(adValue: AdValue?, adUnit : String)
     }
     //Load native 1 in here
     @JvmStatic
@@ -414,7 +414,7 @@ object AdmodUtils {
                 nativeHolder.nativeAd = nativeAd
                 nativeHolder.isLoad = false
                 nativeHolder.native_mutable.value = nativeAd
-                nativeAd.setOnPaidEventListener { adValue: AdValue? -> adCallback.onAdPaid(adValue) }
+                nativeAd.setOnPaidEventListener { adValue: AdValue? -> adCallback.onAdPaid(adValue,nativeHolder.ads) }
                 adCallback.onLoadedAndGetNativeAd(nativeAd)
             }.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -448,7 +448,7 @@ object AdmodUtils {
                 nativeHolder.nativeAd = nativeAd
                 nativeHolder.isLoad = false
                 nativeHolder.native_mutable.value = nativeAd
-                nativeAd.setOnPaidEventListener { adValue: AdValue? -> adCallback.onAdPaid(adValue) }
+                nativeAd.setOnPaidEventListener { adValue: AdValue? -> adCallback.onAdPaid(adValue,nativeHolder.ads2) }
                 adCallback.onLoadedAndGetNativeAd(nativeAd)
                 //viewGroup.setVisibility(View.VISIBLE);
             }.withAdListener(object : AdListener() {
@@ -935,7 +935,7 @@ object AdmodUtils {
                                 adCallback.onAdShowed()
                                 try {
                                     aBoolean.onPaidEventListener =
-                                        OnPaidEventListener { adValue -> adCallback.onPaid(adValue) }
+                                        OnPaidEventListener { adValue -> adCallback.onPaid(adValue,aBoolean.adUnitId) }
                                 } catch (e: Exception) {
                                 }
                             }
@@ -994,7 +994,7 @@ object AdmodUtils {
                             isAdShowing = true
                             adCallback.onAdShowed()
                             try {
-                                interHolder.inter!!.onPaidEventListener = OnPaidEventListener { adValue: AdValue? -> adCallback.onPaid(adValue) }
+                                interHolder.inter!!.onPaidEventListener = OnPaidEventListener { adValue: AdValue? -> adCallback.onPaid(adValue,interHolder.inter!!.adUnitId) }
                             } catch (e: Exception) {
                             }
                         }
@@ -1017,7 +1017,7 @@ object AdmodUtils {
                 //Start activity before showing the ad
                 callback!!.onStartAction()
                 mInterstitialAd.onPaidEventListener =
-                    OnPaidEventListener { adValue: AdValue? -> callback.onPaid(adValue) }
+                    OnPaidEventListener { adValue: AdValue? -> callback.onPaid(adValue,mInterstitialAd.adUnitId) }
                 //Showing the ads
                 mInterstitialAd.show(activity)
             }, 400)
@@ -1624,7 +1624,7 @@ object AdmodUtils {
                         mInterstitialAd = interstitialAd
                         if (mInterstitialAd != null) {
                             mInterstitialAd!!.onPaidEventListener =
-                                OnPaidEventListener { adValue: AdValue? -> adCallback.onPaid(adValue) }
+                                OnPaidEventListener { adValue: AdValue? -> adCallback.onPaid(adValue,mInterstitialAd?.adUnitId) }
                             mInterstitialAd!!.fullScreenContentCallback =
                                 object : FullScreenContentCallback() {
                                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
@@ -1737,7 +1737,7 @@ object AdmodUtils {
                         mInterstitialAd = interstitialAd
                         if (mInterstitialAd != null) {
                             mInterstitialAd!!.onPaidEventListener =
-                                OnPaidEventListener { adValue -> adCallback.onPaid(adValue) }
+                                OnPaidEventListener { adValue -> adCallback.onPaid(adValue,mInterstitialAd?.adUnitId) }
                             mInterstitialAd!!.fullScreenContentCallback =
                                 object : FullScreenContentCallback() {
                                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
