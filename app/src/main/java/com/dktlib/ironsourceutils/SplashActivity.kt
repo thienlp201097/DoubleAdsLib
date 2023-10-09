@@ -29,8 +29,7 @@ class SplashActivity : AppCompatActivity() {
                 Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
             }
 
-            override fun onPaid(adValue: AdValue) {
-
+            override fun onAdPaid(adValue: AdValue, adsId: String) {
             }
         })
         aoaManager.loadAndShowAoA()

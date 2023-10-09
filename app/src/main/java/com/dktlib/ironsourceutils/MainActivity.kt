@@ -286,7 +286,7 @@ class MainActivity : AppCompatActivity() {
 //    }
     override fun onResume() {
         val bannerContainer = findViewById<FrameLayout>(R.id.banner_container)
-        ApplovinUtil.showBanner(this, bannerContainer, "5c902521afdeef72", object : BannerCallback {
+        ApplovinUtil.showBanner(this, bannerContainer, "f443c90308f39f17", object : BannerCallback {
             override fun onBannerLoadFail(error: String) {
             }
 

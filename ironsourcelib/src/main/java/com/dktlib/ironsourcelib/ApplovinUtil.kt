@@ -57,8 +57,7 @@ object ApplovinUtil : LifecycleObserver {
     fun initApplovin(activity: Activity, enableAds: Boolean) {
         this.enableAds = enableAds
         AppLovinSdk.getInstance(activity).mediationProvider = "max"
-        AppLovinSdk.getInstance(activity)
-            .initializeSdk({ configuration: AppLovinSdkConfiguration -> })
+        AppLovinSdk.getInstance(activity).initializeSdk { configuration: AppLovinSdkConfiguration -> }
 
     }
 
@@ -467,7 +466,7 @@ object ApplovinUtil : LifecycleObserver {
 
         // Get the adaptive banner height.
         val heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).height
-        val heightPx = AppLovinSdkUtils.dpToPx(activity, heightDp)
+        val heightPx = AppLovinSdkUtils.dpToPx(activity, 50)
 
         banner?.layoutParams = FrameLayout.LayoutParams(width, heightPx)
         banner?.setExtraParameter("adaptive_banner", "true")
@@ -480,11 +479,7 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
 
-        banner?.setRevenueListener(object : MaxAdRevenueListener {
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-                callback.onAdRevenuePaid(ad)
-            }
-        })
+        banner?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
 
         banner?.setListener(object : MaxAdViewAdListener {
             override fun onAdLoaded(ad: MaxAd?) {
