@@ -50,7 +50,6 @@ object ApplovinUtil : LifecycleObserver {
     lateinit var interstitialAd: MaxInterstitialAd
     lateinit var rewardAd: MaxRewardedAd
     var dialogFullScreen: Dialog? = null
-
     private lateinit var nativeAdLoader: MaxNativeAdLoader
     private var nativeAd: MaxAd? = null
 
@@ -78,34 +77,34 @@ object ApplovinUtil : LifecycleObserver {
         }
 
         interstitialAd.setListener(object : MaxAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(ad: MaxAd) {
                 callback.onInterstitialReady()
                 isLoadInterstitialFailed = false
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(ad: MaxAd) {
                 callback.onInterstitialShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
                 isInterstitialAdShowing = true
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(ad: MaxAd) {
                 callback.onInterstitialClosed()
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(ad: MaxAd) {
 
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                callback.onInterstitialLoadFail(error.toString())
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
+                callback.onInterstitialLoadFail(p1.toString())
                 isLoadInterstitialFailed = true
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                callback.onInterstitialLoadFail(error.toString())
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                callback.onInterstitialLoadFail(p1.toString())
             }
 
         })
@@ -162,19 +161,19 @@ object ApplovinUtil : LifecycleObserver {
         }
 
         interstitialAd.setRevenueListener(object : MaxAdRevenueListener {
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-                callback.onAdRevenuePaid(ad)
+            override fun onAdRevenuePaid(p0: MaxAd) {
+                callback.onAdRevenuePaid(p0)
             }
         })
         interstitialAd.setListener(object : MaxAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
                     isLoadInterstitialFailed = false
                     callback.onInterstitialReady()
                 }
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(p0: MaxAd) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = false
                 }
@@ -183,7 +182,7 @@ object ApplovinUtil : LifecycleObserver {
                 isInterstitialAdShowing = true
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(p0: MaxAd) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
@@ -191,22 +190,22 @@ object ApplovinUtil : LifecycleObserver {
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(p0: MaxAd) {
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 isLoadInterstitialFailed = true
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
-                callback.onInterstitialLoadFail(error.toString())
+                callback.onInterstitialLoadFail(p1.toString())
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
-                callback.onInterstitialLoadFail(error.toString())
+                callback.onInterstitialLoadFail(p1.toString())
             }
         })
 
@@ -214,7 +213,7 @@ object ApplovinUtil : LifecycleObserver {
         if (interstitialAd.isReady) {
             activity.lifecycleScope.launch {
                 if (dialogShowTime > 0) {
-                    var dialog = SweetAlertDialog(activity, SweetAlertDialog.PROGRESS_TYPE)
+                    val dialog = SweetAlertDialog(activity, SweetAlertDialog.PROGRESS_TYPE)
                     dialog.progressHelper.barColor = Color.parseColor("#A5DC86")
                     dialog.titleText = "Loading ads. Please wait..."
                     dialog.setCancelable(false)
@@ -308,14 +307,13 @@ object ApplovinUtil : LifecycleObserver {
         }
 
         interstitialAd.setRevenueListener(object : MaxAdRevenueListener {
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-                callback.onAdRevenuePaid(ad)
+            override fun onAdRevenuePaid(p0: MaxAd) {
+                callback.onAdRevenuePaid(p0)
             }
         })
         interstitialAd.setListener(object : MaxAdListener {
 
-
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch {
                     if (dialogShowTime > 0) {
                         activity.lifecycle.addObserver(
@@ -340,7 +338,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(p0: MaxAd) {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
                     dialogFullScreen.dismiss()
                 }
@@ -358,7 +356,7 @@ object ApplovinUtil : LifecycleObserver {
                 isInterstitialAdShowing = true
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(p0: MaxAd) {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
                     dialogFullScreen.dismiss()
                 }
@@ -375,11 +373,11 @@ object ApplovinUtil : LifecycleObserver {
                 callback.onInterstitialClosed()
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(p0: MaxAd) {
 
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
                         dialogFullScreen.dismiss()
@@ -394,11 +392,11 @@ object ApplovinUtil : LifecycleObserver {
 
                     }
                     isInterstitialAdShowing = false
-                    callback.onInterstitialLoadFail(error?.code.toString().replace("-", ""))
+                    callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
                 }
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                     Log.e(
@@ -482,35 +480,35 @@ object ApplovinUtil : LifecycleObserver {
         banner?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
 
         banner?.setListener(object : MaxAdViewAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(p0: MaxAd) {
                 shimmerFrameLayout.stopShimmer()
                 bannerContainer.removeView(tagView)
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(p0: MaxAd) {
                 callback.onBannerShowSucceed()
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(p0: MaxAd) {
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(p0: MaxAd) {
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 bannerContainer.removeAllViews()
-                callback.onBannerLoadFail(error?.code.toString().replace("-", ""))
+                callback.onBannerLoadFail(p1.code.toString().replace("-", ""))
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                callback.onBannerLoadFail(error?.code.toString().replace("-", ""))
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                callback.onBannerLoadFail(p1.code.toString().replace("-", ""))
 
             }
 
-            override fun onAdExpanded(ad: MaxAd?) {
+            override fun onAdExpanded(p0: MaxAd) {
             }
 
-            override fun onAdCollapsed(ad: MaxAd?) {
+            override fun onAdCollapsed(p0: MaxAd) {
             }
 
         })
@@ -560,19 +558,19 @@ object ApplovinUtil : LifecycleObserver {
         }
 
         rewardAd.setRevenueListener(object : MaxAdRevenueListener {
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-                callback.onAdRevenuePaid(ad)
+            override fun onAdRevenuePaid(p0: MaxAd) {
+                callback.onAdRevenuePaid(p0)
             }
         })
         rewardAd.setListener(object : MaxRewardedAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
                     isLoadInterstitialFailed = false
                     callback.onRewardReady()
                 }
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(p0: MaxAd) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = false
                 }
@@ -581,7 +579,7 @@ object ApplovinUtil : LifecycleObserver {
                 isInterstitialAdShowing = true
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(p0: MaxAd) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
@@ -589,34 +587,34 @@ object ApplovinUtil : LifecycleObserver {
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(p0: MaxAd) {
 
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 isLoadInterstitialFailed = true
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
-                callback.onRewardLoadFail(error.toString())
+                callback.onRewardLoadFail(p1.toString())
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
             }
 
-            override fun onUserRewarded(ad: MaxAd?, reward: MaxReward?) {
+            override fun onUserRewarded(p0: MaxAd, p1: MaxReward) {
                 callback.onUserRewarded()
             }
 
-            override fun onRewardedVideoStarted(ad: MaxAd?) {
+            override fun onRewardedVideoStarted(p0: MaxAd) {
                 callback.onRewardedVideoStarted()
             }
 
-            override fun onRewardedVideoCompleted(ad: MaxAd?) {
+            override fun onRewardedVideoCompleted(p0: MaxAd) {
                 callback.onRewardedVideoCompleted()
             }
         })
@@ -670,45 +668,45 @@ object ApplovinUtil : LifecycleObserver {
         }
 
         rewardAd.setListener(object : MaxRewardedAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(p0: MaxAd) {
                 isLoadInterstitialFailed = false
                 callback.onRewardReady()
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(p0: MaxAd) {
                 callback.onRewardShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
                 isInterstitialAdShowing = true
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(p0: MaxAd) {
                 callback.onRewardClosed()
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(p0: MaxAd) {
 
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                callback.onRewardLoadFail(error.toString())
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
+                callback.onRewardLoadFail(p1.toString())
                 isLoadInterstitialFailed = true
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                callback.onRewardLoadFail(error.toString())
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                callback.onRewardLoadFail(p1.toString())
             }
 
-            override fun onUserRewarded(ad: MaxAd?, reward: MaxReward?) {
+            override fun onUserRewarded(p0: MaxAd, p1: MaxReward) {
                 callback.onUserRewarded()
             }
 
-            override fun onRewardedVideoStarted(ad: MaxAd?) {
+            override fun onRewardedVideoStarted(p0: MaxAd) {
                 callback.onRewardedVideoStarted()
             }
 
-            override fun onRewardedVideoCompleted(ad: MaxAd?) {
+            override fun onRewardedVideoCompleted(p0: MaxAd) {
                 callback.onRewardedVideoCompleted()
             }
 
@@ -735,12 +733,12 @@ object ApplovinUtil : LifecycleObserver {
         nativeAdLoader.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
-            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd?) {
+            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, p1: MaxAd) {
                 // Clean up any pre-existing native ad to prevent memory leaks.
                 if (nativeAd != null) {
                     nativeAdLoader.destroy(nativeAd)
                 }
-                nativeAd = ad
+                nativeAd = p1
                 adCallback.onNativeAdLoaded(nativeAd, nativeAdView)
             }
 
@@ -777,11 +775,7 @@ object ApplovinUtil : LifecycleObserver {
         val shimmerFrameLayout: ShimmerFrameLayout =
             tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
-        nativeAdLoader.setRevenueListener(object : MaxAdRevenueListener {
-            override fun onAdRevenuePaid(ad: MaxAd?) {
-                adCallback.onAdRevenuePaid(ad)
-            }
-        })
+        nativeAdLoader.setRevenueListener { p0 -> adCallback.onAdRevenuePaid(p0) }
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
@@ -830,38 +824,38 @@ object ApplovinUtil : LifecycleObserver {
         }
         interHolder.check = true
         interHolder.inter!!.setListener(object : MaxAdListener {
-            override fun onAdLoaded(ad: MaxAd?) {
+            override fun onAdLoaded(p0: MaxAd) {
                 callback.onInterstitialReady(interHolder.inter!!)
                 isLoadInterstitialFailed = false
                 interHolder.check = false
                 interHolder.mutable.value = interHolder.inter
             }
 
-            override fun onAdDisplayed(ad: MaxAd?) {
+            override fun onAdDisplayed(p0: MaxAd) {
                 callback.onInterstitialShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
                 isInterstitialAdShowing = true
             }
 
-            override fun onAdHidden(ad: MaxAd?) {
+            override fun onAdHidden(p0: MaxAd) {
                 callback.onInterstitialClosed()
                 isInterstitialAdShowing = false
             }
 
-            override fun onAdClicked(ad: MaxAd?) {
+            override fun onAdClicked(p0: MaxAd) {
 
             }
 
-            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                callback.onInterstitialLoadFail(error?.code.toString().replace("-", ""))
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
+                callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
                 isLoadInterstitialFailed = true
                 isInterstitialAdShowing = false
                 interHolder.check = false
                 interHolder.mutable.value = null
             }
 
-            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                callback.onInterstitialLoadFail(error?.code.toString().replace("-", ""))
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
             }
 
         })
@@ -917,14 +911,14 @@ object ApplovinUtil : LifecycleObserver {
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         Log.d(TAG, "onInterstitialAdReady")
                         interHolder.inter?.setListener(object : MaxAdListener {
-                            override fun onAdLoaded(ad: MaxAd?) {
+                            override fun onAdLoaded(p0: MaxAd) {
                                 activity.lifecycleScope.launch(Dispatchers.Main) {
                                     isLoadInterstitialFailed = false
                                     callback.onInterstitialReady(interHolder.inter!!)
                                 }
                             }
 
-                            override fun onAdDisplayed(ad: MaxAd?) {
+                            override fun onAdDisplayed(p0: MaxAd) {
                                 try {
                                     val txt = dialogFullScreen?.findViewById<TextView>(R.id.txtLoading)
                                     val gif = dialogFullScreen?.findViewById<LottieAnimationView>(R.id.imageView3)
@@ -942,7 +936,7 @@ object ApplovinUtil : LifecycleObserver {
                                 isInterstitialAdShowing = true
                             }
 
-                            override fun onAdHidden(ad: MaxAd?) {
+                            override fun onAdHidden(p0: MaxAd) {
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     try {
                                         if (dialogFullScreen?.isShowing == true) {
@@ -960,26 +954,26 @@ object ApplovinUtil : LifecycleObserver {
                                 isInterstitialAdShowing = false
                             }
 
-                            override fun onAdClicked(ad: MaxAd?) {
+                            override fun onAdClicked(p0: MaxAd) {
                             }
 
-                            override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+                            override fun onAdLoadFailed(p0: String, p1: MaxError) {
                                 isLoadInterstitialFailed = true
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
                                 interHolder.inter = null
                                 callback.onInterstitialLoadFail(
-                                    error?.code.toString().replace("-", "")
+                                    p1.code.toString().replace("-", "")
                                 )
                             }
 
-                            override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
                                 callback.onInterstitialLoadFail(
-                                    error?.code.toString().replace("-", "")
+                                    p1.code.toString().replace("-", "")
                                 )
                             }
 
@@ -1030,14 +1024,14 @@ object ApplovinUtil : LifecycleObserver {
                             if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                                 Log.d(TAG, "onInterstitialAdReady")
                                 interHolder.inter?.setListener(object : MaxAdListener {
-                                    override fun onAdLoaded(ad: MaxAd?) {
+                                    override fun onAdLoaded(p0: MaxAd) {
                                         activity.lifecycleScope.launch(Dispatchers.Main) {
                                             isLoadInterstitialFailed = false
                                             callback.onInterstitialReady(interHolder.inter!!)
                                         }
                                     }
 
-                                    override fun onAdDisplayed(ad: MaxAd?) {
+                                    override fun onAdDisplayed(p0: MaxAd) {
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = false
                                         }
@@ -1055,7 +1049,7 @@ object ApplovinUtil : LifecycleObserver {
                                         isInterstitialAdShowing = true
                                     }
 
-                                    override fun onAdHidden(ad: MaxAd?) {
+                                    override fun onAdHidden(p0: MaxAd) {
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             try {
                                                 if (dialogFullScreen?.isShowing == true) {
@@ -1073,29 +1067,26 @@ object ApplovinUtil : LifecycleObserver {
                                         isInterstitialAdShowing = false
                                     }
 
-                                    override fun onAdClicked(ad: MaxAd?) {
+                                    override fun onAdClicked(p0: MaxAd) {
                                     }
 
-                                    override fun onAdLoadFailed(
-                                        adUnitId: String?,
-                                        error: MaxError?
-                                    ) {
+                                    override fun onAdLoadFailed(p0: String, p1: MaxError) {
                                         isLoadInterstitialFailed = true
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
                                         interHolder.inter = null
                                         callback.onInterstitialLoadFail(
-                                            error?.code.toString().replace("-", "")
+                                            p1.code.toString().replace("-", "")
                                         )
                                     }
 
-                                    override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+                                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
                                         callback.onInterstitialLoadFail(
-                                            error?.code.toString().replace("-", "")
+                                            p1.code.toString().replace("-", "")
                                         )
                                     }
 
@@ -1135,7 +1126,7 @@ object ApplovinUtil : LifecycleObserver {
 
         activity.lifecycleScope.launch(Dispatchers.Main) {
             delay(10000)
-            if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing)) {
+            if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing) && !isLoadInterstitialFailed) {
                 dialogFullScreen?.dismiss()
                 interHolder.inter = null
                 interHolder.check = false
@@ -1183,7 +1174,7 @@ object ApplovinUtil : LifecycleObserver {
             override fun onNativeAdClicked(ad: MaxAd) {
             }
 
-            override fun onNativeAdExpired(ad: MaxAd?) {
+            override fun onNativeAdExpired(p0: MaxAd) {
                 nativeHolder.nativeAdLoader?.loadAd()
             }
         })
@@ -1222,7 +1213,7 @@ object ApplovinUtil : LifecycleObserver {
                 override fun onNativeAdClicked(ad: MaxAd) {
                 }
 
-                override fun onNativeAdExpired(ad: MaxAd?) {
+                override fun onNativeAdExpired(p0: MaxAd) {
                     nativeHolder.nativeAdLoader?.loadAd()
                 }
             })
@@ -1320,7 +1311,7 @@ object ApplovinUtil : LifecycleObserver {
             override fun onNativeAdClicked(ad: MaxAd) {
             }
 
-            override fun onNativeAdExpired(ad: MaxAd?) {
+            override fun onNativeAdExpired(p0: MaxAd) {
                 nativeHolder.nativeAdLoader?.loadAd()
             }
         })

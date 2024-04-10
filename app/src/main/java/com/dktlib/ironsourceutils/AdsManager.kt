@@ -43,7 +43,7 @@ object AdsManager {
     fun loadInter(context: Context){
         ApplovinUtil.loadAnGetInterstitials(context,interHolder,object : InterstititialCallbackNew{
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {
-                Toast.makeText(context,"Loaded",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context,"Loaded",Toast.LENGTH_SHORT).show()
             }
 
             override fun onInterstitialClosed() {
@@ -51,7 +51,7 @@ object AdsManager {
             }
 
             override fun onInterstitialLoadFail(error: String) {
-                Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
 
             override fun onInterstitialShowSucceed() {
@@ -81,7 +81,7 @@ object AdsManager {
             override fun onInterstitialLoadFail(error: String) {
                 loadInter(context)
                 adsOnClick.onAdsCloseOrFailed()
-                Toast.makeText(context,"Failed",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed: $error",Toast.LENGTH_SHORT).show()
             }
 
             override fun onInterstitialShowSucceed() {
@@ -128,7 +128,7 @@ object AdsManager {
             override fun onNativeAdClicked(ad: MaxAd) {
             }
 
-            override fun onNativeAdExpired(ad: MaxAd?) {
+            override fun onNativeAdExpired(p0: MaxAd) {
 
             }
         })

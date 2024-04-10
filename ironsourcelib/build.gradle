@@ -4,10 +4,10 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
     defaultConfig {
         minSdk 23
-        targetSdk 31
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -55,7 +55,7 @@ dependencies {
 
     //ads
     implementation 'com.applovin:applovin-sdk:+'
-    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+    implementation 'com.google.android.gms:play-services-ads:23.0.0'
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation 'com.google.android.gms:play-services-appset:16.0.2'
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'

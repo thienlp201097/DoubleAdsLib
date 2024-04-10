@@ -47,11 +47,11 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.OnPaidEventListener
 import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.RequestConfiguration
-import com.google.android.gms.ads.formats.NativeAdOptions
 import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
