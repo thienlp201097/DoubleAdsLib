@@ -1,165 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <Button
+        android:id="@+id/loadAds"
+        android:text="Load"
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+    <Button
+        android:id="@+id/showAds"
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="showAds"
+        app:layout_constraintTop_toBottomOf="@+id/loadAds" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <Button
+        android:id="@+id/loadAndShow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:text="Load Anh Show"
+        app:layout_constraintTop_toBottomOf="@+id/showAds" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/ln1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_load_inter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="load inter" />
-
-                <Button
-                    android:id="@+id/btn_show_inter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="show inter" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/ln2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ln1"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_load_inter_app_lovin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="load inter Max" />
-
-                <Button
-                    android:id="@+id/btn_show_inter_app_lovin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="show inter Max" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/ln3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ln2"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/load_native"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/btn_show_reward"
-                    android:layout_centerHorizontal="true"
-                    android:text="load native" />
-
-                <Button
-                    android:id="@+id/show_native"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/load_native"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginStart="20dp"
-                    android:text="show native" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/ln4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ln3"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/load_native_max"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/btn_show_reward"
-                    android:layout_centerHorizontal="true"
-                    android:text="load native Max" />
-
-                <Button
-                    android:id="@+id/show_native_max"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/load_native"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginStart="20dp"
-                    android:text="show native Max" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <Button
-                android:id="@+id/btn_show_inter_callback2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ln4"
-                android:layout_centerInParent="true"
-                android:text="show inter check time " />
-
-            <Button
-                android:id="@+id/btn_load_show_inter_callback2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btn_show_inter_callback2"
-                android:layout_centerInParent="true"
-                android:text="load and show intersitial" />
-
-            <Button
-                android:id="@+id/btn_show_reward"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btn_load_show_inter_callback2"
-                android:layout_centerHorizontal="true"
-                android:text="load and show reward" />
-
-            <Button
-                android:id="@+id/btn_show_native"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btn_show_reward"
-                android:layout_centerHorizontal="true"
-                android:text="load and show native" />
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btn_show_native">
-
-                <FrameLayout
-                    android:id="@+id/nativead"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="250dp"
-                    android:orientation="horizontal" />
-            </ScrollView>
-
-        </RelativeLayout>
-    </androidx.core.widget.NestedScrollView>
+    <Button
+        android:id="@+id/showBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:text="Show Banner"
+        app:layout_constraintTop_toBottomOf="@+id/loadAndShow" />
 
     <FrameLayout
         android:id="@+id/banner_container"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:minHeight="50dp" />
+        android:minHeight="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
