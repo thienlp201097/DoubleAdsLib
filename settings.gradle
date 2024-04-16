@@ -1,3 +1,3 @@
-rootProject.name = "UnityUtils"
+rootProject.name = "DoubleAds"
 include ':app'
-include ':unitylib'
+include ':admobxapplovin'
