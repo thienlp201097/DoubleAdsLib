@@ -24,8 +24,8 @@ object AdsManagerAdmod {
     val mutable_inter1: MutableLiveData<InterstitialAd> = MutableLiveData()
     var check_inter1 = false
 
-    var nativeHolder = NativeHolderAdmod("ca-app-pub-3940256099942544/2247696110", "ca-app-pub-3940256099942544/2247696110")
-    var interholder = InterHolderAdmod("ca-app-pub-3940256099942544/1033173712","ca-app-pub-3940256099942544/1033173712")
+    var nativeHolder = NativeHolderAdmod("ca-app-pub-3940256099942544/2247696110")
+    var interholder = InterHolderAdmod("ca-app-pub-3940256099942544/1033173712")
 
     fun loadInter(context: Context, interHolder: InterHolderAdmod) {
         AdmobUtils.loadAndGetAdInterstitial(context,interHolder,
