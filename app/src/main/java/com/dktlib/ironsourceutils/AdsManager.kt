@@ -25,7 +25,7 @@ object AdsManager {
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
     var interHolder = InterHolder("134656413e36e374")
-    var nativeHolder = NativeHolder("8aec97f172bce4a6")
+    var nativeHolder = NativeHolder("0f688c4e22b9688b")
     var banner = "f443c90308f39f17"
 
     fun showAdsNative(activity: Activity, nativeHolder: NativeHolder,viewGroup: ViewGroup){

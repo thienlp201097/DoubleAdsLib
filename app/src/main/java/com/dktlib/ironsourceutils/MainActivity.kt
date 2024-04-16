@@ -272,7 +272,20 @@ class MainActivity : AppCompatActivity() {
 
             })
         }
+        ApplovinUtil.showNativeWithLayout(nativeAds,this,AdsManager.nativeHolder,R.layout.native_custom_ad_view,GoogleENative.UNIFIED_MEDIUM,object :
+            NativeCallBackNew {
+            override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+                Toast.makeText(this@MainActivity,"show success", Toast.LENGTH_SHORT).show()
+            }
 
+            override fun onAdFail(error: String) {
+                Toast.makeText(this@MainActivity,"Show failed", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd?) {
+            }
+
+        })
     }
 
     override fun onResume() {

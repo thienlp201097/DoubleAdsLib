@@ -1,6 +1,7 @@
 package com.dktlib.ironsourcelib
 
 import android.app.Activity
+import android.app.Application
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -63,25 +64,29 @@ object ApplovinUtil : LifecycleObserver {
     private lateinit var nativeAdLoader: MaxNativeAdLoader
     private var nativeAd: MaxAd? = null
 
-    fun initApplovin(activity: Activity,SDK_KEY : String, enableAds: Boolean) {
+    fun initApplovin(application: Application,SDK_KEY : String, enableAds: Boolean, initialization: Initialization) {
         this.enableAds = enableAds
         val executor = Executors.newSingleThreadExecutor();
         executor.execute {
-            val initConfigBuilder = AppLovinSdkInitializationConfiguration.builder(SDK_KEY, activity)
+            val initConfigBuilder = AppLovinSdkInitializationConfiguration.builder(SDK_KEY, application)
             initConfigBuilder.mediationProvider = AppLovinMediationProvider.MAX
 
             // Enable test mode by default for the current device. Cannot be run on the main thread.
-            val currentGaid = AdvertisingIdClient.getAdvertisingIdInfo(activity).id
+            val currentGaid = AdvertisingIdClient.getAdvertisingIdInfo(application).id
             if (currentGaid != null) {
                 initConfigBuilder.testDeviceAdvertisingIds = Collections.singletonList(currentGaid)
             }
             // Initialize the AppLovin SDK
-            val sdk = AppLovinSdk.getInstance(activity)
+            val sdk = AppLovinSdk.getInstance(application)
             sdk.initialize(initConfigBuilder.build()) {
-                // AppLovin SDK is initialized, start loading ads now or later if ad gate is reached
+                initialization.onInitSuccessful()
             }
             executor.shutdown()
         }
+    }
+
+    interface Initialization{
+        fun onInitSuccessful()
     }
 
     val TAG: String = "IronSourceUtil"
@@ -1163,7 +1168,7 @@ object ApplovinUtil : LifecycleObserver {
     }
 
     fun loadNativeAds(
-        activity: Activity,
+        activity: Context,
         nativeHolder: NativeHolder,
         adCallback: NativeCallBackNew
     ) {
