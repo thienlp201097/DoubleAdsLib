@@ -70,12 +70,6 @@ object ApplovinUtil : LifecycleObserver {
         executor.execute {
             val initConfigBuilder = AppLovinSdkInitializationConfiguration.builder(SDK_KEY, application)
             initConfigBuilder.mediationProvider = AppLovinMediationProvider.MAX
-
-            // Enable test mode by default for the current device. Cannot be run on the main thread.
-            val currentGaid = AdvertisingIdClient.getAdvertisingIdInfo(application).id
-            if (currentGaid != null) {
-                initConfigBuilder.testDeviceAdvertisingIds = Collections.singletonList(currentGaid)
-            }
             // Initialize the AppLovin SDK
             val sdk = AppLovinSdk.getInstance(application)
             sdk.initialize(initConfigBuilder.build()) {
