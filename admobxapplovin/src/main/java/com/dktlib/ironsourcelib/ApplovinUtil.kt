@@ -64,12 +64,21 @@ object ApplovinUtil : LifecycleObserver {
     private lateinit var nativeAdLoader: MaxNativeAdLoader
     private var nativeAd: MaxAd? = null
 
-    fun initApplovin(application: Application,SDK_KEY : String, enableAds: Boolean, initialization: Initialization) {
+    fun initApplovin(application: Application,SDK_KEY : String, testAds : Boolean, enableAds: Boolean, initialization: Initialization) {
         this.enableAds = enableAds
         val executor = Executors.newSingleThreadExecutor();
         executor.execute {
             val initConfigBuilder = AppLovinSdkInitializationConfiguration.builder(SDK_KEY, application)
             initConfigBuilder.mediationProvider = AppLovinMediationProvider.MAX
+
+            // Enable test mode by default for the current device. Cannot be run on the main thread.
+            if (testAds){
+                val currentGaid = AdvertisingIdClient.getAdvertisingIdInfo(application).id
+                if (currentGaid != null) {
+                    initConfigBuilder.testDeviceAdvertisingIds = Collections.singletonList(currentGaid)
+                }
+            }
+
             // Initialize the AppLovin SDK
             val sdk = AppLovinSdk.getInstance(application)
             sdk.initialize(initConfigBuilder.build()) {
