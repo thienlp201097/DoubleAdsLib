@@ -340,7 +340,6 @@ object ApplovinUtil : LifecycleObserver {
             }
         })
         interstitialAd.setListener(object : MaxAdListener {
-
             override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch {
                     if (dialogShowTime > 0) {
