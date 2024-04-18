@@ -23,22 +23,25 @@ class SplashActivity : AppCompatActivity() {
         val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ApplovinUtil.initApplovin(application, "Hd8NW44NTx4ndvT7Pw2PIQR_omwB0DB00BKnHGXorX1hCETptrgiRyRCtDcZqbhU9Wi_l4R0Icd5N5SkKJFGIy", true,object : ApplovinUtil.Initialization{
-            override fun onInitSuccessful() {
-                ApplovinUtil.loadNativeAds(this@SplashActivity,AdsManager.nativeHolder,object : NativeCallBackNew {
-                    override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
-                        Toast.makeText(this@SplashActivity,"Loaded", Toast.LENGTH_SHORT).show()
-                    }
+        ApplovinUtil.initApplovin(application, "Hd8NW44NTx4ndvT7Pw2PIQR_omwB0DB00BKnHGXorX1hCETptrgiRyRCtDcZqbhU9Wi_l4R0Icd5N5SkKJFGIy",
+            testAds = true,
+            enableAds = true,
+            initialization = object : ApplovinUtil.Initialization{
+                override fun onInitSuccessful() {
+                    ApplovinUtil.loadNativeAds(this@SplashActivity,AdsManager.nativeHolder,object : NativeCallBackNew {
+                        override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
+                            Toast.makeText(this@SplashActivity,"Loaded", Toast.LENGTH_SHORT).show()
+                        }
 
-                    override fun onAdFail(error: String) {
-                        Toast.makeText(this@SplashActivity,"Failed", Toast.LENGTH_SHORT).show()
-                    }
+                        override fun onAdFail(error: String) {
+                            Toast.makeText(this@SplashActivity,"Failed", Toast.LENGTH_SHORT).show()
+                        }
 
-                    override fun onAdRevenuePaid(ad: MaxAd?) {
-                    }
-                })
-            }
-        })
+                        override fun onAdRevenuePaid(ad: MaxAd?) {
+                        }
+                    })
+                }
+            })
 
 
         val aoaManager = AOAManager(this, "", 10000, object : AOAManager.AppOpenAdsListener {
