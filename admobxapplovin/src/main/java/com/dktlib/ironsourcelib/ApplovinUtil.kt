@@ -276,7 +276,7 @@ object ApplovinUtil : LifecycleObserver {
     }
 
     @MainThread
-    fun loadAndShowInterstitialsWithDialogCheckTime(
+    fun  loadAndShowInterstitialsWithDialogCheckTime(
         activity: AppCompatActivity,
         idAd: String,
         dialogShowTime: Long,
@@ -307,10 +307,6 @@ object ApplovinUtil : LifecycleObserver {
             } else {
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = false
-                    Log.e(
-                        "isAppResumeEnabled",
-                        "2" + AppOpenManager.getInstance().isAppResumeEnabled
-                    )
                 }
             }
         }

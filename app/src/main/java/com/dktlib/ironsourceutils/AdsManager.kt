@@ -69,7 +69,6 @@ object AdsManager {
     }
 
     fun showInter(context: AppCompatActivity,interHolder: InterHolder,adsOnClick: AdsOnClick){
-        AppOpenManager.getInstance().isAppResumeEnabled = true
         ApplovinUtil.showInterstitialsWithDialogCheckTimeNew(context, 800,interHolder ,object :
             InterstititialCallbackNew {
             override fun onInterstitialReady(interstitialAd : MaxInterstitialAd) {
@@ -144,7 +143,7 @@ object AdsManager {
         ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(activity as AppCompatActivity,idAd,1500, object :
             InterstititialCallback {
             override fun onInterstitialReady() {
-
+                AppOpenManager.getInstance().isAppResumeEnabled = false
             }
 
             override fun onInterstitialClosed() {
@@ -157,12 +156,13 @@ object AdsManager {
             }
 
             override fun onInterstitialShowSucceed() {
-
+                AppOpenManager.getInstance().isAppResumeEnabled = false
             }
 
             override fun onAdRevenuePaid(ad: MaxAd?) {
 
             }
         })
+
     }
 }

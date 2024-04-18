@@ -362,7 +362,13 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         if (!AdmobUtils.isShowAds) {
             return;
         }
-
+        if (ApplovinUtil.INSTANCE.isInterstitialAdShowing()){
+            Log.d("===Onresume", "isAppResumeEnabled");
+            return;
+        }else {
+            if(AdmobUtils.dialog != null && AdmobUtils.dialog.isShowing())
+                AdmobUtils.dialog.dismiss();
+        }
         if (!isAppResumeEnabled) {
             Log.d("===Onresume", "isAppResumeEnabled");
             return;
