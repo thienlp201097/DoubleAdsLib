@@ -370,7 +370,7 @@ object ApplovinUtil : LifecycleObserver {
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
                         dialogFullScreen.dismiss()
                     }
-                },500)
+                },200)
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = false
                     Log.e(
@@ -971,10 +971,10 @@ object ApplovinUtil : LifecycleObserver {
                                         if (dialogFullScreen?.isShowing == true) {
                                             dialogFullScreen?.dismiss()
                                         }
-                                    }catch (e : Exception){
+                                    }catch (_: Exception){
 
                                     }
-                                },800)
+                                },200)
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
@@ -1084,10 +1084,10 @@ object ApplovinUtil : LifecycleObserver {
                                                 if (dialogFullScreen?.isShowing == true) {
                                                     dialogFullScreen?.dismiss()
                                                 }
-                                            }catch (e : Exception){
+                                            }catch (_: Exception){
 
                                             }
-                                        },800)
+                                        },200)
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
@@ -1155,12 +1155,16 @@ object ApplovinUtil : LifecycleObserver {
 
         activity.lifecycleScope.launch(Dispatchers.Main) {
             delay(10000)
-            if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing) && !isLoadInterstitialFailed) {
-                dialogFullScreen?.dismiss()
-                interHolder.inter = null
-                interHolder.check = false
-                interHolder.mutable.removeObservers(activity)
-                callback.onInterstitialLoadFail("inter not ready")
+            try {
+                if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing) && !isLoadInterstitialFailed) {
+                    dialogFullScreen?.dismiss()
+                    interHolder.inter = null
+                    interHolder.check = false
+                    interHolder.mutable.removeObservers(activity)
+                    callback.onInterstitialLoadFail("inter not ready")
+                }
+            }catch (_: Exception){
+
             }
         }
     }

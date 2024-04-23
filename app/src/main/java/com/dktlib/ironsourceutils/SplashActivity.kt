@@ -40,25 +40,8 @@ class SplashActivity : AppCompatActivity() {
                         override fun onAdRevenuePaid(ad: MaxAd?) {
                         }
                     })
+                    Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
                 }
             })
-
-
-        val aoaManager = AOAManager(this, "", 10000, object : AOAManager.AppOpenAdsListener {
-            override fun onAdsClose() {
-                Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
-            }
-
-            override fun onAdsFailed(message: String) {
-                Utils.getInstance().addActivity(this@SplashActivity, MainActivity::class.java)
-            }
-
-            override fun onAdPaid(adValue: AdValue, adsId: String) {
-            }
-        })
-        aoaManager.loadAndShowAoA()
-        binding.btnNext.setOnClickListener {
-          //  requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
     }
 }
