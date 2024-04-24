@@ -4,25 +4,36 @@ An useful, quick implementation of IronSource Mediation SDK
 
 <!-- GETTING STARTED -->
 
-### Prerequisites
-
-Add this to your project-level build.gradle
-  ```sh
-  allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-  ```
-Add this to your app-level build.gradle
-```sh
-dependencies {
-	implementation 'com.github.dktlib:ApplovinUtilsLibrary:Tag'
-}
- ```
-### Usage
-
+// ADMOB
+    fun postRevenueAdjust(ad: AdValue, adUnit: String?) {
+        val adjustAdRevenue = AdjustAdRevenue(AdjustConfig.AD_REVENUE_ADMOB)
+        val rev = ad.valueMicros.toDouble() / 1000000
+        adjustAdRevenue.setRevenue(rev, ad.currencyCode)
+        adjustAdRevenue.setAdRevenueUnit(adUnit)
+        Adjust.trackAdRevenue(adjustAdRevenue)
+    }
+// MAX
+    fun firebaseAdRevenue(activity: Context, ad: MaxAd?) {
+        val revenue = ad!!.revenue // In USD
+        val mFirebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(activity)
+        val params = Bundle()
+        params.putString(FirebaseAnalytics.Param.AD_PLATFORM, "appLovin")
+        params.putString(FirebaseAnalytics.Param.AD_SOURCE, ad.networkName)
+        params.putString(FirebaseAnalytics.Param.AD_FORMAT, ad.format.displayName)
+        params.putString(FirebaseAnalytics.Param.AD_UNIT_NAME, ad.adUnitId)
+        params.putDouble(FirebaseAnalytics.Param.VALUE, revenue)
+        params.putString(FirebaseAnalytics.Param.CURRENCY, "USD")
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, params)
+        postRevenueAdjustMax(ad)
+    }
+    fun postRevenueAdjustMax(ad : MaxAd){
+        val adjustAdRevenue = AdjustAdRevenue(AdjustConfig.AD_REVENUE_APPLOVIN_MAX)
+        adjustAdRevenue.setRevenue(ad.getRevenue(), "USD")
+        adjustAdRevenue.setAdRevenueNetwork(ad.getNetworkName())
+        adjustAdRevenue.setAdRevenueUnit(ad.getAdUnitId())
+        adjustAdRevenue.setAdRevenuePlacement(ad.getPlacement())
+        Adjust.trackAdRevenue(adjustAdRevenue)
+    }
 #### Init
 Add this to onCreate of your first activity
  ```sh
