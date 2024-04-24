@@ -4,7 +4,7 @@ An useful, quick implementation of IronSource Mediation SDK
 
 <!-- GETTING STARTED -->
 
-// ADMOB
+// LOG REVENUE ADMOB
 
     fun postRevenueAdjust(ad: AdValue, adUnit: String?) {
         val adjustAdRevenue = AdjustAdRevenue(AdjustConfig.AD_REVENUE_ADMOB)
@@ -14,7 +14,7 @@ An useful, quick implementation of IronSource Mediation SDK
         Adjust.trackAdRevenue(adjustAdRevenue)
     }
     
-// MAX
+// LOG REVENUE MAX
 
     fun firebaseAdRevenue(activity: Context, ad: MaxAd?) {
         val revenue = ad!!.revenue // In USD
