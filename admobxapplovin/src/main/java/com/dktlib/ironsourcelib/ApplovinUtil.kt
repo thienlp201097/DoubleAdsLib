@@ -19,9 +19,19 @@ import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
-import com.applovin.mediation.*
+import com.applovin.mediation.MaxAd
+import com.applovin.mediation.MaxAdFormat
+import com.applovin.mediation.MaxAdListener
+import com.applovin.mediation.MaxAdRevenueListener
+import com.applovin.mediation.MaxAdViewAdListener
+import com.applovin.mediation.MaxError
+import com.applovin.mediation.MaxReward
+import com.applovin.mediation.MaxRewardedAdListener
 import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.ads.MaxRewardedAd
@@ -63,7 +73,7 @@ object ApplovinUtil : LifecycleObserver {
     var dialogFullScreen: Dialog? = null
     private lateinit var nativeAdLoader: MaxNativeAdLoader
     private var nativeAd: MaxAd? = null
-
+    var applovin_sdk : AppLovinSdk? = null
     fun initApplovin(application: Application,SDK_KEY : String, testAds : Boolean, enableAds: Boolean, initialization: Initialization) {
         this.enableAds = enableAds
         val executor = Executors.newSingleThreadExecutor();
@@ -80,8 +90,8 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             // Initialize the AppLovin SDK
-            val sdk = AppLovinSdk.getInstance(application)
-            sdk.initialize(initConfigBuilder.build()) {
+            applovin_sdk = AppLovinSdk.getInstance(application)
+            applovin_sdk?.initialize(initConfigBuilder.build()) {
                 initialization.onInitSuccessful()
             }
             executor.shutdown()
@@ -107,7 +117,10 @@ object ApplovinUtil : LifecycleObserver {
             callback.onInterstitialLoadFail("null")
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onInterstitialLoadFail("SDK not Initialized")
+            return
+        }
         interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(ad: MaxAd) {
                 callback.onInterstitialReady()
@@ -164,7 +177,10 @@ object ApplovinUtil : LifecycleObserver {
             callback.onInterstitialClosed()
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onInterstitialLoadFail("SDK not Initialized")
+            return
+        }
         if (interstitialAd == null) {
             callback.onInterstitialLoadFail("null")
             return
@@ -287,7 +303,10 @@ object ApplovinUtil : LifecycleObserver {
             callback.onInterstitialClosed()
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onInterstitialLoadFail("SDK not Initialized")
+            return
+        }
         val dialogFullScreen = Dialog(activity)
         dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialogFullScreen.setContentView(R.layout.dialog_full_screen)
@@ -485,7 +504,10 @@ object ApplovinUtil : LifecycleObserver {
             callback.onBannerLoadFail("")
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onBannerLoadFail("SDK not Initialized")
+            return
+        }
         bannerContainer.removeAllViews()
         banner = MaxAdView(idAd, activity)
 
@@ -558,7 +580,10 @@ object ApplovinUtil : LifecycleObserver {
             callback.onRewardClosed()
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onRewardLoadFail("SDK not Initialized")
+            return
+        }
         if (rewardAd == null) {
             callback.onRewardLoadFail("null")
             return
@@ -689,7 +714,10 @@ object ApplovinUtil : LifecycleObserver {
         timeout: Long,
         callback: RewardCallback
     ) {
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onRewardLoadFail("SDK not Initialized")
+            return
+        }
         rewardAd = MaxRewardedAd.getInstance(idAd, activity)
         if (!enableAds || !isNetworkConnected(activity)) {
             callback.onRewardClosed()
@@ -757,7 +785,10 @@ object ApplovinUtil : LifecycleObserver {
         if (!enableAds || !isNetworkConnected(activity)) {
             adCallback.onAdFail("No internet")
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            adCallback.onAdFail("SDK not Initialized")
+            return
+        }
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
         nativeAdLoader.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
@@ -793,7 +824,10 @@ object ApplovinUtil : LifecycleObserver {
             adCallback.onAdFail()
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            adCallback.onAdFail()
+            return
+        }
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
         val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
@@ -844,6 +878,10 @@ object ApplovinUtil : LifecycleObserver {
     ) {
         if (interHolder.inter != null) {
             Log.d("===AdsInter", "Inter not null")
+            return
+        }
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onInterstitialLoadFail("SDK not Initialized")
             return
         }
         interHolder.inter = MaxInterstitialAd(interHolder.adsId, activity as Activity?)
@@ -902,7 +940,10 @@ object ApplovinUtil : LifecycleObserver {
             callback.onInterstitialLoadFail("null")
             return
         }
-
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onInterstitialLoadFail("SDK not Initialized")
+            return
+        }
         if (AppOpenManager.getInstance().isInitialized) {
             if (!AppOpenManager.getInstance().isAppResumeEnabled) {
                 return
@@ -1182,6 +1223,10 @@ object ApplovinUtil : LifecycleObserver {
             Log.d("===AdsInter", "Native not null")
             return
         }
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            adCallback.onAdFail("SDK not Initialized")
+            return
+        }
         nativeHolder.isLoad = true
         nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
         nativeHolder.nativeAdLoader?.setRevenueListener { ad -> adCallback.onAdRevenuePaid(ad) }
@@ -1224,6 +1269,10 @@ object ApplovinUtil : LifecycleObserver {
     ) {
         if (!enableAds || !isNetworkConnected(context)) {
             callback.onAdFail("No internet")
+            return
+        }
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onAdFail("SDK not Initialized")
             return
         }
         val adView = createNativeAdView(context, layout)
@@ -1309,6 +1358,10 @@ object ApplovinUtil : LifecycleObserver {
             adCallback.onAdFail("No internet")
             return
         }
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            adCallback.onAdFail("SDK not Initialized")
+            return
+        }
         nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
         view.removeAllViews()
         val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
@@ -1374,6 +1427,10 @@ object ApplovinUtil : LifecycleObserver {
     ) {
         if (!enableAds || !isNetworkConnected(activity)) {
             adCallback.onAdFail("No internet")
+            return
+        }
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            adCallback.onAdFail("SDK not Initialized")
             return
         }
         nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
