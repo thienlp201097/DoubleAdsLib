@@ -5,6 +5,7 @@ An useful, quick implementation of IronSource Mediation SDK
 <!-- GETTING STARTED -->
 
 // ADMOB
+
     fun postRevenueAdjust(ad: AdValue, adUnit: String?) {
         val adjustAdRevenue = AdjustAdRevenue(AdjustConfig.AD_REVENUE_ADMOB)
         val rev = ad.valueMicros.toDouble() / 1000000
@@ -12,7 +13,9 @@ An useful, quick implementation of IronSource Mediation SDK
         adjustAdRevenue.setAdRevenueUnit(adUnit)
         Adjust.trackAdRevenue(adjustAdRevenue)
     }
+    
 // MAX
+
     fun firebaseAdRevenue(activity: Context, ad: MaxAd?) {
         val revenue = ad!!.revenue // In USD
         val mFirebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(activity)
