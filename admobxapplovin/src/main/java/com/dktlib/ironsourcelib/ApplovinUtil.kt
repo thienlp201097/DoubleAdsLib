@@ -74,7 +74,9 @@ object ApplovinUtil : LifecycleObserver {
     private lateinit var nativeAdLoader: MaxNativeAdLoader
     private var nativeAd: MaxAd? = null
     var applovin_sdk : AppLovinSdk? = null
+    var isClickAds = false
     fun initApplovin(application: Application,SDK_KEY : String, testAds : Boolean, enableAds: Boolean, initialization: Initialization) {
+        isClickAds = false
         this.enableAds = enableAds
         val executor = Executors.newSingleThreadExecutor();
         executor.execute {
@@ -139,7 +141,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(ad: MaxAd) {
-
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -239,6 +241,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(p0: MaxAd) {
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -422,7 +425,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(p0: MaxAd) {
-
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -544,6 +547,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(p0: MaxAd) {
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -642,7 +646,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(p0: MaxAd) {
-
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -742,7 +746,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(p0: MaxAd) {
-
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -807,6 +811,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
+                isClickAds = true
             }
         })
         nativeAdLoader.loadAd()
@@ -865,6 +870,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
+                isClickAds = true
             }
         })
         nativeAdLoader.loadAd()
@@ -910,7 +916,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdClicked(p0: MaxAd) {
-
+                isClickAds = true
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -1025,6 +1031,7 @@ object ApplovinUtil : LifecycleObserver {
                             }
 
                             override fun onAdClicked(p0: MaxAd) {
+                                isClickAds = true
                             }
 
                             override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -1138,6 +1145,7 @@ object ApplovinUtil : LifecycleObserver {
                                     }
 
                                     override fun onAdClicked(p0: MaxAd) {
+                                        isClickAds = true
                                     }
 
                                     override fun onAdLoadFailed(p0: String, p1: MaxError) {
@@ -1250,6 +1258,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
+                isClickAds = true
             }
 
             override fun onNativeAdExpired(p0: MaxAd) {
@@ -1293,6 +1302,7 @@ object ApplovinUtil : LifecycleObserver {
                 }
 
                 override fun onNativeAdClicked(ad: MaxAd) {
+                    isClickAds = true
                 }
 
                 override fun onNativeAdExpired(p0: MaxAd) {
@@ -1395,6 +1405,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
+                isClickAds = true
             }
 
             override fun onNativeAdExpired(p0: MaxAd) {
@@ -1464,6 +1475,7 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
+                isClickAds = true
             }
 
             override fun onNativeAdExpired(p0: MaxAd) {

@@ -32,7 +32,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     private static final String TAG = "AppOpenManager";
     private static volatile AppOpenManager INSTANCE;
     private AppOpenAd appResumeAd = null;
-    private AppOpenAd splashAd = null;
+    private final AppOpenAd splashAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private FullScreenContentCallback fullScreenContentCallback;
     private String appResumeAdId;
@@ -42,8 +42,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     public boolean isShowingAdsOnResume = false;
     public boolean isShowingAdsOnResumeBanner = false;
     private long appResumeLoadTime = 0;
-    private long splashLoadTime = 0;
-    private int splashTimeout = 0;
+    private final long splashLoadTime = 0;
+    private final int splashTimeout = 0;
     private boolean isInitialized = false;
     public boolean isAppResumeEnabled = true;
     private final List<Class> disabledAppOpenList;
@@ -51,7 +51,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     private boolean isTimeout = false;
     private static final int TIMEOUT_MSG = 11;
     private Dialog dialogFullScreen;
-    private Handler timeoutHandler = new Handler(msg -> {
+    private final Handler timeoutHandler = new Handler(msg -> {
         if (msg.what == TIMEOUT_MSG) {
             isTimeout = true;
         }
@@ -350,14 +350,14 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("===Onresume", "onresume");
+                Log.d("===Onresume", "onresume :" + currentActivity.getClass().getName());
                 if (currentActivity == null) {
                     return;
                 }
                 if (currentActivity.getClass() == AdActivity.class){
                     return;
                 }
-                if(AdmobUtils.isAdShowing){
+                if(AdmobUtils.isAdShowing || ApplovinUtil.INSTANCE.isInterstitialAdShowing()){
                     return;
                 }
                 if (!AdmobUtils.isShowAds) {
@@ -377,6 +377,10 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                         Log.d(TAG, "onStart: activity is disabled");
                         return;
                     }
+                }
+                if (ApplovinUtil.INSTANCE.isClickAds()){
+                    ApplovinUtil.INSTANCE.setClickAds(false);
+                    return;
                 }
                 showAdIfAvailable(false);
             }
