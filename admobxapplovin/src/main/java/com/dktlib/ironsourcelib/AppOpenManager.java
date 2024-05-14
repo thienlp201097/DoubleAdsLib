@@ -350,7 +350,6 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("===Onresume", "onresume :" + currentActivity.getClass().getName());
                 if (currentActivity == null) {
                     return;
                 }
