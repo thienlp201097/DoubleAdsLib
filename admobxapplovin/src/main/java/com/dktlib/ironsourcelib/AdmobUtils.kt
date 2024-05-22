@@ -612,7 +612,6 @@ object AdmobUtils {
             viewGroup.visibility = View.GONE
             return
         }
-        viewGroup.removeAllViews()
         var s = nativeHolder.ads
         if (isTesting) {
             s = activity.getString(R.string.test_ads_admob_native_id)
