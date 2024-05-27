@@ -32,7 +32,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     private static final String TAG = "AppOpenManager";
     private static volatile AppOpenManager INSTANCE;
     private AppOpenAd appResumeAd = null;
-    private final AppOpenAd splashAd = null;
+    private AppOpenAd splashAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private FullScreenContentCallback fullScreenContentCallback;
     private String appResumeAdId;
@@ -42,8 +42,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     public boolean isShowingAdsOnResume = false;
     public boolean isShowingAdsOnResumeBanner = false;
     private long appResumeLoadTime = 0;
-    private final long splashLoadTime = 0;
-    private final int splashTimeout = 0;
+    private long splashLoadTime = 0;
+    private int splashTimeout = 0;
     private boolean isInitialized = false;
     public boolean isAppResumeEnabled = true;
     private final List<Class> disabledAppOpenList;
@@ -51,7 +51,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     private boolean isTimeout = false;
     private static final int TIMEOUT_MSG = 11;
     private Dialog dialogFullScreen;
-    private final Handler timeoutHandler = new Handler(msg -> {
+    private Handler timeoutHandler = new Handler(msg -> {
         if (msg.what == TIMEOUT_MSG) {
             isTimeout = true;
         }
@@ -148,6 +148,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     }
 
     boolean isLoading = false;
+    public boolean isDismiss = false;
     public void fetchAd(final boolean isSplash) {
         Log.d(TAG, "fetchAd: isSplash = " + isSplash);
         if (isAdAvailable(isSplash) || appResumeAdId == null || AppOpenManager.this.appResumeAd!= null) {
@@ -275,10 +276,16 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         }
         Log.d("===Onresume", "FullScreenContentCallback");
         if (!isShowingAd && isAdAvailable(isSplash)) {
+            isDismiss = true;
             FullScreenContentCallback callback =
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
+                            Log.d("==TestAOA==", "onResume: true");
+                            new Handler().postDelayed(() -> {
+                                isDismiss = false;
+                                Log.d("==TestAOA==", "onResume: false");
+                            },200);
                             isLoading = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Dismiss");
                             try {
@@ -299,6 +306,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                         @Override
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
                             isLoading = false;
+                            isDismiss = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Show false");
                             try {
                                 dialogFullScreen.dismiss();
@@ -350,13 +358,14 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d("===Onresume", "onresume");
                 if (currentActivity == null) {
                     return;
                 }
                 if (currentActivity.getClass() == AdActivity.class){
                     return;
                 }
-                if(AdmobUtils.isAdShowing || ApplovinUtil.INSTANCE.isInterstitialAdShowing()){
+                if(AdmobUtils.isAdShowing){
                     return;
                 }
                 if (!AdmobUtils.isShowAds) {
@@ -377,10 +386,6 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                         return;
                     }
                 }
-                if (ApplovinUtil.INSTANCE.isClickAds()){
-                    ApplovinUtil.INSTANCE.setClickAds(false);
-                    return;
-                }
                 showAdIfAvailable(false);
             }
         },30);
@@ -391,7 +396,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         isShowingAdsOnResumeBanner = true;
         dialogFullScreen = new Dialog(context);
         dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogFullScreen.setContentView(R.layout.dialog_onresume);
+        dialogFullScreen.setContentView(R.layout.dialog_full_screen);
         dialogFullScreen.setCancelable(false);
         dialogFullScreen.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialogFullScreen.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
