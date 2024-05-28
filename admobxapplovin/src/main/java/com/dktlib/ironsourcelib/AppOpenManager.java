@@ -396,7 +396,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         isShowingAdsOnResumeBanner = true;
         dialogFullScreen = new Dialog(context);
         dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogFullScreen.setContentView(R.layout.dialog_full_screen);
+        dialogFullScreen.setContentView(R.layout.dialog_onresume);
         dialogFullScreen.setCancelable(false);
         dialogFullScreen.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialogFullScreen.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
