@@ -30,7 +30,7 @@ object AdjustUtils {
         adjustAdRevenue.setRevenue(ad.revenue, "USD")
         adjustAdRevenue.setAdRevenueNetwork(ad.networkName)
         Log.d("==postRevenueAdjustMax==", "postRevenueAdjustMax: ${ad.networkName}")
-        if (ad.networkName == "AdMob" || ad.networkName == "Google Ad Manager"){
+        if (ad.networkName == "Google AdMob" || ad.networkName == "Google Ad Manager"){
             Log.d("==postRevenueAdjustMax==", " ${ad.networkName} no post revenue")
             return
         }
