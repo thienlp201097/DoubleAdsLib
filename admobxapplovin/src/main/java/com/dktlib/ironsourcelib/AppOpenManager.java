@@ -365,6 +365,10 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                 if (currentActivity.getClass() == AdActivity.class){
                     return;
                 }
+                if (ApplovinUtil.INSTANCE.isClickAds()){
+                    ApplovinUtil.INSTANCE.setClickAds(false);
+                    return;
+                }
                 if(AdmobUtils.isAdShowing){
                     return;
                 }
