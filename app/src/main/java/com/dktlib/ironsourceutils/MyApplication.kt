@@ -1,10 +1,9 @@
 package com.dktlib.ironsourceutils
 
-import com.dktlib.ironsourcelib.adjust.AdjustUtils
-import com.dktlib.ironsourcelib.application.AdsApplication
+import android.app.Application
 
-class MyApplication : AdsApplication() {
-    override fun onCreateApplication() {
-        AdjustUtils.initAdjust(this,"",false)
+class MyApplication:Application() {
+    override fun onCreate() {
+        super.onCreate()
     }
 }
