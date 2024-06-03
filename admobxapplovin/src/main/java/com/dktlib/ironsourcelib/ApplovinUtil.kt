@@ -66,6 +66,7 @@ import java.util.concurrent.Executors
 
 
 object ApplovinUtil : LifecycleObserver {
+
     var enableAds = true
     var isInterstitialAdShowing = false
     private var banner: MaxAdView? = null
