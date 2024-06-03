@@ -23,17 +23,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.airbnb.lottie.LottieAnimationView
 import com.dktlib.ironsourcelib.NativeFunc.Companion.populateNativeAdView
+import com.dktlib.ironsourcelib.adjust.AdjustUtils
 import com.dktlib.ironsourcelib.utils.SweetAlert.SweetAlertDialog
+import com.dktlib.ironsourcelib.utils.admod.BannerHolderAdmob
+import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmob
+import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmob
+import com.dktlib.ironsourcelib.utils.admod.RewardedInterstitialHolderAdmob
 import com.dktlib.ironsourcelib.utils.admod.callback.AdCallBackInterLoad
 import com.dktlib.ironsourcelib.utils.admod.callback.AdLoadCallback
 import com.dktlib.ironsourcelib.utils.admod.callback.AdsInterCallBack
-import com.dktlib.ironsourcelib.utils.admod.BannerHolder
-import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmod
 import com.dktlib.ironsourcelib.utils.admod.callback.NativeAdmobCallback
 import com.dktlib.ironsourcelib.utils.admod.callback.NativeFullScreenCallBack
-import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmod
 import com.dktlib.ironsourcelib.utils.admod.callback.RewardAdCallback
-import com.dktlib.ironsourcelib.utils.admod.RewardedInterstitialHolderAdmob
 import com.dktlib.ironsourcelib.utils.admod.remote.BannerPlugin
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.ads.mediation.admob.AdMobAdapter
@@ -223,7 +224,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAdBannerCollapsibleReload(
         activity: Activity,
-        banner: BannerHolder,
+        banner: BannerHolderAdmob,
         collapsibleBannerSize: CollapsibleBanner,
         viewGroup: ViewGroup,
         callback: BannerCollapsibleAdCallback
@@ -402,7 +403,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndGetNativeAds(
         context: Context,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         adCallback: NativeAdmobCallback
     ) {
         if (!isShowAds || !isNetworkConnected(context)) {
@@ -426,7 +427,7 @@ object AdmobUtils {
                 nativeHolder.isLoad = false
                 nativeHolder.native_mutable.value = nativeAd
                 nativeAd.setOnPaidEventListener { adValue: AdValue? -> adValue?.let {
-                    adCallback.onAdPaid(
+                    AdjustUtils.postRevenueAdjust(
                         it,nativeHolder.ads)
                 } }
                 adCallback.onLoadedAndGetNativeAd(nativeAd)
@@ -456,7 +457,7 @@ object AdmobUtils {
     @JvmStatic
     fun showNativeAdsWithLayout(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         size: GoogleENative,
@@ -501,7 +502,7 @@ object AdmobUtils {
             nativeHolder.native_mutable.observe((activity as LifecycleOwner)) { nativeAd: NativeAd? ->
                 if (nativeAd != null) {
                     nativeAd.setOnPaidEventListener {
-                        callback.onPaidNative(it,nativeHolder.ads)
+                        AdjustUtils.postRevenueAdjust(it, nativeHolder.ads)
                     }
                     val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
                     populateNativeAdView(nativeAd, adView, size)
@@ -535,7 +536,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowNativeAdsWithLayoutAds(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         size: GoogleENative,
@@ -573,7 +574,7 @@ object AdmobUtils {
                 viewGroup.removeAllViews()
                 viewGroup.addView(adView)
                 nativeAd.setOnPaidEventListener { adValue: AdValue ->
-                    adCallback.onAdPaid(adValue,s)
+                    AdjustUtils.postRevenueAdjust(adValue, s)
                 }
                 //viewGroup.setVisibility(View.VISIBLE);
             }.withAdListener(object : AdListener() {
@@ -601,7 +602,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowNativeAdsWithLayoutAdsNoShimmer(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         size: GoogleENative,
@@ -625,7 +626,7 @@ object AdmobUtils {
                 viewGroup.removeAllViews()
                 viewGroup.addView(adView)
                 nativeAd.setOnPaidEventListener { adValue: AdValue ->
-                    adCallback.onAdPaid(adValue,s)
+                    AdjustUtils.postRevenueAdjust(adValue, s)
                 }
                 //viewGroup.setVisibility(View.VISIBLE);
             }.withAdListener(object : AdListener() {
@@ -653,7 +654,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndGetAdInterstitial(
         activity: Context,
-        interHolder: InterHolderAdmod,
+        interHolder: InterHolderAdmob,
         adLoadCallback: AdCallBackInterLoad
     ) {
         isAdShowing = false
@@ -708,7 +709,7 @@ object AdmobUtils {
     @JvmStatic
     fun showAdInterstitialWithCallbackNotLoadNew(
         activity: Activity,
-        interHolder: InterHolderAdmod,
+        interHolder: InterHolderAdmob,
         timeout: Long,
         adCallback: AdsInterCallBack?,
         enableLoadingDialog: Boolean
@@ -789,8 +790,11 @@ object AdmobUtils {
                                 isAdShowing = true
                                 adCallback?.onAdShowed()
                                 try {
-                                    aBoolean.setOnPaidEventListener {
-                                            adValue -> adCallback?.onPaid(adValue,interHolder.inter?.adUnitId)
+                                    aBoolean.setOnPaidEventListener { adValue ->
+                                        AdjustUtils.postRevenueAdjust(
+                                            adValue,
+                                            interHolder.inter?.adUnitId
+                                        )
                                     }
                                 } catch (e: Exception) {
                                 }
@@ -869,7 +873,12 @@ object AdmobUtils {
             isAdShowing = true
             Handler(Looper.getMainLooper()).postDelayed({
                 callback?.onStartAction()
-                mInterstitialAd.setOnPaidEventListener { adValue -> callback?.onPaid(adValue,mInterstitialAd.adUnitId) }
+                mInterstitialAd.setOnPaidEventListener { adValue ->
+                    AdjustUtils.postRevenueAdjust(
+                        adValue,
+                        mInterstitialAd.adUnitId
+                    )
+                }
                 mInterstitialAd.show(activity)
             },400)
         } else {
@@ -940,7 +949,12 @@ object AdmobUtils {
                 override fun onAdLoaded(rewardedAd: RewardedAd) {
                     mRewardedAd = rewardedAd
                     if (mRewardedAd != null) {
-                        mRewardedAd?.setOnPaidEventListener { adCallback2.onPaid(it, mRewardedAd?.adUnitId) }
+                        mRewardedAd?.setOnPaidEventListener {
+                            AdjustUtils.postRevenueAdjust(
+                                it,
+                                mRewardedAd?.adUnitId
+                            )
+                        }
                         mRewardedAd?.fullScreenContentCallback =
                             object : FullScreenContentCallback() {
                                 override fun onAdShowedFullScreenContent() {
@@ -1085,7 +1099,10 @@ object AdmobUtils {
                         reward?.let {
                             mInterstitialRewardAd.mutable.removeObservers((activity as LifecycleOwner))
                             it.setOnPaidEventListener { value ->
-                                adCallback.onPaid(value,mInterstitialRewardAd.inter?.adUnitId)
+                                AdjustUtils.postRevenueAdjust(
+                                    value,
+                                    mInterstitialRewardAd.inter?.adUnitId
+                                )
                             }
                             mInterstitialRewardAd.inter?.fullScreenContentCallback = object : FullScreenContentCallback() {
                                 override fun onAdDismissedFullScreenContent() {
@@ -1132,7 +1149,7 @@ object AdmobUtils {
                         delay(800)
 
                         mInterstitialRewardAd.inter?.setOnPaidEventListener {
-                            adCallback.onPaid(it,mInterstitialRewardAd.inter?.adUnitId)
+                            AdjustUtils.postRevenueAdjust(it, mInterstitialRewardAd.inter?.adUnitId)
                         }
                         mInterstitialRewardAd.inter?.fullScreenContentCallback = object : FullScreenContentCallback() {
                             override fun onAdDismissedFullScreenContent() {
@@ -1187,7 +1204,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowAdInterstitial(
         activity: AppCompatActivity,
-        admobId: InterHolderAdmod,
+        admobId: InterHolderAdmob,
         adCallback: AdsInterCallBack,
         enableLoadingDialog: Boolean
     ) {
@@ -1420,7 +1437,8 @@ object AdmobUtils {
             .build()
         builder.withNativeAdOptions(adOptions)
         builder.forNativeAd { nativeAd ->
-            nativeAd.setOnPaidEventListener { adValue: AdValue? -> adValue?.let { listener.onPaidNative(adValue,id) } }
+            nativeAd.setOnPaidEventListener { adValue: AdValue? ->
+                adValue?.let { AdjustUtils.postRevenueAdjust(it, adUnit = id) }}
             populateNativeAdView(nativeAd,adView.findViewById(R.id.native_ad_view))
             viewGroup.removeAllViews()
             shimmerFrameLayout?.stopShimmer()
@@ -1441,7 +1459,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndGetNativeFullScreenAds(
         context: Context,
-        nativeHolder: NativeHolderAdmod,mediaAspectRatio : Int,
+        nativeHolder: NativeHolderAdmob, mediaAspectRatio : Int,
         adCallback: NativeAdCallbackNew
     ) {
         if (!isShowAds || !isNetworkConnected(context)) {
@@ -1469,8 +1487,7 @@ object AdmobUtils {
             nativeHolder.isLoad = false
             nativeHolder.native_mutable.value = nativeAd
             nativeAd.setOnPaidEventListener { adValue: AdValue? -> adValue?.let {
-                adCallback.onAdPaid(
-                    it,nativeHolder.ads)
+                AdjustUtils.postRevenueAdjust(it, adUnit = nativeHolder.ads)
             } }
             adCallback.onLoadedAndGetNativeAd(nativeAd)
         }
@@ -1497,7 +1514,7 @@ object AdmobUtils {
     @JvmStatic
     fun showNativeFullScreenAdsWithLayout(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         callback: AdsNativeCallBackAdmod
@@ -1538,7 +1555,7 @@ object AdmobUtils {
             nativeHolder.native_mutable.observe((activity as LifecycleOwner)) { nativeAd: NativeAd? ->
                 if (nativeAd != null) {
                     nativeAd.setOnPaidEventListener {
-                        callback.onPaidNative(it,nativeHolder.ads)
+                        AdjustUtils.postRevenueAdjust(it, adUnit = nativeHolder.ads)
                     }
                     val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
                     populateNativeAdView(nativeHolder.nativeAd!!,adView.findViewById(R.id.native_ad_view))
@@ -1578,7 +1595,14 @@ object AdmobUtils {
             .build()
         builder.withNativeAdOptions(adOptions)
         builder.forNativeAd { nativeAd ->
-            nativeAd.setOnPaidEventListener { adValue: AdValue? -> adValue?.let { listener.onPaidNative(adValue,id) } }
+            nativeAd.setOnPaidEventListener { adValue: AdValue? ->
+                adValue?.let {
+                    AdjustUtils.postRevenueAdjust(
+                        adValue,
+                        id
+                    )
+                }
+            }
             populateNativeAdView(nativeAd,adView.findViewById(R.id.native_ad_view))
             viewGroup.removeAllViews()
             viewGroup.addView(adView)

@@ -220,12 +220,14 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 //            return;
 //        }
         currentActivity = activity;
+        Log.d("===Onresume", currentActivity.getClass().getName());
         Log.d("===ADS", "Running");
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
         currentActivity = activity;
+        Log.d("===Onresume", currentActivity.getClass().getName());
         if (splashActivity == null) {
             if (!activity.getClass().getName().equals(AdActivity.class.getName())) {
                 fetchAd(false);
@@ -358,11 +360,15 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("===Onresume", "onresume");
+                Log.d("===Onresume", currentActivity.getClass().getName());
                 if (currentActivity == null) {
                     return;
                 }
                 if (currentActivity.getClass() == AdActivity.class){
+                    return;
+                }
+                if (ApplovinUtil.INSTANCE.isClickAds()){
+                    ApplovinUtil.INSTANCE.setClickAds(false);
                     return;
                 }
                 if(AdmobUtils.isAdShowing){
