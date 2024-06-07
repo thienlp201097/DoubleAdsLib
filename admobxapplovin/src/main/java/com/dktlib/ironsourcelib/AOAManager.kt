@@ -29,13 +29,14 @@ class AOAManager(private val activity: Activity,val appOpen: String,val timeOut:
     var isLoading = true
     var dialogFullScreen: Dialog? = null
     var isStart = true
+    private var isLoadAndShow = true
     private val adRequest: AdRequest
         get() = AdRequest.Builder().build()
 
     private val isAdAvailable: Boolean
         get() = appOpenAd != null
 
-    fun loadAndShowAoA() {
+    fun loadAoA() {
         Log.d("===Load","id1")
         var idAoa = appOpen
         if (AdmobUtils.isTesting){
@@ -79,9 +80,10 @@ class AOAManager(private val activity: Activity,val appOpen: String,val timeOut:
                 override fun onAdLoaded(ad: AppOpenAd) {
                     super.onAdLoaded(ad)
                     appOpenAd = ad
+                    appOpenAdsListener.onAdsLoaded()
                     job.cancel()
                     Log.d("====Timeout", "isAdAvailable = true")
-                    if (!AppOpenManager.getInstance().isShowingAd && !isShowingAd){
+                    if (!AppOpenManager.getInstance().isShowingAd && !isShowingAd && isLoadAndShow){
                         showAdIfAvailable()
                     }
                 }
@@ -185,8 +187,13 @@ class AOAManager(private val activity: Activity,val appOpen: String,val timeOut:
         } catch (ignored: Exception) {
         }
     }
+
+    fun setLoadAndShow(loadAndShow: Boolean){
+        isLoadAndShow = loadAndShow
+    }
     interface AppOpenAdsListener {
         fun onAdsClose()
+        fun onAdsLoaded()
         fun onAdsFailed(message : String)
         fun onAdPaid(adValue: AdValue, adUnitAds : String)
     }
