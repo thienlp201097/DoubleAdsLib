@@ -28,10 +28,10 @@ import com.dktlib.ironsourcelib.utils.admod.callback.AdCallBackInterLoad
 import com.dktlib.ironsourcelib.utils.admod.callback.AdLoadCallback
 import com.dktlib.ironsourcelib.utils.admod.callback.AdsInterCallBack
 import com.dktlib.ironsourcelib.utils.admod.BannerHolder
-import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmod
+import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmob
 import com.dktlib.ironsourcelib.utils.admod.callback.NativeAdmobCallback
 import com.dktlib.ironsourcelib.utils.admod.callback.NativeFullScreenCallBack
-import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmod
+import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmob
 import com.dktlib.ironsourcelib.utils.admod.callback.RewardAdCallback
 import com.dktlib.ironsourcelib.utils.admod.RewardedInterstitialHolderAdmob
 import com.dktlib.ironsourcelib.utils.admod.remote.BannerPlugin
@@ -402,7 +402,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndGetNativeAds(
         context: Context,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         adCallback: NativeAdmobCallback
     ) {
         if (!isShowAds || !isNetworkConnected(context)) {
@@ -456,7 +456,7 @@ object AdmobUtils {
     @JvmStatic
     fun showNativeAdsWithLayout(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         size: GoogleENative,
@@ -535,7 +535,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowNativeAdsWithLayoutAds(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         size: GoogleENative,
@@ -601,7 +601,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowNativeAdsWithLayoutAdsNoShimmer(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         size: GoogleENative,
@@ -653,7 +653,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndGetAdInterstitial(
         activity: Context,
-        interHolder: InterHolderAdmod,
+        interHolder: InterHolderAdmob,
         adLoadCallback: AdCallBackInterLoad
     ) {
         isAdShowing = false
@@ -708,7 +708,7 @@ object AdmobUtils {
     @JvmStatic
     fun showAdInterstitialWithCallbackNotLoadNew(
         activity: Activity,
-        interHolder: InterHolderAdmod,
+        interHolder: InterHolderAdmob,
         timeout: Long,
         adCallback: AdsInterCallBack?,
         enableLoadingDialog: Boolean
@@ -1187,7 +1187,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowAdInterstitial(
         activity: AppCompatActivity,
-        admobId: InterHolderAdmod,
+        admobId: InterHolderAdmob,
         adCallback: AdsInterCallBack,
         enableLoadingDialog: Boolean
     ) {
@@ -1441,7 +1441,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndGetNativeFullScreenAds(
         context: Context,
-        nativeHolder: NativeHolderAdmod,mediaAspectRatio : Int,
+        nativeHolder: NativeHolderAdmob, mediaAspectRatio : Int,
         adCallback: NativeAdCallbackNew
     ) {
         if (!isShowAds || !isNetworkConnected(context)) {
@@ -1497,7 +1497,7 @@ object AdmobUtils {
     @JvmStatic
     fun showNativeFullScreenAdsWithLayout(
         activity: Activity,
-        nativeHolder: NativeHolderAdmod,
+        nativeHolder: NativeHolderAdmob,
         viewGroup: ViewGroup,
         layout: Int,
         callback: AdsNativeCallBackAdmod

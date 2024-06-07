@@ -7,13 +7,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import com.dktlib.ironsourcelib.AdmobUtils
 import com.dktlib.ironsourcelib.GoogleENative
-import com.dktlib.ironsourcelib.callback_applovin.NativeAdCallback
 import com.dktlib.ironsourcelib.utils.Utils
 import com.dktlib.ironsourcelib.utils.admod.callback.AdCallBackInterLoad
 import com.dktlib.ironsourcelib.utils.admod.callback.AdsInterCallBack
-import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmod
-import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmod
-import com.dktlib.ironsourcelib.utils.admod.callback.NativeAdCallbackAdmod
+import com.dktlib.ironsourcelib.utils.admod.InterHolderAdmob
+import com.dktlib.ironsourcelib.utils.admod.NativeHolderAdmob
 import com.dktlib.ironsourcelib.utils.admod.callback.NativeAdmobCallback
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -24,10 +22,10 @@ object AdsManagerAdmod {
     val mutable_inter1: MutableLiveData<InterstitialAd> = MutableLiveData()
     var check_inter1 = false
 
-    var nativeHolder = NativeHolderAdmod("ca-app-pub-3940256099942544/2247696110")
-    var interholder = InterHolderAdmod("ca-app-pub-3940256099942544/1033173712")
+    var nativeHolder = NativeHolderAdmob("ca-app-pub-3940256099942544/2247696110")
+    var interholder = InterHolderAdmob("ca-app-pub-3940256099942544/1033173712")
 
-    fun loadInter(context: Context, interHolder: InterHolderAdmod) {
+    fun loadInter(context: Context, interHolder: InterHolderAdmob) {
         AdmobUtils.loadAndGetAdInterstitial(context,interHolder,
             object :
                 AdCallBackInterLoad {
@@ -59,7 +57,7 @@ object AdsManagerAdmod {
 
     fun showInter(
         context: Context,
-        interHolder: InterHolderAdmod,
+        interHolder: InterHolderAdmob,
         adListener: AdListener,
         enableLoadingDialog: Boolean
     ) {
@@ -98,7 +96,7 @@ object AdsManagerAdmod {
             }, enableLoadingDialog)
     }
 
-    fun loadAdsNativeNew(context: Context, holder: NativeHolderAdmod) {
+    fun loadAdsNativeNew(context: Context, holder: NativeHolderAdmob) {
         AdmobUtils.loadAndGetNativeAds(
             context,
             holder,
@@ -117,7 +115,7 @@ object AdsManagerAdmod {
             })
     }
 
-    fun showNative(activity: Activity, viewGroup: ViewGroup, holder: NativeHolderAdmod) {
+    fun showNative(activity: Activity, viewGroup: ViewGroup, holder: NativeHolderAdmob) {
         if (!AdmobUtils.isNetworkConnected(activity)) {
             viewGroup.visibility = View.GONE
             return

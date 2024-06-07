@@ -14,6 +14,12 @@ An useful, quick implementation of IronSource Mediation SDK
         Adjust.trackAdRevenue(adjustAdRevenue)
     }
     
+    maven("https://jitpack.io")
+    maven("https://android-sdk.is.com/")
+    maven("https://artifact.bytedance.com/repository/pangle/")
+    maven("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")
+    maven("https://artifactory.bidmachine.io/bidmachine")
+    
 // LOG REVENUE MAX
 
     fun firebaseAdRevenue(activity: Context, ad: MaxAd?) {
