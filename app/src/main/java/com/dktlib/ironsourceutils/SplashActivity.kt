@@ -20,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
         AdmobUtils.initAdmob(this, 10000, isDebug = true, isEnableAds = true)
         AppOpenManager.getInstance().init(application, getString(R.string.test_ads_admob_app_open_new))
         AppOpenManager.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
+        AppOpenManager.getInstance().setWaitingTime(10000)
         val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (ApplovinUtil.isNetworkConnected(this)){
