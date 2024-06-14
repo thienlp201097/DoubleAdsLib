@@ -1217,25 +1217,7 @@ object AdmobUtils {
                 }
             }
         }
-        val dialogFullScreen = Dialog(activity)
-        dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialogFullScreen.setContentView(R.layout.dialog_full_screen)
-        dialogFullScreen.setCancelable(false)
-        dialogFullScreen.window!!.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        dialogFullScreen.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
-        val img = dialogFullScreen.findViewById<LottieAnimationView>(R.id.imageView3)
-        img?.setAnimation(R.raw.gifloading)
-        if (enableLoadingDialog) {
-            try {
-                if (!activity.isFinishing && !dialogFullScreen.isShowing) {
-                    dialogFullScreen.show()
-                }
-            } catch (ignored: Exception) {
-            }
-        }
+        dialogLoading(activity)
         if (isTesting) {
             admobId = activity.getString(R.string.test_ads_admob_inter_id)
         } else {
@@ -1267,7 +1249,6 @@ object AdmobUtils {
                                             mInterstitialAd = null
                                         }
                                         dismissAdDialog()
-                                        dialogFullScreen.dismiss()
                                         Log.e("Admodfail", "onAdFailedToLoad" + adError.message)
                                         Log.e("Admodfail", "errorCodeAds" + adError.cause)
                                     }
@@ -1275,7 +1256,6 @@ object AdmobUtils {
                                     override fun onAdDismissedFullScreenContent() {
                                         lastTimeShowInterstitial = Date().time
                                         adCallback.onEventClickAdClosed()
-                                        dialogFullScreen.dismiss()
                                         if (mInterstitialAd != null) {
                                             mInterstitialAd = null
                                         }
@@ -1291,7 +1271,6 @@ object AdmobUtils {
                                         adCallback.onAdShowed()
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             dismissAdDialog()
-                                            dialogFullScreen.dismiss()
                                         },800)
                                     }
                                 }
@@ -1302,7 +1281,6 @@ object AdmobUtils {
                             } else {
                                 mInterstitialAd = null
                                 dismissAdDialog()
-                                dialogFullScreen.dismiss()
                                 isAdShowing = false
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
@@ -1311,7 +1289,6 @@ object AdmobUtils {
                             }
                         } else {
                             dismissAdDialog()
-                            dialogFullScreen.dismiss()
                             adCallback.onAdFail("mInterstitialAd null")
                             isAdShowing = false
                             if (AppOpenManager.getInstance().isInitialized) {

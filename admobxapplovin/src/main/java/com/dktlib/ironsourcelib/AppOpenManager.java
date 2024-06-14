@@ -367,9 +367,10 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
             public void run() {
                 Log.d("===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
 
-                if (System.currentTimeMillis() - timeToBackground < waitingTime){
+                if (System.currentTimeMillis() - timeToBackground < 30000){
                     return;
                 }
+
                 if (currentActivity == null) {
                     return;
                 }
