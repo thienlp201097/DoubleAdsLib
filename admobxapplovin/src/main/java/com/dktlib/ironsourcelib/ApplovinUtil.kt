@@ -43,6 +43,7 @@ import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
+import com.dktlib.ironsourcelib.AdmobUtils.dialog
 import com.dktlib.ironsourcelib.callback_applovin.BannerCallback
 import com.dktlib.ironsourcelib.callback_applovin.InterstititialCallback
 import com.dktlib.ironsourcelib.callback_applovin.InterstititialCallbackNew
@@ -104,7 +105,7 @@ object ApplovinUtil : LifecycleObserver {
         fun onInitSuccessful()
     }
 
-    val TAG: String = "IronSourceUtil"
+    val TAG: String = "==MaxUtil=="
 
 
     //Only use for splash interstitial
@@ -297,7 +298,7 @@ object ApplovinUtil : LifecycleObserver {
     @MainThread
     fun  loadAndShowInterstitialsWithDialogCheckTime(
         activity: AppCompatActivity,
-        idAd: String,
+        idAd: InterHolder,
         dialogShowTime: Long,
         callback: InterstititialCallback
     ) {
@@ -310,17 +311,9 @@ object ApplovinUtil : LifecycleObserver {
             callback.onInterstitialLoadFail("SDK not Initialized")
             return
         }
-        val dialogFullScreen = Dialog(activity)
-        dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialogFullScreen.setContentView(R.layout.dialog_full_screen)
-        dialogFullScreen.setCancelable(false)
-        dialogFullScreen.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        dialogFullScreen.window?.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
+        dialogLoading(activity)
 
-        interstitialAd = MaxInterstitialAd(idAd, activity)
+        interstitialAd = MaxInterstitialAd(idAd.adsId, activity)
         interstitialAd.loadAd()
 
         if (AppOpenManager.getInstance().isInitialized) {
@@ -336,9 +329,7 @@ object ApplovinUtil : LifecycleObserver {
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds || !isNetworkConnected(activity)) {
             Log.e("isNetworkConnected", "1" + AppOpenManager.getInstance().isAppResumeEnabled)
-            if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-                dialogFullScreen.dismiss()
-            }
+            dismissAdDialog()
             Log.e("isNetworkConnected", "2" + AppOpenManager.getInstance().isAppResumeEnabled)
 
             if (AppOpenManager.getInstance().isInitialized) {
@@ -356,43 +347,34 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setRevenueListener(object : MaxAdRevenueListener {
-            override fun onAdRevenuePaid(p0: MaxAd) {
-                callback.onAdRevenuePaid(p0)
-            }
-        })
+        interstitialAd.setRevenueListener { p0 ->
+            callback.onAdRevenuePaid(p0)
+        }
         interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(p0: MaxAd) {
-                activity.lifecycleScope.launch {
-                    if (dialogShowTime > 0) {
-                        activity.lifecycle.addObserver(
-                            DialogHelperActivityLifeCycle(
-                                dialogFullScreen
+                Handler().postDelayed({
+                    dismissAdDialog()
+                    if (interstitialAd.isReady) {
+                        interstitialAd.showAd()
+                    }else{
+                        isLoadInterstitialFailed = true
+                        if (AppOpenManager.getInstance().isInitialized) {
+                            AppOpenManager.getInstance().isAppResumeEnabled = true
+                            Log.e(
+                                "isAppResumeEnabled",
+                                "4" + AppOpenManager.getInstance().isAppResumeEnabled
                             )
-                        )
-                        if (!activity.isFinishing) {
-                            dialogFullScreen.show()
+
                         }
-                        delay(dialogShowTime)
-//                        if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-//                            dialogFullScreen.dismiss()
-//                        }
+                        isInterstitialAdShowing = false
+                        callback.onInterstitialLoadFail("Interstitial is not Ready")
                     }
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                        Log.d(TAG, "onInterstitialAdReady")
-                        if (interstitialAd.isReady) {
-                            interstitialAd.showAd()
-                        }
-                    }
-                }
+                },400)
+
             }
 
             override fun onAdDisplayed(p0: MaxAd) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-                        dialogFullScreen.dismiss()
-                    }
-                },200)
+                dismissAdDialog()
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = false
                     Log.e(
@@ -402,15 +384,12 @@ object ApplovinUtil : LifecycleObserver {
 
                 }
                 callback.onInterstitialShowSucceed()
-
                 lastTimeInterstitialShowed = System.currentTimeMillis()
                 isInterstitialAdShowing = true
             }
 
             override fun onAdHidden(p0: MaxAd) {
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-                    dialogFullScreen.dismiss()
-                }
+                dismissAdDialog()
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                     Log.e(
@@ -420,7 +399,6 @@ object ApplovinUtil : LifecycleObserver {
 
                 }
                 isInterstitialAdShowing = false
-
                 callback.onInterstitialClosed()
             }
 
@@ -429,72 +407,33 @@ object ApplovinUtil : LifecycleObserver {
             }
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
-                activity.lifecycleScope.launch(Dispatchers.Main) {
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-                        dialogFullScreen.dismiss()
-                    }
-                    isLoadInterstitialFailed = true
-                    if (AppOpenManager.getInstance().isInitialized) {
-                        AppOpenManager.getInstance().isAppResumeEnabled = true
-                        Log.e(
-                            "isAppResumeEnabled",
-                            "4" + AppOpenManager.getInstance().isAppResumeEnabled
-                        )
+                dismissAdDialog()
+                isLoadInterstitialFailed = true
+                if (AppOpenManager.getInstance().isInitialized) {
+                    AppOpenManager.getInstance().isAppResumeEnabled = true
+                    Log.e(
+                        "isAppResumeEnabled",
+                        "4" + AppOpenManager.getInstance().isAppResumeEnabled
+                    )
 
-                    }
-                    isInterstitialAdShowing = false
-                    callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
                 }
+                isInterstitialAdShowing = false
+                callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
             }
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                dismissAdDialog()
                 if (AppOpenManager.getInstance().isInitialized) {
                     AppOpenManager.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
                         "7" + AppOpenManager.getInstance().isAppResumeEnabled
                     )
-
                 }
                 isInterstitialAdShowing = false
                 callback.onInterstitialClosed()
-
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-                    dialogFullScreen.dismiss()
-                }
             }
         })
-
-        if (interstitialAd.isReady) {
-            activity.lifecycleScope.launch {
-                if (dialogShowTime > 0) {
-                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialogFullScreen))
-                    if (!activity.isFinishing) {
-                        dialogFullScreen.show()
-                    }
-                    delay(dialogShowTime)
-                    if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && dialogFullScreen.isShowing) {
-                        dialogFullScreen.dismiss()
-                    }
-                }
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                    Log.d(TAG, "onInterstitialAdReady")
-                    if (interstitialAd.isReady) {
-                        interstitialAd.showAd()
-                    }
-                }
-            }
-        } else {
-            if (dialogShowTime > 0) {
-                activity.lifecycleScope.launch(Dispatchers.Main) {
-                    activity.lifecycle.addObserver(DialogHelperActivityLifeCycle(dialogFullScreen))
-                    if (!activity.isFinishing) {
-                        dialogFullScreen.show()
-                    }
-                }
-            }
-
-        }
     }
 
 
@@ -973,15 +912,7 @@ object ApplovinUtil : LifecycleObserver {
             interHolder.mutable.removeObservers(activity as LifecycleOwner)
             if (interHolder.inter?.isReady == true) {
                 activity.lifecycleScope.launch {
-                    dialogFullScreen = Dialog(activity)
-                    dialogFullScreen?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                    dialogFullScreen?.setContentView(R.layout.dialog_full_screen)
-                    dialogFullScreen?.setCancelable(false)
-                    dialogFullScreen?.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-                    dialogFullScreen?.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-                    if (!activity.isFinishing) {
-                        dialogFullScreen?.show()
-                    }
+                    dialogLoading(activity)
                     delay(dialogShowTime)
                     try {
                         if (dialogFullScreen?.isShowing == true) {
@@ -1008,15 +939,7 @@ object ApplovinUtil : LifecycleObserver {
                             }
 
                             override fun onAdDisplayed(p0: MaxAd) {
-                                try {
-                                    val txt = dialogFullScreen?.findViewById<TextView>(R.id.txtLoading)
-                                    val gif = dialogFullScreen?.findViewById<LottieAnimationView>(R.id.imageView3)
-                                    val bg = dialogFullScreen?.findViewById<ConstraintLayout>(R.id.main_container)
-                                    txt?.visibility = View.GONE
-                                    gif?.visibility = View.GONE
-                                    bg?.setBackgroundResource(R.drawable.bg_main_dialog)
-                                }catch (ignored: Exception) {
-                                }
+                                dismissAdDialog()
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = false
                                 }
@@ -1026,15 +949,6 @@ object ApplovinUtil : LifecycleObserver {
                             }
 
                             override fun onAdHidden(p0: MaxAd) {
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    try {
-                                        if (dialogFullScreen?.isShowing == true) {
-                                            dialogFullScreen?.dismiss()
-                                        }
-                                    }catch (_: Exception){
-
-                                    }
-                                },200)
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
@@ -1048,6 +962,7 @@ object ApplovinUtil : LifecycleObserver {
                             }
 
                             override fun onAdLoadFailed(p0: String, p1: MaxError) {
+                                dismissAdDialog()
                                 isLoadInterstitialFailed = true
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
@@ -1070,12 +985,7 @@ object ApplovinUtil : LifecycleObserver {
                         })
                         interHolder.inter?.showAd()
                     } else {
-                        try {
-                            if (dialogFullScreen?.isShowing == true) {
-                                dialogFullScreen?.dismiss()
-                            }
-                        }catch (ignored: Exception) {
-                        }
+                        dismissAdDialog()
                     }
                 }
             } else {
@@ -1090,33 +1000,11 @@ object ApplovinUtil : LifecycleObserver {
             }
         } else {
             activity.lifecycleScope.launch {
-                dialogFullScreen = Dialog(activity)
-                dialogFullScreen?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialogFullScreen?.setContentView(R.layout.dialog_full_screen)
-                dialogFullScreen?.setCancelable(false)
-                dialogFullScreen?.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-                dialogFullScreen?.window?.setLayout(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-                )
-                try {
-                    if (!activity.isFinishing && dialogFullScreen != null && dialogFullScreen?.isShowing == false) {
-                        dialogFullScreen?.show()
-                    }
-                }catch (ignored: Exception) {
-                }
-
+                dialogLoading(activity)
                 delay(dialogShowTime)
                 interHolder.mutable.observe(activity as LifecycleOwner) {
                     if (it != null) {
                         if (it.isReady) {
-                            try {
-                                if (dialogFullScreen?.isShowing == true) {
-                                    dialogFullScreen?.dismiss()
-                                }
-                            }catch (_: Exception){
-
-                            }
                             interHolder.mutable.removeObservers(activity as LifecycleOwner)
                             if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                                 Log.d(TAG, "onInterstitialAdReady")
@@ -1129,33 +1017,14 @@ object ApplovinUtil : LifecycleObserver {
                                     }
 
                                     override fun onAdDisplayed(p0: MaxAd) {
-                                        if (AppOpenManager.getInstance().isInitialized) {
-                                            AppOpenManager.getInstance().isAppResumeEnabled = false
-                                        }
-                                        try {
-                                            val txt = dialogFullScreen?.findViewById<TextView>(R.id.txtLoading)
-                                            val gif = dialogFullScreen?.findViewById<LottieAnimationView>(R.id.imageView3)
-                                            val bg = dialogFullScreen?.findViewById<ConstraintLayout>(R.id.main_container)
-                                            txt?.visibility = View.GONE
-                                            gif?.visibility = View.GONE
-                                            bg?.setBackgroundResource(R.drawable.bg_main_dialog)
-                                        }catch (ignored: Exception) {
-                                        }
+                                        dismissAdDialog()
                                         callback.onInterstitialShowSucceed()
                                         lastTimeInterstitialShowed = System.currentTimeMillis()
                                         isInterstitialAdShowing = true
                                     }
 
                                     override fun onAdHidden(p0: MaxAd) {
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            try {
-                                                if (dialogFullScreen?.isShowing == true) {
-                                                    dialogFullScreen?.dismiss()
-                                                }
-                                            }catch (_: Exception){
-
-                                            }
-                                        },200)
+                                        dismissAdDialog()
                                         if (AppOpenManager.getInstance().isInitialized) {
                                             AppOpenManager.getInstance().isAppResumeEnabled = true
                                         }
@@ -1191,13 +1060,12 @@ object ApplovinUtil : LifecycleObserver {
                                 })
                                 interHolder.inter?.showAd()
                             } else {
+                                dismissAdDialog()
                                 callback.onInterstitialClosed()
-                                dialogFullScreen?.dismiss()
                             }
                         } else {
                             activity.lifecycleScope.launch(Dispatchers.Main) {
                                 interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                                dialogFullScreen?.dismiss()
                                 if (AppOpenManager.getInstance().isInitialized) {
                                     AppOpenManager.getInstance().isAppResumeEnabled = true
                                 }
@@ -1208,8 +1076,8 @@ object ApplovinUtil : LifecycleObserver {
                         }
                     } else {
                         activity.lifecycleScope.launch(Dispatchers.Main) {
+                            dismissAdDialog()
                             interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                            dialogFullScreen?.dismiss()
                             if (AppOpenManager.getInstance().isInitialized) {
                                 AppOpenManager.getInstance().isAppResumeEnabled = true
                             }
@@ -1226,7 +1094,7 @@ object ApplovinUtil : LifecycleObserver {
             delay(10000)
             try {
                 if ((!interHolder.inter!!.isReady) && (!isInterstitialAdShowing) && !isLoadInterstitialFailed) {
-                    dialogFullScreen?.dismiss()
+                    dismissAdDialog()
                     interHolder.inter = null
                     interHolder.check = false
                     interHolder.mutable.removeObservers(activity)
@@ -1506,17 +1374,38 @@ object ApplovinUtil : LifecycleObserver {
     }
 
 
-    fun dialogLoading(context: Context?) {
-        dialogFullScreen = Dialog(context!!)
+    fun dialogLoading(context: Activity) {
+        dialogFullScreen = Dialog(context)
         dialogFullScreen?.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialogFullScreen?.setContentView(R.layout.dialog_full_screen)
         dialogFullScreen?.setCancelable(false)
-        dialogFullScreen?.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        dialogFullScreen?.window?.setLayout(
+        dialogFullScreen?.window!!.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        dialogFullScreen?.window!!.setLayout(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
-        dialogFullScreen?.show()
+        val img = dialogFullScreen?.findViewById<LottieAnimationView>(R.id.imageView3)
+        img?.setAnimation(R.raw.gifloading)
+        try {
+            if (!context.isFinishing && dialogFullScreen != null && dialogFullScreen?.isShowing == false) {
+                dialogFullScreen?.show()
+            }
+        } catch (ignored: Exception) {
+        }
+
+    }
+
+    @JvmStatic
+    fun dismissAdDialog() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            try {
+                Log.d(TAG, "dismissAdDialog: ")
+                if (dialogFullScreen != null && dialogFullScreen?.isShowing == true) {
+                    dialogFullScreen?.dismiss()
+                }
+            }catch (_: Exception){
+            }
+        },500)
     }
 
     fun isNetworkConnected(context: Context): Boolean {
