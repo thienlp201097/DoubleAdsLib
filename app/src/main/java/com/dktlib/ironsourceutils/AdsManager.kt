@@ -140,7 +140,7 @@ object AdsManager {
         nativeAdLoader?.loadAd()
     }
 
-    fun loadAndShowIntersial(activity: Activity, idAd: String,adsOnClick: AdsOnClick){
+    fun loadAndShowIntersial(activity: Activity, idAd: InterHolder,adsOnClick: AdsOnClick){
         ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(activity as AppCompatActivity,idAd,1500, object :
             InterstititialCallback {
             override fun onInterstitialReady() {

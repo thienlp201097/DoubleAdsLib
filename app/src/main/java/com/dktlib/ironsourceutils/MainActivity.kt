@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnLoadShowInterCallback2.setOnClickListener {
-            AdsManager.loadAndShowIntersial(this,"134656413e36e374",object : AdsManager.AdsOnClick{
+            AdsManager.loadAndShowIntersial(this,AdsManager.interHolder,object : AdsManager.AdsOnClick{
                 override fun onAdsCloseOrFailed() {
                     startActivity(Intent(this@MainActivity, MainActivity3::class.java))
                 }

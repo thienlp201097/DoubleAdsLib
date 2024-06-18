@@ -16,7 +16,7 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(R.layout.activity_main2)
         val btn = findViewById<Button>(R.id.btn_2)
         btn.setOnClickListener {
-                ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this,"loadandshow",1500,object :
+                ApplovinUtil.loadAndShowInterstitialsWithDialogCheckTime(this,AdsManager.interHolder,800,object :
                     InterstititialCallback {
                     override fun onInterstitialReady() {
 

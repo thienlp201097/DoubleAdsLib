@@ -914,22 +914,9 @@ object ApplovinUtil : LifecycleObserver {
                 activity.lifecycleScope.launch {
                     dialogLoading(activity)
                     delay(dialogShowTime)
-                    try {
-                        if (dialogFullScreen?.isShowing == true) {
-                            dialogFullScreen?.dismiss()
-                        }
-                    }catch (_: Exception){
-
-                    }
                     if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         Log.d(TAG, "onInterstitialAdReady")
-                        try {
-                            if (dialogFullScreen?.isShowing == true) {
-                                dialogFullScreen?.dismiss()
-                            }
-                        }catch (_: Exception){
 
-                        }
                         interHolder.inter?.setListener(object : MaxAdListener {
                             override fun onAdLoaded(p0: MaxAd) {
                                 activity.lifecycleScope.launch(Dispatchers.Main) {
