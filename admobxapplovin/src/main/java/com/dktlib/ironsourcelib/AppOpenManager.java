@@ -359,6 +359,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
             }, 100);
         }
     }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    protected void outBackground() {
+        timeToBackground = System.currentTimeMillis();
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     protected void onMoveToForeground() {
         // Show the ad (if available) when the app moves to foreground.

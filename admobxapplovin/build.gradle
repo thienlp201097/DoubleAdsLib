@@ -48,9 +48,25 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
     //ads
     implementation 'com.applovin:applovin-sdk:+'
-    implementation 'com.google.android.gms:play-services-ads:23.0.0'
+    implementation 'com.google.android.gms:play-services-ads:23.2.0'
     implementation 'com.intuit.sdp:sdp-android:1.1.1'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.airbnb.android:lottie:6.3.0'
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.airbnb.android:lottie:6.4.1'
     implementation 'com.google.android.ump:user-messaging-platform:2.2.0'
+
+    implementation 'com.google.ads.mediation:pangle:6.0.0.8.0'
+    implementation 'com.google.ads.mediation:applovin:12.5.0.1'
+    implementation 'com.google.ads.mediation:facebook:6.17.0.0'
+    implementation 'com.google.ads.mediation:ironsource:8.1.0.0'
+    implementation 'com.google.ads.mediation:vungle:7.4.0.0'
+    implementation 'com.google.ads.mediation:mintegral:16.7.81.0'
+
+    implementation 'com.applovin.mediation:bidmachine-adapter:2.7.0.1'
+    implementation 'com.applovin.mediation:google-ad-manager-adapter:23.2.0.0'
+    implementation 'com.applovin.mediation:google-adapter:23.2.0.0'
+    implementation 'com.applovin.mediation:inmobi-adapter:10.7.4.0'
+    implementation 'com.applovin.mediation:ironsource-adapter:8.1.0.0.0'
+    implementation 'com.applovin.mediation:facebook-adapter:6.17.0.0'
+    implementation 'com.applovin.mediation:mintegral-adapter:16.7.71.0'
+    implementation 'com.applovin.mediation:bytedance-adapter:5.9.0.6.0'
 }
