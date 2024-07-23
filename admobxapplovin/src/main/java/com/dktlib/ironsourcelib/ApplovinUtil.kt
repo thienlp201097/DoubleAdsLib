@@ -456,7 +456,7 @@ object ApplovinUtil : LifecycleObserver {
         val width = ViewGroup.LayoutParams.MATCH_PARENT
 
         // Get the adaptive banner height.
-        val heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).height
+//        val heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).height
         val heightPx = AppLovinSdkUtils.dpToPx(activity, 50)
 
         banner?.layoutParams = FrameLayout.LayoutParams(width, heightPx)
