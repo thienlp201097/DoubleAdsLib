@@ -215,6 +215,75 @@ object AdmobUtils {
         }
         Log.e(" Admod", "loadAdBanner")
     }
+
+    @JvmStatic
+    fun loadAdBannerWithSize(
+        activity: Activity,
+        bannerId: String?,bannerSize: AdSize,
+        viewGroup: ViewGroup,
+        bannerAdCallback: BannerCallBack
+    ) {
+        var bannerId = bannerId
+        if (!isShowAds || !isNetworkConnected(activity)) {
+            viewGroup.visibility = View.GONE
+            bannerAdCallback.onFailed("None Show")
+            return
+        }
+        val mAdView = AdView(activity)
+        if (isTesting) {
+            bannerId = activity.getString(R.string.test_ads_admob_banner_id)
+        }
+        mAdView.adUnitId = bannerId!!
+        val adSize : AdSize = if (bannerSize == AdSize.BANNER){
+            getAdSize(activity)
+        }else{
+            getAdSizeInline(activity)
+        }
+        mAdView.setAdSize(adSize)
+        val tagView = activity.layoutInflater.inflate(R.layout.layoutbanner_loading, null, false)
+
+        try {
+            viewGroup.removeAllViews()
+            viewGroup.addView(tagView, 0)
+            viewGroup.addView(mAdView, 1)
+        }catch (_: Exception){
+
+        }
+        shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
+        shimmerFrameLayout?.startShimmer()
+        mAdView.onPaidEventListener =
+            OnPaidEventListener { adValue -> bannerAdCallback.onPaid(adValue, mAdView) }
+        mAdView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                shimmerFrameLayout?.stopShimmer()
+                viewGroup.removeView(tagView)
+                bannerAdCallback.onLoad()
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.e(" Admod", "failloadbanner" + adError.message)
+                shimmerFrameLayout?.stopShimmer()
+                viewGroup.removeView(tagView)
+                bannerAdCallback.onFailed(adError.message)
+            }
+
+            override fun onAdOpened() {}
+            override fun onAdClicked() {
+                ApplovinUtil.isClickAds = true
+                bannerAdCallback.onClickAds()
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+        }
+        if (adRequest != null) {
+            mAdView.loadAd(adRequest!!)
+        }
+        Log.e(" Admod", "loadAdBanner")
+    }
+
     interface BannerCollapsibleAdCallback {
         fun onClickAds()
         fun onBannerAdLoaded(adSize: AdSize)
@@ -400,6 +469,19 @@ object AdmobUtils {
         val adWidth = (widthPixels / density).toInt()
         // Step 3 - Get adaptive ad size and return for setting on the ad view.
         return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
+    }
+
+
+    private fun getAdSizeInline(context: Activity): AdSize {
+        // Step 2 - Determine the screen width (less decorations) to use for the ad width.
+        val display = context.windowManager.defaultDisplay
+        val outMetrics = DisplayMetrics()
+        display.getMetrics(outMetrics)
+        val widthPixels = outMetrics.widthPixels.toFloat()
+        val density = outMetrics.density
+        val adWidth = (widthPixels / density).toInt()
+        // Step 3 - Get adaptive ad size and return for setting on the ad view.
+        return AdSize.getInlineAdaptiveBannerAdSize(adWidth, 200)
     }
 
     //Load native 1 in here

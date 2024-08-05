@@ -18,6 +18,7 @@ import com.dktlib.ironsourcelib.callback_applovin.NativeCallBackNew
 import com.dktlib.ironsourcelib.callback_applovin.RewardCallback
 import com.dktlib.ironsourcelib.utils.admod.callback.AdsInterCallBack
 import com.dktlib.ironsourceutils.databinding.ActivityMainBinding
+import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -189,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
         binding.loadBanner.setOnClickListener {
-            AdmobUtils.loadAdBanner(this,"",binding.bannerContainer,object : AdmobUtils.BannerCallBack{
+            AdmobUtils.loadAdBannerWithSize(this,"", AdSize.LARGE_BANNER,binding.bannerContainer,object : AdmobUtils.BannerCallBack{
                 override fun onClickAds() {
 
                 }
