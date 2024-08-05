@@ -511,6 +511,79 @@ object ApplovinUtil : LifecycleObserver {
 
     }
 
+    fun showBannerMERC(
+        activity: AppCompatActivity, bannerContainer: ViewGroup, idAd: String,
+        callback: BannerCallback
+    ) {
+
+        if (!enableAds || !isNetworkConnected(activity)) {
+            callback.onBannerLoadFail("")
+            return
+        }
+        if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
+            callback.onBannerLoadFail("SDK not Initialized")
+            return
+        }
+        bannerContainer.removeAllViews()
+        banner = MaxAdView(idAd, MaxAdFormat.MREC, activity)
+
+        val width = ViewGroup.LayoutParams.MATCH_PARENT
+
+        // Get the adaptive banner height.
+        val heightPx = AppLovinSdkUtils.dpToPx(activity, 250)
+
+        banner?.layoutParams = FrameLayout.LayoutParams(width, heightPx)
+        banner?.setExtraParameter("adaptive_banner", "true")
+
+        val tagView: View =
+            activity.layoutInflater.inflate(R.layout.banner_merc_shimmer_layout, null, false)
+        bannerContainer.addView(tagView, 0)
+        bannerContainer.addView(banner, 1)
+        val shimmerFrameLayout: ShimmerFrameLayout =
+            tagView.findViewById(R.id.shimmer_view_container)
+        shimmerFrameLayout.startShimmer()
+
+        banner?.setRevenueListener { ad -> callback.onAdRevenuePaid(ad) }
+
+        banner?.setListener(object : MaxAdViewAdListener {
+            override fun onAdLoaded(p0: MaxAd) {
+                shimmerFrameLayout.stopShimmer()
+                bannerContainer.removeView(tagView)
+            }
+
+            override fun onAdDisplayed(p0: MaxAd) {
+                callback.onBannerShowSucceed()
+            }
+
+            override fun onAdHidden(p0: MaxAd) {
+            }
+
+            override fun onAdClicked(p0: MaxAd) {
+                isClickAds = true
+            }
+
+            override fun onAdLoadFailed(p0: String, p1: MaxError) {
+                bannerContainer.removeAllViews()
+                callback.onBannerLoadFail(p1.code.toString().replace("-", ""))
+            }
+
+            override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                callback.onBannerLoadFail(p1.code.toString().replace("-", ""))
+
+            }
+
+            override fun onAdExpanded(p0: MaxAd) {
+            }
+
+            override fun onAdCollapsed(p0: MaxAd) {
+            }
+
+        })
+
+        banner?.loadAd()
+
+    }
+
 
     @MainThread
     fun showRewardWithDialogCheckTime(

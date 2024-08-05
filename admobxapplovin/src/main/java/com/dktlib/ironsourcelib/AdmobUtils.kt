@@ -481,7 +481,7 @@ object AdmobUtils {
         val density = outMetrics.density
         val adWidth = (widthPixels / density).toInt()
         // Step 3 - Get adaptive ad size and return for setting on the ad view.
-        return AdSize.getInlineAdaptiveBannerAdSize(adWidth, 200)
+        return AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(context, adWidth)
     }
 
     //Load native 1 in here
