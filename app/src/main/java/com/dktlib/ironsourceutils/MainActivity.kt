@@ -190,19 +190,39 @@ class MainActivity : AppCompatActivity() {
             })
         }
         binding.loadBanner.setOnClickListener {
-            AdmobUtils.loadAdBannerWithSize(this,"", AdSize.LARGE_BANNER,binding.bannerContainer,object : AdmobUtils.BannerCallBack{
+//            AdmobUtils.loadAdBannerWithSize(this,"", AdSize.LARGE_BANNER,binding.bannerContainer,object : AdmobUtils.BannerCallBack{
+//                override fun onClickAds() {
+//
+//                }
+//
+//                override fun onLoad() {
+//                }
+//
+//                override fun onFailed(message: String) {
+//                }
+//
+//                override fun onPaid(adValue: AdValue?, mAdView: AdView?) {
+//                }
+//            })
+            
+            AdmobUtils.loadAdBannerCollapsibleReload(this,AdsManager.bannerHolder,CollapsibleBanner.BOTTOM,binding.bannerContainer,object :
+                AdmobUtils.BannerCollapsibleAdCallback {
                 override fun onClickAds() {
-
+                    
                 }
 
-                override fun onLoad() {
+                override fun onBannerAdLoaded(adSize: AdSize) {
+                    
                 }
 
-                override fun onFailed(message: String) {
+                override fun onAdFail(message: String) {
+                    
                 }
 
-                override fun onPaid(adValue: AdValue?, mAdView: AdView?) {
+                override fun onAdPaid(adValue: AdValue, mAdView: AdView) {
+                    
                 }
+
             })
         }
 

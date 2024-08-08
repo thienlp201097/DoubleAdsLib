@@ -305,19 +305,18 @@ object AdmobUtils {
             return
         }
         banner.mAdView?.destroy()
+        banner.mAdView?.let {
+            viewGroup.removeView(it)
+        }
         banner.mAdView = AdView(activity)
         if (isTesting) {
             bannerId = activity.getString(R.string.test_ads_admob_banner_collapsible_id)
         }
         banner.mAdView?.adUnitId = bannerId
         val tagView = activity.layoutInflater.inflate(R.layout.layoutbanner_loading, null, false)
-        try {
-            viewGroup.removeAllViews()
-            viewGroup.addView(tagView, 0)
-            viewGroup.addView(banner.mAdView, 1)
-        }catch (_: Exception){
-
-        }
+        viewGroup.removeAllViews()
+        viewGroup.addView(tagView, 0)
+        viewGroup.addView(banner.mAdView, 1)
         val adSize = getAdSize(activity)
         banner.mAdView?.setAdSize(adSize)
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)

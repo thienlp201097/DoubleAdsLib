@@ -19,6 +19,7 @@ import com.dktlib.ironsourcelib.callback_applovin.InterstititialCallbackNew
 import com.dktlib.ironsourcelib.callback_applovin.NativeCallBackNew
 import com.dktlib.ironsourcelib.utils.InterHolder
 import com.dktlib.ironsourcelib.utils.NativeHolder
+import com.dktlib.ironsourcelib.utils.admod.BannerHolder
 
 object AdsManager {
     var inter: MaxInterstitialAd?=null
@@ -27,6 +28,7 @@ object AdsManager {
     var interHolder = InterHolder("134656413e36e374")
     var nativeHolder = NativeHolder("0f688c4e22b9688b")
     var banner = "f443c90308f39f17"
+    var bannerHolder = BannerHolder("")
 
     fun showAdsNative(activity: Activity, nativeHolder: NativeHolder,viewGroup: ViewGroup){
         ApplovinUtil.loadAndShowNativeAds(activity,nativeHolder,viewGroup,GoogleENative.UNIFIED_MEDIUM,object :
