@@ -305,19 +305,22 @@ object AdmobUtils {
             viewGroup.visibility = View.GONE
             return
         }
+        viewGroup.removeAllViews()
         banner.mAdView?.destroy()
-        banner.mAdView?.let {
-            viewGroup.removeView(it)
-        }
+
         banner.mAdView = AdView(activity)
         if (isTesting) {
             bannerId = activity.getString(R.string.test_ads_admob_banner_collapsible_id)
         }
         banner.mAdView?.adUnitId = bannerId
         val tagView = activity.layoutInflater.inflate(R.layout.layoutbanner_loading, null, false)
-        viewGroup.removeAllViews()
-        viewGroup.addView(tagView, 0)
-        viewGroup.addView(banner.mAdView, 1)
+        try {
+            viewGroup.addView(tagView, 0)
+            viewGroup.addView(banner.mAdView, 1)
+        }catch (_ : Exception){
+            return
+        }
+
         val adSize = getAdSize(activity)
         banner.mAdView?.setAdSize(adSize)
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
@@ -328,14 +331,20 @@ object AdmobUtils {
                 banner.mAdView?.onPaidEventListener =
                     OnPaidEventListener { adValue -> callback.onAdPaid(adValue, banner.mAdView!!) }
                 shimmerFrameLayout?.stopShimmer()
-                viewGroup.removeView(tagView)
+                try {
+                    viewGroup.removeView(tagView)
+                }catch (_ : Exception){
+                }
                 callback.onBannerAdLoaded(adSize)
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.e(" Admod", "failloadbanner" + adError.message)
                 shimmerFrameLayout?.stopShimmer()
-                viewGroup.removeView(tagView)
+                try {
+                    viewGroup.removeView(tagView)
+                }catch (_ : Exception){
+                }
                 callback.onAdFail(adError.message)
             }
 
