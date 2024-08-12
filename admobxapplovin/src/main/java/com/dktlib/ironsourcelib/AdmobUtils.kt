@@ -574,7 +574,11 @@ object AdmobUtils {
                 }
                 nativeHolder.native_mutable.removeObservers((activity as LifecycleOwner))
                 viewGroup.removeAllViews()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
                 callback.NativeLoaded()
             } else {
                 if (shimmerFrameLayout != null) {
@@ -589,7 +593,12 @@ object AdmobUtils {
             } else {
                 activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
             }
-            viewGroup.addView(tagView, 0)
+            try {
+                viewGroup.addView(tagView, 0)
+            }catch (_ : Exception){
+
+            }
+
             if (shimmerFrameLayout == null) shimmerFrameLayout =
                 tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout?.startShimmer()
@@ -604,7 +613,12 @@ object AdmobUtils {
                         shimmerFrameLayout?.stopShimmer()
                     }
                     viewGroup.removeAllViews()
-                    viewGroup.addView(adView)
+                    try {
+                        viewGroup.addView(adView)
+                    }catch (_ : Exception){
+
+                    }
+
                     callback.NativeLoaded()
                     nativeHolder.native_mutable.removeObservers((activity as LifecycleOwner))
                 } else {
@@ -650,7 +664,12 @@ object AdmobUtils {
         } else {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
         }
-        viewGroup.addView(tagView, 0)
+        try {
+            viewGroup.addView(tagView, 0)
+        }catch (_ : Exception){
+
+        }
+
         val shimmerFrameLayout =
             tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
@@ -666,7 +685,12 @@ object AdmobUtils {
                 populateNativeAdView(nativeAd, adView, size)
                 shimmerFrameLayout.stopShimmer()
                 viewGroup.removeAllViews()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
+
                 nativeAd.setOnPaidEventListener { adValue: AdValue ->
                     adCallback.onAdPaid(adValue,s)
                 }
@@ -719,7 +743,11 @@ object AdmobUtils {
                     .inflate(layout, null) as NativeAdView
                 populateNativeAdView(nativeAd, adView, size)
                 viewGroup.removeAllViews()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
                 nativeAd.setOnPaidEventListener { adValue: AdValue ->
                     adCallback.onAdPaid(adValue,s)
                 }
@@ -1482,7 +1510,12 @@ object AdmobUtils {
         }
         viewGroup.removeAllViews()
         val tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_fullscreen, null, false)
-        viewGroup.addView(tagView,0)
+        try {
+            viewGroup.addView(tagView,0)
+        }catch (_ : Exception){
+
+        }
+
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout?.startShimmer()
         val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
@@ -1498,7 +1531,12 @@ object AdmobUtils {
             populateNativeAdView(nativeAd,adView.findViewById(R.id.native_ad_view))
             viewGroup.removeAllViews()
             shimmerFrameLayout?.stopShimmer()
-            viewGroup.addView(adView)
+            try {
+                viewGroup.addView(adView)
+            }catch (_ : Exception){
+
+            }
+
         }
         builder.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -1590,13 +1628,21 @@ object AdmobUtils {
                 val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
                 populateNativeAdView(nativeHolder.nativeAd!!,adView.findViewById(R.id.native_ad_view))
                 shimmerFrameLayout?.stopShimmer()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
                 if (shimmerFrameLayout != null) {
                     shimmerFrameLayout?.stopShimmer()
                 }
                 nativeHolder.native_mutable.removeObservers((activity as LifecycleOwner))
                 viewGroup.removeAllViews()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
                 callback.NativeLoaded()
             } else {
                 if (shimmerFrameLayout != null) {
@@ -1607,7 +1653,12 @@ object AdmobUtils {
             }
         } else {
             val tagView = activity.layoutInflater.inflate(R.layout.layoutnative_loading_fullscreen, null, false)
-            viewGroup.addView(tagView, 0)
+            try {
+                viewGroup.addView(tagView, 0)
+            }catch (_ : Exception){
+
+            }
+
             if (shimmerFrameLayout == null) shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout?.startShimmer()
             nativeHolder.native_mutable.observe((activity as LifecycleOwner)) { nativeAd: NativeAd? ->
@@ -1621,7 +1672,12 @@ object AdmobUtils {
                         shimmerFrameLayout?.stopShimmer()
                     }
                     viewGroup.removeAllViews()
-                    viewGroup.addView(adView)
+                    try {
+                        viewGroup.addView(adView)
+                    }catch (_ : Exception){
+
+                    }
+
                     callback.NativeLoaded()
                     nativeHolder.native_mutable.removeObservers((activity as LifecycleOwner))
                 } else {
@@ -1656,7 +1712,11 @@ object AdmobUtils {
             nativeAd.setOnPaidEventListener { adValue: AdValue? -> adValue?.let { listener.onPaidNative(adValue,id) } }
             populateNativeAdView(nativeAd,adView.findViewById(R.id.native_ad_view))
             viewGroup.removeAllViews()
-            viewGroup.addView(adView)
+            try {
+                viewGroup.addView(adView)
+            }catch (_ : Exception){
+
+            }
         }
         builder.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -1693,7 +1753,12 @@ object AdmobUtils {
         } else {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
         }
-        viewGroup.addView(tagView, 0)
+        try {
+            viewGroup.addView(tagView, 0)
+        }catch (_ : Exception){
+
+        }
+
         val shimmerFrameLayout =
             tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
@@ -1709,7 +1774,13 @@ object AdmobUtils {
                 populateNativeAdViewNoBtn(nativeAd, adView, size)
                 shimmerFrameLayout.stopShimmer()
                 viewGroup.removeAllViews()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
+
+
                 nativeAd.setOnPaidEventListener { adValue: AdValue ->
                     adCallback.onAdPaid(adValue,s)
                 }
@@ -1762,7 +1833,11 @@ object AdmobUtils {
                 }
                 nativeHolder.native_mutable.removeObservers((activity as LifecycleOwner))
                 viewGroup.removeAllViews()
-                viewGroup.addView(adView)
+                try {
+                    viewGroup.addView(adView)
+                }catch (_ : Exception){
+
+                }
                 callback.NativeLoaded()
             } else {
                 if (shimmerFrameLayout != null) {
@@ -1792,7 +1867,12 @@ object AdmobUtils {
                         shimmerFrameLayout?.stopShimmer()
                     }
                     viewGroup.removeAllViews()
-                    viewGroup.addView(adView)
+                    try {
+                        viewGroup.addView(adView)
+                    }catch (_ : Exception){
+
+                    }
+
                     callback.NativeLoaded()
                     nativeHolder.native_mutable.removeObservers((activity as LifecycleOwner))
                 } else {
