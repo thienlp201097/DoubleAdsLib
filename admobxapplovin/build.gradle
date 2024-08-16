@@ -48,7 +48,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
     //ads
     implementation 'com.applovin:applovin-sdk:+'
-    implementation 'com.google.android.gms:play-services-ads:23.2.0'
+    implementation 'com.google.android.gms:play-services-ads:23.3.0'
     implementation 'com.intuit.sdp:sdp-android:1.1.1'
     implementation 'com.google.code.gson:gson:2.11.0'
     implementation 'com.airbnb.android:lottie:6.4.1'
