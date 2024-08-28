@@ -533,12 +533,9 @@ object ApplovinUtil : LifecycleObserver {
         banner = MaxAdView(idAd, MaxAdFormat.MREC, activity)
 
         val width = ViewGroup.LayoutParams.MATCH_PARENT
-
         // Get the adaptive banner height.
         val heightPx = AppLovinSdkUtils.dpToPx(activity, 250)
-
         banner?.layoutParams = FrameLayout.LayoutParams(width, heightPx)
-        banner?.setExtraParameter("adaptive_banner", "true")
 
         val tagView: View =
             activity.layoutInflater.inflate(R.layout.banner_merc_shimmer_layout, null, false)
@@ -953,12 +950,16 @@ object ApplovinUtil : LifecycleObserver {
                 callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
                 isLoadInterstitialFailed = true
                 isInterstitialAdShowing = false
+                interHolder.inter = null
                 interHolder.check = false
                 interHolder.mutable.value = null
             }
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                 callback.onInterstitialLoadFail(p1.code.toString().replace("-", ""))
+                interHolder.inter = null
+                interHolder.check = false
+                interHolder.mutable.value = null
             }
 
         })

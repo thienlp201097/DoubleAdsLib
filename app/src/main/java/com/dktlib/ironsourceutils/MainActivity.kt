@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.bannerMax.setOnClickListener {
-            ApplovinUtil.showBannerMERC(this, binding.bannerContainer, "f443c90308f39f17", object : BannerCallback {
+            ApplovinUtil.showBannerMERC(this, binding.mrecAdView, "f443c90308f39f17", object : BannerCallback {
                 override fun onBannerLoadFail(error: String) {
                 }
 

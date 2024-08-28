@@ -25,7 +25,7 @@ object AdsManager {
     var inter: MaxInterstitialAd?=null
     val mutable_inter: MutableLiveData<MaxInterstitialAd> = MutableLiveData()
     var check_inter = false
-    var interHolder = InterHolder("134656413e36e374")
+    var interHolder = InterHolder("9bdd558152f72465")
     var nativeHolder = NativeHolder("0f688c4e22b9688b")
     var banner = "f443c90308f39f17"
     var bannerHolder = BannerHolder("")
