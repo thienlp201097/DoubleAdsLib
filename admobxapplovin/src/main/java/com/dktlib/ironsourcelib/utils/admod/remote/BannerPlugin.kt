@@ -12,7 +12,6 @@ import com.dktlib.ironsourcelib.utils.admod.remote.BannerPlugin.BannerConfig.Com
 import com.dktlib.ironsourcelib.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_BOTTOM
 import com.dktlib.ironsourcelib.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_TOP
 import com.dktlib.ironsourcelib.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_STANDARD
-import com.google.gson.annotations.SerializedName
 import com.vapp.admoblibrary.ads.remote.BannerRemoteConfig
 
 @SuppressLint("ViewConstructor")
@@ -127,13 +126,9 @@ class BannerPlugin(
     }
 
     data class BannerConfig(
-        @SerializedName("ad_unit_id")
         val adUnitId: String?,
-        @SerializedName("type")
         val type: String?,
-        @SerializedName("refresh_rate_sec")
         val refreshRateSec: Int?,
-        @SerializedName("cb_fetch_interval_sec")
         val cbFetchIntervalSec: Int?
     ) {
         companion object {
