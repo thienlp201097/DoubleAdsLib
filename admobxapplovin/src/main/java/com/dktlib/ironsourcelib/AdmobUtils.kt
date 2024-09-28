@@ -102,8 +102,7 @@ object AdmobUtils {
     var shimmerFrameLayout: ShimmerFrameLayout?=null
     //id thật
     var idIntersitialReal: String? = null
-    var interIsShowingWithNative = false
-    var interIsShowingWithBanner = false
+
     //Hàm Khởi tạo admob
     @JvmStatic
     fun initAdmob(context: Context?, timeout: Int, isDebug: Boolean, isEnableAds: Boolean) {

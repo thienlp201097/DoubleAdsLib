@@ -71,6 +71,7 @@ object AdsManager {
     }
 
     fun showInter(context: AppCompatActivity,interHolder: InterHolder,adsOnClick: AdsOnClick){
+
         AppOpenManager.getInstance().isAppResumeEnabled = true
         ApplovinUtil.showInterstitialsWithDialogCheckTimeNew(context, 800,interHolder ,object :
             InterstititialCallbackNew {

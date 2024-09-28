@@ -20,6 +20,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.dktlib.ironsourcelib.utils.admod.callback.OnResumeListener;
 import com.google.android.gms.ads.AdActivity;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -49,6 +50,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     private int splashTimeout = 0;
     public long timeToBackground = 0;
     private long waitingTime = 0;
+    private long onTimeShowInter = 0;
+    private long onDismissTime = 0;
     private boolean isInitialized = false;
     public boolean isAppResumeEnabled = true;
     private final List<Class> disabledAppOpenList;
@@ -67,6 +70,21 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         this.waitingTime = waitingTime;
     }
 
+    public void setOnDismissTimeForInter(long time){
+        onDismissTime = time;
+    }
+
+    public long getOnDismissTimeForInter(){
+        return onDismissTime;
+    }
+
+    public void setWaitingTimeShowInter(long waitingTime){
+        this.onTimeShowInter = waitingTime;
+    }
+
+    public long getWaitingTimeShowInter(){
+        return this.onTimeShowInter;
+    }
     /**
      * Constructor
      */
@@ -157,7 +175,6 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     }
 
     boolean isLoading = false;
-    public boolean isDismiss = false;
     public void fetchAd(final boolean isSplash) {
         Log.d(TAG, "fetchAd: isSplash = " + isSplash);
         if (isAdAvailable(isSplash) || appResumeAdId == null || AppOpenManager.this.appResumeAd!= null) {
@@ -284,16 +301,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         }
         Log.d("===Onresume", "FullScreenContentCallback");
         if (!isShowingAd && isAdAvailable(isSplash)) {
-            isDismiss = true;
             FullScreenContentCallback callback =
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
+                            setOnDismissTimeForInter(System.currentTimeMillis());
                             Log.d("==TestAOA==", "onResume: true");
-                            new Handler().postDelayed(() -> {
-                                isDismiss = false;
-                                Log.d("==TestAOA==", "onResume: false");
-                            },200);
                             isLoading = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Dismiss");
                             try {
@@ -313,8 +326,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                         @Override
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
+
                             isLoading = false;
-                            isDismiss = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Show false");
                             try {
                                 dialogFullScreen.dismiss();
@@ -374,6 +387,11 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                 Log.d("===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
 
                 if (System.currentTimeMillis() - timeToBackground < waitingTime){
+                    return;
+                }
+
+                if (System.currentTimeMillis() - getOnDismissTimeForInter() < getWaitingTimeShowInter()){
+                    Log.d("==DismissInter==", "run: getWaitingTimeShowInter");
                     return;
                 }
 

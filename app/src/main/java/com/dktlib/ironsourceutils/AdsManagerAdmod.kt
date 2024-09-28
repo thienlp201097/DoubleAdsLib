@@ -2,10 +2,12 @@ package com.dktlib.ironsourceutils
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import com.dktlib.ironsourcelib.AdmobUtils
+import com.dktlib.ironsourcelib.AppOpenManager
 import com.dktlib.ironsourcelib.GoogleENative
 import com.dktlib.ironsourcelib.utils.Utils
 import com.dktlib.ironsourcelib.utils.admod.callback.AdCallBackInterLoad
@@ -61,6 +63,10 @@ object AdsManagerAdmod {
         adListener: AdListener,
         enableLoadingDialog: Boolean
     ) {
+        if (System.currentTimeMillis() - AppOpenManager.getInstance().onDismissTimeForInter < AppOpenManager.getInstance().waitingTimeShowInter) {
+            Log.d("==DismissInter==", "showInter: Waiting Time Show Inter")
+            return
+        }
         AdmobUtils.showAdInterstitialWithCallbackNotLoadNew(
             context as Activity,interHolder,10000, object :
                 AdsInterCallBack {
@@ -84,6 +90,8 @@ object AdsManagerAdmod {
                 }
 
                 override fun onEventClickAdClosed() {
+                    AppOpenManager.getInstance().onDismissTimeForInter = System.currentTimeMillis()
+
                     interHolder.inter = null
                     loadInter(context,interHolder)
 //                    adListener.onAdClosed()
