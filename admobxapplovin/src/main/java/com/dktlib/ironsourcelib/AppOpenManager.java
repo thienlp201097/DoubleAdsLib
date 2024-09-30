@@ -3,9 +3,7 @@ package com.dktlib.ironsourcelib;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Dialog;
-import android.content.ComponentCallbacks2;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,13 +12,11 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.dktlib.ironsourcelib.utils.admod.callback.OnResumeListener;
 import com.google.android.gms.ads.AdActivity;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -51,7 +47,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     public long timeToBackground = 0;
     private long waitingTime = 0;
     private long onTimeShowInter = 0;
-    private long onDismissTime = 0;
+    private long onDismissTimeInter = 0;
+    private long onDismissTimeOnResume = 0;
     private boolean isInitialized = false;
     public boolean isAppResumeEnabled = true;
     private final List<Class> disabledAppOpenList;
@@ -71,11 +68,19 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     }
 
     public void setOnDismissTimeForInter(long time){
-        onDismissTime = time;
+        onDismissTimeInter = time;
     }
 
     public long getOnDismissTimeForInter(){
-        return onDismissTime;
+        return onDismissTimeInter;
+    }
+
+    public void setOnDismissTimeOnResume(long time){
+        onDismissTimeOnResume = time;
+    }
+
+    public long getOnDismissTimeOnResume(){
+        return onDismissTimeOnResume;
     }
 
     public void setWaitingTimeShowInter(long waitingTime){
@@ -305,7 +310,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-                            setOnDismissTimeForInter(System.currentTimeMillis());
+                            setOnDismissTimeOnResume(System.currentTimeMillis());
                             Log.d("==TestAOA==", "onResume: true");
                             isLoading = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Dismiss");

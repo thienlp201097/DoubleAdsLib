@@ -63,7 +63,7 @@ object AdsManagerAdmod {
         adListener: AdListener,
         enableLoadingDialog: Boolean
     ) {
-        if (System.currentTimeMillis() - AppOpenManager.getInstance().onDismissTimeForInter < AppOpenManager.getInstance().waitingTimeShowInter) {
+        if (System.currentTimeMillis() - AppOpenManager.getInstance().onDismissTimeOnResume < AppOpenManager.getInstance().waitingTimeShowInter) {
             Log.d("==DismissInter==", "showInter: Waiting Time Show Inter")
             return
         }
