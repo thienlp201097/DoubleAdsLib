@@ -62,6 +62,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         }
         return false;
     });
+    public boolean isDismiss = false;
 
     public void setWaitingTime(long waitingTime){
         this.waitingTime = waitingTime;
@@ -306,12 +307,16 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         }
         Log.d("===Onresume", "FullScreenContentCallback");
         if (!isShowingAd && isAdAvailable(isSplash)) {
+            isDismiss = true;
             FullScreenContentCallback callback =
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
+                            new Handler().postDelayed(() -> {
+                                isDismiss = false;
+                                Log.d("==TestAOA==", "onResume: false");
+                            },200);
                             setOnDismissTimeOnResume(System.currentTimeMillis());
-                            Log.d("==TestAOA==", "onResume: true");
                             isLoading = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Dismiss");
                             try {
@@ -331,7 +336,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                         @Override
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
-
+                            isDismiss = false;
                             isLoading = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Show false");
                             try {
