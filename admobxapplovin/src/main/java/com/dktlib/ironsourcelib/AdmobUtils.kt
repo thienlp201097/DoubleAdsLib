@@ -589,8 +589,10 @@ object AdmobUtils {
         } else {
             val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
                 activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
-            } else {
+            } else if (size === GoogleENative.UNIFIED_SMALL){
                 activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+            }else{
+                activity.layoutInflater.inflate(R.layout.layoutbanner_loading, null, false)
             }
             try {
                 viewGroup.addView(tagView, 0)
@@ -660,8 +662,10 @@ object AdmobUtils {
         var s = nativeHolder.ads
         val tagView: View = if (size === GoogleENative.UNIFIED_MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
-        } else {
+        } else if (size === GoogleENative.UNIFIED_SMALL){
             activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+        }else{
+            activity.layoutInflater.inflate(R.layout.layoutbanner_loading, null, false)
         }
         try {
             viewGroup.addView(tagView, 0)
